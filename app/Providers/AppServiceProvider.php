@@ -20,7 +20,8 @@ class AppServiceProvider extends ServiceProvider
 
         (new FilamentSetup())
             ->configureColors()
-            ->configureFormFields();
+            ->configureFormFields()
+            ->configureNotification();
     }
 
     private function configureEloquent(): void

@@ -14,7 +14,13 @@
         content="width=device-width, initial-scale=1"
     >
 
-    <title>{{ config('app.name') }}</title>
+    <title>
+        @if ($title)
+            {{ $title }} - {{ config('app.name') }}
+        @else
+            {{ config('app.name') }}
+        @endif
+    </title>
 
     <link
         rel="preconnect"
@@ -24,6 +30,12 @@
         href="https://fonts.bunny.net/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
         rel="stylesheet"
     />
+
+    <link
+        rel="icon"
+        type="image/png"
+        href="{{ asset('favicon.png') }}"
+    >
 
     <style>
         [x-cloak] {
