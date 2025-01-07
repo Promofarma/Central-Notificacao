@@ -3,7 +3,9 @@
 <x-partials.head :$title />
 
 <x-partials.body>
-    {{ $slot }}
+    <x-ui.panel>
+        {{ $slot }}
+    </x-ui.panel>
 </x-partials.body>
 
 </html>
