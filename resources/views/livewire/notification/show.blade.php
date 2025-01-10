@@ -3,12 +3,14 @@
     :$headerActions
 >
     <x-slot:sub-header>
-        <div class="flex items-center w-full gap-3 py-2 mx-auto md:max-w-sm">
-            <x-lucide-info class="size-4 stroke-slate-500" />
-            <p class="text-xs font-medium text-slate-500">
+        <div class="w-full mx-auto md:max-w-sm">
+            <x-ui.badge
+                icon="info"
+                color="white"
+            >
                 Criado por: <strong>{{ $notification->user->name }}</strong> em
                 <strong>{{ $notification->formatted_created_at }}</strong>
-            </p>
+            </x-ui.badge>
         </div>
     </x-slot:sub-header>
     <div class="space-y-6">
@@ -35,5 +37,11 @@
                 @endforeach
             </div>
         </x-ui.container>
+
+        @if (filled($schedule = $notification->schedule))
+            <x-ui.container title="Lista de Notificações Agendadas">
+                <x-notification.schedule.table :results="$schedule->results" />
+            </x-ui.container>
+        @endif
     </div>
 </x-ui.page>

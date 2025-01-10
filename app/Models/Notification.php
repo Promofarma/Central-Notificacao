@@ -4,16 +4,17 @@ declare(strict_types=1);
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Casts\Attribute;
+use App\Helpers\FormatsTimestamps;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
-use Illuminate\Support\Carbon;
 use Illuminate\Support\Str;
 
 class Notification extends Model
 {
+    use FormatsTimestamps;
+
     protected $primaryKey = 'uuid';
 
     protected $keyType = 'string';
@@ -50,12 +51,5 @@ class Notification extends Model
     public function schedule(): HasOne
     {
         return $this->hasOne(NotificationSchedule::class);
-    }
-
-    protected function formattedCreatedAt(): Attribute
-    {
-        return Attribute::get(function (mixed $value, array $attributes): string {
-            return Carbon::parse($attributes['created_at'])->format('d/m/Y à\\s H:i');
-        });
     }
 }

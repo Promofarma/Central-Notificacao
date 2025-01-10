@@ -160,5 +160,8 @@
     "Your email address is unverified.": "Seu endereço de e-mail não foi verificado.",
     "Photo": "Foto",
     "Notifications": "Notificações",
-    "Notification": "Notificação"
+    "Notification": "Notificação",
+    "Pending": "Pendente",
+    "Created": "Criado",
+    "Cancelled": "Cancelado"
 }

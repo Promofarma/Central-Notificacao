@@ -20,6 +20,7 @@ class Index extends PageIndex
     public function notifications(): Collection
     {
         return Notification::query()
+            ->with('schedule')
             ->withCount([
                 'recipients',
                 'recipients as recipients_read_count' => fn ($query) => $query->read(),
