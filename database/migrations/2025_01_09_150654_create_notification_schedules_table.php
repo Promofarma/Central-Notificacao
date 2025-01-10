@@ -17,16 +17,12 @@ return new class () extends Migration {
             $table->integer('interval_day')->nullable();
             $table->date('start_date');
             $table->date('end_date');
-            $table->boolean('is_active')->default(true);
             $table->timestamps();
 
             $table->foreign('notification_uuid')->references('uuid')->on('notifications')->onDelete('cascade');
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('notification_schedules');
