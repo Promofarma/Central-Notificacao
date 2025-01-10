@@ -24,6 +24,7 @@ class Button extends Component
         public ?string $wireTarget = null,
         public bool $fullSize = false,
         public ?string $text = null,
+        public ?string $formId = null,
     ) {
     }
 
@@ -36,6 +37,7 @@ class Button extends Component
     {
         return [
             'type' => $this->type,
+            'form' => $this->formId,
             'wire:loading.attr' => $this->wireTarget ? 'disabled' : null,
             'wire:target' => $this->wireTarget,
         ];

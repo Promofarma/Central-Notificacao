@@ -8,7 +8,6 @@
             'px-4 py-2 text-base font-semibold' => $size === 'large',
             'bg-white border border-slate-200 active:bg-slate-200 text-slate-900 hover:bg-slate-50' => $color === 'white',
             'bg-primary-500 text-white active:bg-primary-700 hover:bg-primary-600' => $color === 'primary',
-            'bg-secondary-500 text-white active:bg-secondary-700 hover:bg-secondary-600' => $color === 'secondary',
             'bg-green-500 text-white active:bg-green-700 hover:bg-green-600' => $color === 'success',
             'bg-red-500 text-white active:bg-red-700 hover:bg-red-600' => $color === 'danger',
             'bg-amber-500 text-white active:bg-amber-700 hover:bg-amber-600' => $color === 'warning',
