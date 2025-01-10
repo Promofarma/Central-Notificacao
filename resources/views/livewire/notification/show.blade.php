@@ -40,7 +40,7 @@
 
         @if (filled($schedule = $notification->schedule))
             <x-ui.container title="Lista de Notificações Agendadas">
-                <x-notification.schedule.table :results="$schedule->results" />
+                <livewire:notification.schedule.index :results="$schedule->results" />
             </x-ui.container>
         @endif
     </div>

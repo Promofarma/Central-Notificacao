@@ -1,9 +1,4 @@
 @use('App\Enums\ScheduleResultStatus')
-
-@props([
-    'results' => [],
-])
-
 <div class="overflow-auto rounded-lg shadow-sm ring-1 ring-slate-200 shadow-slate-300/10">
     <table class="w-full">
         <thead class="border-b bg-slate-50 border-slate-200">

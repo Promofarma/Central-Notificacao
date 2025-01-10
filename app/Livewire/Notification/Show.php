@@ -9,9 +9,7 @@ use App\Models\Notification;
 use App\View\Components\Ui\Button;
 use Illuminate\View\Compilers\BladeCompiler;
 use Livewire\Attributes\Locked;
-use Livewire\Attributes\On;
 
-#[On('notification-schedule-cancelled')]
 class Show extends Page
 {
     protected static string $layout = 'components.layouts.app';
