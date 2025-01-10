@@ -18,6 +18,7 @@ return new class () extends Migration {
             $table->json('data')->nullable();
             $table->foreignIdFor(Category::class)->constrained();
             $table->foreignIdFor(User::class)->constrained();
+            $table->date('scheduled_at')->nullable();
             $table->timestamps();
         });
     }

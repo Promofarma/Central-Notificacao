@@ -40,6 +40,11 @@ abstract class Page extends Component implements Accessable
         return static::$title;
     }
 
+    protected function getHeaderActions(): array
+    {
+        return [];
+    }
+
     public function mount(): void
     {
         abort_unless(static::canAccess(), 403);
@@ -51,6 +56,7 @@ abstract class Page extends Component implements Accessable
             $this->getView(),
             [
                 'title' => $this->getTitle(),
+                'headerActions' => $this->getHeaderActions(),
                 ...$this->getViewData(),
             ]
         )
