@@ -16,6 +16,7 @@ return new class () extends Migration {
             $table->string('title', 60)->index();
             $table->text('content');
             $table->json('data')->nullable();
+            $table->uuid('parent_uuid')->nullable();
             $table->foreignIdFor(Category::class)->constrained();
             $table->foreignIdFor(User::class)->constrained();
             $table->date('scheduled_at')->nullable();
