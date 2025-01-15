@@ -47,6 +47,12 @@
                                 />
                             @endif
 
+                            @if ($result->status === ScheduleResultStatus::Created)
+                                <span class="font-medium text-slate-400">
+                                    Criado em {{ $result->created_at->format('d/m/Y à\\s H:i') }}
+                                </span>
+                            @endif
+
                             @if ($result->status === ScheduleResultStatus::Cancelled)
                                 <span class="font-medium text-slate-400">
                                     Cancelado em {{ $result->canceled_at->format('d/m/Y à\\s H:i') }}
