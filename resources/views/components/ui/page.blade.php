@@ -1,6 +1,6 @@
 <div class="space-y-6">
     <header class="flex flex-col items-start gap-3 md:flex-row md:items-center md:justify-between">
-        <h2 class="text-xl font-bold leading-tight tracking-tight sm:text-2xl lg:text-3xl">
+        <h2 class="text-xl font-extrabold leading-tight tracking-tight sm:text-2xl lg:text-3xl">
             {{ $title }}
         </h2>
         <div class="flex items-center gap-3">

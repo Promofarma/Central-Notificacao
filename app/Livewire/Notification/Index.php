@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Livewire\Notification;
 
+use App\Filters\Concerns\InteractsWithFilterData;
+use App\Filters\NotificationFilter;
 use App\Livewire\Ui\Page\Index as PageIndex;
 use App\Models\Notification;
 use Illuminate\Support\Collection;
@@ -12,6 +14,8 @@ use Livewire\Attributes\Computed;
 
 class Index extends PageIndex
 {
+    use InteractsWithFilterData;
+
     protected static string $view = 'livewire.notification.index';
 
     protected static ?string $title = 'Notificações';
@@ -27,7 +31,9 @@ class Index extends PageIndex
                 'attachments',
             ])
             ->where('user_id', Auth::id())
+            ->whereNull('parent_uuid')
             ->orderBy('created_at', 'desc')
+            ->filter(new NotificationFilter($this->getFilterData()))
             ->get();
     }
 }
