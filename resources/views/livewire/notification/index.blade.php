@@ -2,7 +2,12 @@
     :$title
     :$headerActions
 >
-    <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+    <x-slot:sub-header>
+        <livewire:notification.filter />
+    </x-slot:sub-header>
+
+
+    <div class="grid grid-cols-1 gap-y-6">
         @foreach ($this->notifications as $notification)
             <x-notification.item
                 :$notification
@@ -10,4 +15,6 @@
             />
         @endforeach
     </div>
+
+
 </x-ui.page>

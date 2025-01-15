@@ -4,7 +4,7 @@
         <x-sidebar />
         <!-- Main -->
         <main
-            class="flex flex-col flex-1 [&>:first-child::-webkit-scrollbar]:w-1.5 [&>:first-child::-webkit-scrollbar-track]:bg-slate-200 [&>:first-child::-webkit-scrollbar-thumb]:bg-slate-400 [&>:first-child::-webkit-scrollbar-thumb]:rounded-lg [&>:first-child]:flex-1 [&>:first-child]:overflow-y-auto [&>:first-child]:py-4 [&>:first-child]:px-0.5 [&>:first-child]:h-0"
+            class="flex flex-col flex-1 [&>:first-child::-webkit-scrollbar]:w-1.5 [&>:first-child::-webkit-scrollbar-track]:bg-slate-200 [&>:first-child::-webkit-scrollbar-thumb]:bg-slate-400 [&>:first-child::-webkit-scrollbar-thumb]:rounded-lg [&>:first-child]:flex-1 [&>:first-child]:overflow-y-auto [&>:first-child]:py-4 [&>:first-child]:pr-0.5 [&>:first-child]:pl-1 [&>:first-child]:h-0"
         >
             {{ $slot }}
         </main>
