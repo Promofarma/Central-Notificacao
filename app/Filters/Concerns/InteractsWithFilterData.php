@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Filters\Concerns;
 
 use App\Filters\BaseFilterComponent;
+use App\Helpers\FormatCacheKey;
 use App\Livewire\Ui\Toast\Toast;
 
 trait InteractsWithFilterData
@@ -24,6 +25,8 @@ trait InteractsWithFilterData
         [$property, $value] = $data;
 
         $this->filterData[$property] = $value;
+
+        $this->afterOnFilterDataUpdated();
     }
 
     public function onFilterDataReseted(string $key = null): void
@@ -34,6 +37,8 @@ trait InteractsWithFilterData
 
         $this->reset('filterData');
 
+        $this->afterOnFilterDataReseted();
+
         Toast::success('Filtros limpos com sucesso!')->now();
     }
 
@@ -41,11 +46,19 @@ trait InteractsWithFilterData
     {
         parent::mount();
 
-        $this->filterData = session(BaseFilterComponent::FILTER_CACHED_KEY, []);
+        $this->filterData = session(FormatCacheKey::format(static::class), []);
     }
 
-    protected function getFilterData(): array
+    public function getFilterData(): array
     {
         return $this->filterData;
+    }
+
+    protected function afterOnFilterDataUpdated(): void
+    {
+    }
+
+    protected function afteronFilterDataReseted(): void
+    {
     }
 }

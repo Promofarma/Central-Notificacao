@@ -16,7 +16,7 @@
         const target = $refs.target;
 
         if (!target) {
-            console.error('No target found');
+            return;
         }
 
         target.addEventListener('click', () => {

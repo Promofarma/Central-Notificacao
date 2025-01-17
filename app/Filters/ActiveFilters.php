@@ -64,17 +64,17 @@ class ActiveFilters
         return implode(' & ', $filteredValues);
     }
 
-    private function getSelectedOptionLabels(Select $select): string|array|null
+    private function getSelectedOptionLabels(Component $component): string|array|null
     {
-        $selectedValues = $select->getState();
+        $selectedValues = $component->getState();
 
         if (blank($selectedValues)) {
-            return $select->isMultiple() ? [] : null;
+            return $component->isMultiple() ? [] : null;
         }
 
-        $options = $select->getOptions();
+        $options = $component->getOptions();
 
-        if (!$select->isMultiple()) {
+        if (!$component->isMultiple()) {
             return $options[$selectedValues];
         }
 
