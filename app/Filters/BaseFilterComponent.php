@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Filters;
 
+use App\Helpers\FormatCacheKey;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Form;
@@ -26,13 +27,16 @@ abstract class BaseFilterComponent extends Component implements HasForms
 
     public const FILTER_RESETED_EVENT = 'filter-reseted';
 
-    public const FILTER_CACHED_KEY = 'filterData';
-
     public ?array $filterData = [];
 
     abstract protected function getView(): string;
 
     abstract protected function getFormSchema(): array;
+
+    protected function getCacheFilterKey(): string
+    {
+        return FormatCacheKey::format(static::class);
+    }
 
     protected function getViewData(): array
     {
@@ -70,7 +74,7 @@ abstract class BaseFilterComponent extends Component implements HasForms
 
     public function mount(): void
     {
-        $cachedFilterData = ($this->getPersistFiltersInSession() && session(static::FILTER_CACHED_KEY) ? session(static::FILTER_CACHED_KEY) : []);
+        $cachedFilterData = ($this->getPersistFiltersInSession() && session($this->getCacheFilterKey()) ? session($this->getCacheFilterKey()) : []);
 
         $this->form->fill($cachedFilterData);
     }
@@ -105,7 +109,7 @@ abstract class BaseFilterComponent extends Component implements HasForms
         $this->form->fill();
 
         if ($this->getPersistFiltersInSession()) {
-            session()->forget(static::FILTER_CACHED_KEY);
+            session()->forget($this->getCacheFilterKey());
         }
 
         $this->dispatch(static::FILTER_RESETED_EVENT);
@@ -114,7 +118,7 @@ abstract class BaseFilterComponent extends Component implements HasForms
     private function putFilterDataInSession(): void
     {
         if ($this->getPersistFiltersInSession()) {
-            session()->put(static::FILTER_CACHED_KEY, $this->filterData);
+            session()->put($this->getCacheFilterKey(), $this->filterData);
         }
     }
 }

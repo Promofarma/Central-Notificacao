@@ -12,7 +12,7 @@ trait FormatsTimestamps
     protected function formattedCreatedAt(): Attribute
     {
         return Attribute::get(function (mixed $value, array $attributes): string {
-            return Carbon::parse($attributes['created_at'])->format('d/m/Y à\\s H:i');
+            return Carbon::parse($attributes['created_at'])->format('d/m à\\s H:i');
         });
     }
 

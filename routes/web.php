@@ -7,10 +7,15 @@ use App\Livewire\Auth\Login;
 use App\Livewire\Dashboard\Dashboard;
 use App\Livewire\Notification\Create;
 use App\Livewire\Notification\Index;
+use App\Livewire\Recipient\Index as RecipientIndex;
 use App\Livewire\Notification\Show;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware('guest')->get('/', Login::class)->name('login');
+
+Route::group(['prefix' => 'recipient'], function (): void {
+    Route::get('/{recipientId}', RecipientIndex::class)->name('recipient.index');
+});
 
 Route::group(['middleware' => 'auth'], function (): void {
     Route::get('/logout', LogoutController::class)->name('logout');

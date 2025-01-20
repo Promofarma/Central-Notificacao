@@ -10,15 +10,12 @@ use App\Models\Category;
 class CategorySeeder extends Seeder
 {
     protected array $categories = [
-        'Midias',
-        'Promoções',
-        'Comunicados',
-    ];
-
-    protected array $icons = [
-        'image',
-        'circle-percent',
-        'message-square',
+        'Compras e Insumos',
+        'Manutenção e Financeiro',
+        'Logística e Estoque',
+        'Comunicação e Marketing',
+        'Treinamento e Padronização',
+        'Organização e Operacional',
     ];
 
     public function run(): void
@@ -26,7 +23,7 @@ class CategorySeeder extends Seeder
         foreach ($this->categories as $index => $category) {
             Category::query()->create([
                 'name' => $category,
-                'icon' => $this->icons[$index],
+                'icon' => 'box',
             ]);
         }
     }
