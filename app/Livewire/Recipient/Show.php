@@ -10,26 +10,46 @@ use Livewire\Attributes\Locked;
 use Livewire\Component;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
+use Livewire\Attributes\On;
 
 class Show extends Component
 {
     #[Locked]
-    public int $recipientId;
-
-    #[Locked]
     public string $notificationUuid;
 
-    public NotificationRecipient $notificationRecipient;
+    #[Locked]
+    public int $recipientId;
+
+    public ?NotificationRecipient $notificationRecipient;
 
     public function mount(): void
     {
-        $this->notificationRecipient = Cache::get($this->getCacheKey()) ?? $this->getNotificationRecipientFromDatabase();
+        $this->initializeNotificationRecipient();
+    }
 
-        if (!$this->notificationRecipient->isRead()) {
-            $this->notificationRecipient->markAsRead();
-            $this->updateNotificationCache();
-            $this->dispatch('notification-readed');
-        }
+    public function getNotificationRecipient(): NotificationRecipient
+    {
+        return NotificationRecipient::query()
+            ->select(['id', 'notification_uuid', 'recipient_id', 'read_at', 'archived_at', 'created_at'])
+            ->with([
+                'notification' => fn ($query) => $query
+                        ->select(['uuid', 'title', 'content', 'user_id', 'created_at'])
+                        ->with([
+                            'user' => fn ($query) => $query->select(['id', 'name']),
+                            'attachments' => fn ($query) => $query->select(['id', 'file_name', 'size', 'extension', 'path', 'notification_uuid', 'created_at']),
+                        ]),
+            ])
+            ->where([
+                'notification_uuid' => $this->notificationUuid,
+                'recipient_id' => $this->recipientId,
+            ])
+            ->firstOrFail();
+    }
+
+    #[On('notification-archived')]
+    public function onNotificationArchived(): void
+    {
+        Cache::put($this->getCacheKey(), $this->notificationRecipient);
     }
 
     public function render(): View|Factory
@@ -40,36 +60,24 @@ class Show extends Component
         ]);
     }
 
-    private function updateNotificationCache(): void
+    private function initializeNotificationRecipient(): void
     {
-        Cache::put(
-            $this->getCacheKey(),
-            $this->notificationRecipient,
-        );
-    }
+        /** @var NotificationRecipient $notificationRecipient */
+        $notificationRecipient = Cache::get($this->getCacheKey()) ?? $this->getNotificationRecipient();
 
-    private function getNotificationRecipientFromDatabase(): NotificationRecipient
-    {
-        return NotificationRecipient::query()
-            ->select(['id', 'notification_uuid', 'recipient_id', 'read_at', 'archived_at', 'created_at'])
-            ->with([
-                'notification' => static fn ($query) => $query
-                    ->select(['uuid', 'title', 'content', 'category_id', 'user_id', 'created_at'])
-                    ->with(['user', 'attachments']),
-            ])
-            ->where([
-                'recipient_id' => $this->recipientId,
-                'notification_uuid' => $this->notificationUuid,
-            ])
-            ->firstOrFail();
+        if (!$notificationRecipient->isRead()) {
+            $notificationRecipient->markAsRead();
+
+            $this->dispatch('notification-read');
+
+            Cache::put($this->getCacheKey(), $notificationRecipient);
+        }
+
+        $this->notificationRecipient = $notificationRecipient;
     }
 
     private function getCacheKey(): string
     {
-        return sprintf(
-            'recipient-%d-notification-%s',
-            $this->recipientId,
-            $this->notificationUuid
-        );
+        return 'recipient.' . $this->recipientId . '.notification.' . $this->notificationUuid;
     }
 }

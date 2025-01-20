@@ -4,7 +4,7 @@
 
         delay: 1000,
 
-        selectedNotificationUuid: null,
+        selected: null,
 
         _notificationListItems: [],
 
@@ -61,7 +61,7 @@
             });
         },
 
-        handleNotificationSelection(uuid) {
+        handleOnNotificationSelection(uuid) {
             if (!uuid || this.isOpening) return;
 
             this.isOpening = true;
@@ -69,11 +69,11 @@
             let timeout = null;
 
             try {
-                this.selectedNotificationUuid = uuid;
+                this.selected = uuid;
 
                 timeout = setTimeout(async () => {
                     try {
-                        await $wire.set('selectedNotificationUuid', uuid);
+                        await $wire.set('selected', uuid);
                     } catch (err) {
                         console.error('Failed to set notification UUID:', err);
                     } finally {
@@ -87,12 +87,12 @@
             }
         },
 
-        handleResetFilters() {
-            this.selectedNotificationUuid = null;
+        handleOnResetedFilters() {
+            this.selected = null;
 
             const reset = async () => {
                 try {
-                    await $wire.set('selectedNotificationUuid', null);
+                    await $wire.set('selected', null);
                 } catch (err) {
                     console.error('Failed to reset filters:', err);
                 }
@@ -102,25 +102,21 @@
         }
     }"
     class="flex flex-col flex-1 overflow-hidden"
-    x-on:filter-reseted.window="handleResetFilters()"
-    x-on:filter-updated.window="handleResetFilters()"
+    x-on:filter-reseted.window="handleOnResetedFilters()"
+    x-on:filter-updated.window="handleOnResetedFilters()"
 >
-    @foreach ($groupedRecipientNotifications as $groupName => $recipientNotifications)
+    @forelse ($groupedRecipientNotifications as $groupName => $recipientNotifications)
         <div
             class="flex flex-col"
             x-bind:class="isOpenGroupItem('{{ md5($groupName) }}') && 'flex-1 overflow-hidden'"
-            x-on:click.outside="selectedNotificationUuid || closeGroupItem('{{ md5($groupName) }}')"
+            x-on:click.outside="selected || closeGroupItem('{{ md5($groupName) }}')"
             wire:key="{{ $getGroupItems()->keys()->join('-') }}"
         >
-            <!-- group button -->
             <x-recipient.group-button
                 :label="$groupName"
                 :count="$recipientNotifications->count()"
                 x-on:click.prevent="toggleGroupItem('{{ md5($groupName) }}')"
             />
-            <!-- group button -->
-
-            <!-- list items -->
             <div
                 class="flex-1 h-0 overflow-y-auto max-h-[calc(100%-0.75rem*4)]"
                 x-show="isOpenGroupItem('{{ md5($groupName) }}')"
@@ -135,8 +131,15 @@
                     />
                 @endforeach
             </div>
-            <!-- list items -->
         </div>
-    @endforeach
+    @empty
+        <div class="p-3 grid h-full place-content-center opacity-75">
+            <x-ui.empty-state icon="inbox">
+                <x-slot:description>
+                    Sem notificações no momento.
+                </x-slot:description>
+            </x-ui.empty-state>
+        </div>
+    @endforelse
 
 </div>

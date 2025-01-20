@@ -11,6 +11,7 @@ use App\Models\NotificationRecipient;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
 use Livewire\Attributes\Locked;
+use Livewire\Attributes\On;
 
 class Index extends Page
 {
@@ -20,12 +21,14 @@ class Index extends Page
 
     protected static string $view = 'livewire.recipient.index';
 
-    protected static ?string $title = 'Inbox';
+    protected static ?string $title = 'Caixa de entrada';
 
     #[Locked]
-    public int $recipient;
+    /** Route parameter */
+    public int $recipientId;
 
-    public ?string $selectedNotificationUuid = null;
+    /** Selected notification uuid */
+    public ?string $selected = null;
 
     public function getNotificationRecipients(): Collection
     {
@@ -39,7 +42,7 @@ class Index extends Page
                 'created_at',
             ])
             ->with([
-                'notification' => static fn ($query) => $query
+                'notification' => fn ($query) => $query
                         ->select([
                             'uuid',
                             'title',
@@ -50,11 +53,17 @@ class Index extends Page
                         ])
                         ->withCount('attachments')
                         ->with([
-                            'category:id,name',
-                            'user:id,name',
+                            'user' => fn ($query) => $query->select([
+                                'id',
+                                'name',
+                            ]),
+                            'category' => fn ($query) => $query->select([
+                                'id',
+                                'name',
+                            ]),
                         ]),
             ])
-            ->where('recipient_id', $this->recipient)
+            ->where('recipient_id', $this->recipientId)
             ->filter(new NotificationRecipientFilter($this->getFilterData()))
             ->get();
     }
@@ -70,19 +79,20 @@ class Index extends Page
         );
     }
 
-    private function getCacheKey(): string
+    #[On('notification-read', 'notification-archived')]
+    public function forgetCacheOnNotificationEvent(): void
     {
-        return 'recipient-' . $this->recipient . '-notifications';
+        $this->forgetCache();
     }
 
-    protected function afterOnFilterDataUpdated(): void
+    public function afterOnFilterDataUpdated(): void
     {
-        Cache::forget($this->getCacheKey());
+        $this->forgetCache();
     }
 
-    protected function afterOnFilterDataReseted(): void
+    public function afterOnFilterDataReseted(): void
     {
-        Cache::forget($this->getCacheKey());
+        $this->forgetCache();
     }
 
     protected function getViewData(): array
@@ -90,5 +100,15 @@ class Index extends Page
         return [
             'groupedRecipientNotifications' => $this->getGroupedRecipientNotifications(),
         ];
+    }
+
+    private function forgetCache(): void
+    {
+        Cache::forget($this->getCacheKey());
+    }
+
+    private function getCacheKey(): string
+    {
+        return 'recipient.' . $this->recipientId . '.notifications';
     }
 }

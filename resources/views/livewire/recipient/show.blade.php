@@ -1,59 +1,47 @@
-<main
-    class="relative flex-1 grid overflow-y-auto grid-rows-[auto_1fr] [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-track]:bg-slate-300/50 [&::-webkit-scrollbar-thumb]:bg-slate-400 [&::-webkit-scrollbar-thumb]:rounded-full"
-    wire:transition.opacity.duration.200ms
->
+<section class="flex-1">
     <header
-        class="flex items-center justify-between px-3 bg-white border-b shadow-sm h-14 border-slate-200 shadow-slate-300/10"
+        class="flex items-center justify-between h-full px-3 bg-white border-b shadow-sm max-h-14 border-slate-200 shadow-slate-300/10"
     >
-        <h2 class="text-lg font-bold text-slate-700">
-            {{ $notification->title }}
-        </h2>
-        <div class="flex items-center gap-3">
-            <div class="inline-flex items-center gap-1.5 text-green-600">
-                @if ($notificationRecipient->isRead())
-                    <x-lucide-check-check class="size-3" />
-                    <span class="text-xs font-medium">
-                        Lida em <strong>{{ $notificationRecipient->read_at }}</strong>
-                    </span>
-                @endif
-            </div>
-
-            <div class="inline-flex items-center gap-1.5 text-slate-400">
-                <x-lucide-archive class="size-3" />
-                <span class="text-xs font-medium">
-                    Arquivada
+        <h3 class="text-lg font-bold">{{ $notification->title }}</h3>
+        <div class="flex items-center gap-4">
+            @if ($notificationRecipient->isRead())
+                <span class="inline-flex items-center gap-2 text-green-600">
+                    <x-lucide-check-check class="size-4" />
+                    <span class="text-xs font-medium">Lida em
+                        {{ $notificationRecipient->read_at->diffForHumans() }}</span>
                 </span>
-            </div>
+            @endif
 
-            <x-ui.button
-                size="small"
-                icon="archive"
-            >
-                Arquivar
-            </x-ui.button>
-
+            @if ($notificationRecipient->isArchived())
+                <span class="inline-flex items-center gap-2 text-slate-600">
+                    <x-lucide-archive class="size-4" />
+                    <span class="text-xs font-medium">Arquivada</span>
+                </span>
+            @else
+                <livewire:recipient.archive
+                    :notification-recipient="$notificationRecipient"
+                    :wire:key="$notificationRecipient->id"
+                />
+            @endif
         </div>
     </header>
-
-    <section class="p-6 space-y-6">
-        <div class="space-y-1">
-            <span class="text-xs font-medium text-slate-400">Enviada por
-                <strong>{{ $notification->user->name }}</strong> em
-                {{ $notification->formatted_created_at }}</span>
-        </div>
-
-        <div class="max-w-full prose">
+    <div class="p-3 space-y-4">
+        <x-ui.container
+            title="Conteúdo"
+            class="space-y-2"
+        >
             {!! $notification->content !!}
-        </div>
-        @if (filled($attachments = $notification->attachments))
-            <div class="grid gap-3">
-                <span class="text-sm font-semibold text-slate-700">Anexos:</span>
-                <ul class="space-y-2">
-                    @foreach ($attachments as $attachment)
-                        {{-- <x-notification.attachment-item :$attachment /> --}}
-                    @endforeach
-                </ul>
-            </div>
+        </x-ui.container>
+
+        @if ($notification->attachments->isNotEmpty())
+            <x-ui.container
+                title="Anexos"
+                class="space-y-2"
+            >
+                @foreach ($notification->attachments as $attachment)
+                    <x-notification.attachment.item :attachment="$attachment" />
+                @endforeach
+            </x-ui.container>
         @endif
-    </section>
-</main>
+    </div>
+</section>

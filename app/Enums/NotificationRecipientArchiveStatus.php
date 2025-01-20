@@ -11,7 +11,7 @@ enum NotificationRecipientArchiveStatus: string implements Arrayable
 {
     use HasToArray;
 
-    case Unarchived = 'unarchived';
-
     case Archived = 'archived';
+
+    case Unarchived = 'unarchived';
 }

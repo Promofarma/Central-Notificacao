@@ -13,6 +13,14 @@ class NotificationRecipient extends Model
 {
     use HasFilter;
 
+    protected function casts(): array
+    {
+        return [
+            'read_at' => 'datetime',
+            'archived_at' => 'datetime',
+        ];
+    }
+
     public function recipient(): BelongsTo
     {
         return $this->belongsTo(Recipient::class);
@@ -55,7 +63,10 @@ class NotificationRecipient extends Model
 
     public function markAsRead(): void
     {
-        $this->read_at = now();
-        $this->save();
+        $this->update([
+            'read_at' => now(),
+            'ip_address' => request()->ip(),
+            'updated_at' => now(),
+        ]);
     }
 }

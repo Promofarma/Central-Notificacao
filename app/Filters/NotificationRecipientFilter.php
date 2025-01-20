@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Filters;
 
+use App\Enums\NotificationRecipientArchiveStatus;
+use App\Enums\NotificationRecipientReadStatus;
 use App\Filters\Contracts\Filterable;
 use Illuminate\Database\Eloquent\Builder;
 
@@ -19,44 +21,49 @@ class NotificationRecipientFilter implements Filterable
         return $builder
             ->when(
                 value: $this->getUserId(),
-                callback: fn (Builder $query, int $value) => $query->whereHas('notification', fn (Builder $query) => $query->where('user_id', $value)),
+                callback: fn (Builder $query, int $value): Builder => $query->whereHas('notification', fn (Builder $query): Builder => $query->where('user_id', $value)),
             )
             ->when(
                 value: $this->getCategoryId(),
-                callback: fn (Builder $query, int $value) => $query->whereHas('notification', fn (Builder $query) => $query->where('category_id', $value)),
+                callback: fn (Builder $query, int $value): Builder => $query->whereHas('notification', fn (Builder $query): Builder => $query->where('category_id', $value)),
             )
             ->when(
-                value: $this->isRead(),
-                callback: fn (Builder $query, bool $value) => $value ? $query->read() : $query->unread(),
+                value: $this->getReadStatus(),
+                callback: fn (Builder $query, NotificationRecipientReadStatus $value): Builder => match ($value) {
+                    NotificationRecipientReadStatus::Read => $query->read(),
+                    NotificationRecipientReadStatus::Unread => $query->unread(),
+                },
             )
             ->when(
-                value: $this->isArchived(),
-                callback: fn (Builder $query, bool $value) => $value ? $query->archived() : $query->unarchived(),
+                value: $this->getArchiveStatus(),
+                callback: fn (Builder $query, NotificationRecipientArchiveStatus $value): Builder => match ($value) {
+                    NotificationRecipientArchiveStatus::Archived => $query->archived(),
+                    NotificationRecipientArchiveStatus::Unarchived => $query->unarchived(),
+                },
             );
     }
 
     public function getUserId(): ?int
     {
-        return $this->has('user_id') ? (int) $this->data['user_id'] : null;
+        return isset($this->data['user_id']) ? (int) $this->data['user_id'] : null;
     }
 
     public function getCategoryId(): ?int
     {
-        return $this->has('category_id') ? (int) $this->data['category_id'] : null;
+        return isset($this->data['category_id']) ? (int) $this->data['category_id'] : null;
     }
 
-    public function isRead(): bool
+    public function getReadStatus(): ?NotificationRecipientReadStatus
     {
-        return $this->has('is_read') ? (bool) $this->data['is_read'] : false;
+        $readStatus = $this->data['read_status'] ?? null;
+
+        return $readStatus ? NotificationRecipientReadStatus::from($readStatus) : null;
     }
 
-    public function isArchived(): bool
+    public function getArchiveStatus(): ?NotificationRecipientArchiveStatus
     {
-        return $this->has('is_archived') ? (bool) $this->data['is_archived'] : false;
-    }
+        $archiveStatus = $this->data['archive_status'] ?? null;
 
-    private function has(string $key): bool
-    {
-        return array_key_exists($key, $this->data);
+        return $archiveStatus ? NotificationRecipientArchiveStatus::from($archiveStatus) : null;
     }
 }

@@ -7,7 +7,7 @@
     >
         <x-recipient.mini-sidebar />
         <x-recipient.sidebar-wrapper
-            title="Inbox"
+            title="Caixa de Entrada"
             icon="inbox"
             x-show="tab === 'inbox'"
             x-cloak
@@ -23,11 +23,11 @@
             <livewire:recipient.filter />
         </x-recipient.sidebar-wrapper>
     </aside>
-    @if ($selectedNotificationUuid)
+    @if ($selected)
         <livewire:recipient.show
-            :recipient-id="$recipient"
-            :notification-uuid="$selectedNotificationUuid"
-            wire:key="{{ $selectedNotificationUuid }}"
+            :notification-uuid="$selected"
+            :recipient-id="$recipientId"
+            :wire:key="$selected"
         />
     @else
         <x-recipient.content />

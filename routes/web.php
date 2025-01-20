@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('guest')->get('/', Login::class)->name('login');
 
 Route::group(['prefix' => 'recipient'], function (): void {
-    Route::get('/{recipient}', RecipientIndex::class)->name('recipient.index');
+    Route::get('/{recipientId}', RecipientIndex::class)->name('recipient.index');
 });
 
 Route::group(['middleware' => 'auth'], function (): void {

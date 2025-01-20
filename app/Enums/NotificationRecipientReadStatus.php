@@ -11,7 +11,7 @@ enum NotificationRecipientReadStatus: string implements Arrayable
 {
     use HasToArray;
 
-    case Unread = 'unread';
-
     case Read = 'read';
+
+    case Unread = 'unread';
 }

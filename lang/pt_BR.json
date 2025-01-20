@@ -163,5 +163,9 @@
     "Notification": "Notificação",
     "Pending": "Pendente",
     "Created": "Criado",
-    "Cancelled": "Cancelado"
+    "Cancelled": "Cancelado",
+    "Read": "Lida",
+    "Unread": "Não Lida",
+    "Archived": "Arquivada",
+    "Unarchived": "Não Arquivada"
 }

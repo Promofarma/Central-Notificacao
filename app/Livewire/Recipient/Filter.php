@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Livewire\Recipient;
 
+use App\Enums\NotificationRecipientArchiveStatus;
+use App\Enums\NotificationRecipientReadStatus;
 use Filament\Forms\Components;
 use App\Filters\BaseFilterComponent;
 use App\Models\Category;
@@ -31,21 +33,15 @@ class Filter extends BaseFilterComponent
                 ->native(false)
                 ->options(Category::pluck('name', 'id')),
 
-            $this->withHintClearAction(Components\Radio::make('is_read'))
-                ->label('Exibir notificações lidas?')
+            $this->withHintClearAction(Components\Radio::make('read_status'))
+                ->label('Status de leitura')
                 ->reactive()
-                ->boolean(
-                    trueLabel: 'Sim',
-                    falseLabel: 'Não',
-                ),
+                ->options(NotificationRecipientReadStatus::toArray()),
 
-            $this->withHintClearAction(Components\Radio::make('is_archived'))
-                ->label('Exibir notificações arquivadas?')
+            $this->withHintClearAction(Components\Radio::make('archive_status'))
+                ->label('Status de arquivamento')
                 ->reactive()
-                ->boolean(
-                    trueLabel: 'Sim',
-                    falseLabel: 'Não',
-                ),
+                ->options(NotificationRecipientArchiveStatus::toArray()),
         ];
     }
 }

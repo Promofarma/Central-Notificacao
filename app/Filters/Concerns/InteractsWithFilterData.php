@@ -54,11 +54,11 @@ trait InteractsWithFilterData
         return $this->filterData;
     }
 
-    protected function afterOnFilterDataUpdated(): void
+    public function afterOnFilterDataUpdated(): void
     {
     }
 
-    protected function afteronFilterDataReseted(): void
+    public function afteronFilterDataReseted(): void
     {
     }
 }
