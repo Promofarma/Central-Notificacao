@@ -12,6 +12,7 @@ use App\Actions\BindNotificationRecipients;
 use App\Actions\CreateNotificationSchedule;
 use App\DTO\NotificationDTO;
 use App\Forms\Schemas\NotificationFormSchema;
+use App\Helpers\ForgetCacheManyKeys;
 use App\Livewire\Ui\Toast\Toast;
 use App\Models\Recipient;
 
@@ -55,6 +56,14 @@ class Create extends PageCreate
         }
 
         Toast::success(title: 'Notificação Criada com Sucesso!')->now();
+
+        ForgetCacheManyKeys::make(
+            key: 'recipient.*.notifications',
+            values: $this->getRecipientIdsBasedOnSelection(),
+        )->forgetAll();
+
+        // temporary solution
+        $this->js('window.localStorage.removeItem("group-items");');
 
         $this->redirectRoute($this->routeName('index'));
     }
