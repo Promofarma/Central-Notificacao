@@ -1,6 +1,6 @@
 .toast-container {
     position: fixed;
-    bottom: .5rem;
+    top: .5rem;
     right: .5rem;
     max-width: 24rem;
     width: 100%;
