@@ -37,7 +37,7 @@ class Index extends Page
                 'id',
                 'notification_uuid',
                 'recipient_id',
-                'read_at',
+                'readed_at',
                 'archived_at',
                 'created_at',
             ])
@@ -79,7 +79,8 @@ class Index extends Page
         );
     }
 
-    #[On('notification-read', 'notification-archived')]
+    #[On('notification-readed')]
+    #[On('notification-archived')]
     public function forgetCacheOnNotificationEvent(): void
     {
         $this->forgetCache();
@@ -109,6 +110,6 @@ class Index extends Page
 
     private function getCacheKey(): string
     {
-        return 'recipient.' . $this->recipientId . '.notifications';
+        return 'recipient.'.$this->recipientId.'.notifications';
     }
 }

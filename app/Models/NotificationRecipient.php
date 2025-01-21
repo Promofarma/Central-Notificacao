@@ -16,7 +16,8 @@ class NotificationRecipient extends Model
     protected function casts(): array
     {
         return [
-            'read_at' => 'datetime',
+            'viewed_at' => 'datetime',
+            'readed_at' => 'datetime',
             'archived_at' => 'datetime',
         ];
     }
@@ -33,12 +34,22 @@ class NotificationRecipient extends Model
 
     public function scopeUnread(Builder $query): Builder
     {
-        return $query->whereNull('read_at');
+        return $query->whereNull('readed_at');
     }
 
     public function scopeRead(Builder $query): Builder
     {
-        return $query->whereNotNull('read_at');
+        return $query->whereNotNull('readed_at');
+    }
+
+    public function scopeViewed(Builder $query): Builder
+    {
+        return $query->whereNotNull('viewed_at');
+    }
+
+    public function scopeUnviewed(Builder $query): Builder
+    {
+        return $query->whereNull('viewed_at');
     }
 
     public function scopeArchived(Builder $query): Builder
@@ -53,7 +64,7 @@ class NotificationRecipient extends Model
 
     public function isRead(): bool
     {
-        return $this->read_at !== null;
+        return $this->readed_at !== null;
     }
 
     public function isArchived(): bool
@@ -64,8 +75,7 @@ class NotificationRecipient extends Model
     public function markAsRead(): void
     {
         $this->update([
-            'read_at' => now(),
-            'ip_address' => request()->ip(),
+            'readed_at' => now(),
             'updated_at' => now(),
         ]);
     }

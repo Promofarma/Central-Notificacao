@@ -5,12 +5,12 @@ declare(strict_types=1);
 namespace App\Livewire\Recipient;
 
 use App\Models\NotificationRecipient;
-use Illuminate\Support\Facades\Cache;
-use Livewire\Attributes\Locked;
-use Livewire\Component;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
+use Illuminate\Support\Facades\Cache;
+use Livewire\Attributes\Locked;
 use Livewire\Attributes\On;
+use Livewire\Component;
 
 class Show extends Component
 {
@@ -30,7 +30,7 @@ class Show extends Component
     public function getNotificationRecipient(): NotificationRecipient
     {
         return NotificationRecipient::query()
-            ->select(['id', 'notification_uuid', 'recipient_id', 'read_at', 'archived_at', 'created_at'])
+            ->select(['id', 'notification_uuid', 'recipient_id', 'readed_at', 'archived_at', 'created_at'])
             ->with([
                 'notification' => fn ($query) => $query
                         ->select(['uuid', 'title', 'content', 'user_id', 'created_at'])
@@ -65,10 +65,10 @@ class Show extends Component
         /** @var NotificationRecipient $notificationRecipient */
         $notificationRecipient = Cache::get($this->getCacheKey()) ?? $this->getNotificationRecipient();
 
-        if (!$notificationRecipient->isRead()) {
+        if (! $notificationRecipient->isRead()) {
             $notificationRecipient->markAsRead();
 
-            $this->dispatch('notification-read');
+            $this->dispatch('notification-readed');
 
             Cache::put($this->getCacheKey(), $notificationRecipient);
         }
@@ -78,6 +78,6 @@ class Show extends Component
 
     private function getCacheKey(): string
     {
-        return 'recipient.' . $this->recipientId . '.notification.' . $this->notificationUuid;
+        return 'recipient.'.$this->recipientId.'.notification.'.$this->notificationUuid;
     }
 }

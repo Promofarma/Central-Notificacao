@@ -23,6 +23,16 @@ class Notification extends Model
 
     public $incrementing = false;
 
+    protected function casts(): array
+    {
+        return [
+            'data' => 'array',
+            'category_id' => 'integer',
+            'user_id' => 'integer',
+            'scheduled_at' => 'date',
+        ];
+    }
+
     protected static function booted(): void
     {
         static::creating(function (Model $model): void {

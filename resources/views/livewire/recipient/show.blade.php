@@ -8,7 +8,7 @@
                 <span class="inline-flex items-center gap-2 text-green-600">
                     <x-lucide-check-check class="size-4" />
                     <span class="text-xs font-medium">Lida em
-                        {{ $notificationRecipient->read_at->diffForHumans() }}</span>
+                        {{ $notificationRecipient->readed_at->diffForHumans() }}</span>
                 </span>
             @endif
 
