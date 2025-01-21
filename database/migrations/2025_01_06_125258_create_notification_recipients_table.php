@@ -6,7 +6,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class () extends Migration {
+return new class() extends Migration {
     public function up(): void
     {
         Schema::create('notification_recipients', function (Blueprint $table): void {
@@ -14,7 +14,8 @@ return new class () extends Migration {
             $table->uuid('notification_uuid');
             $table->unsignedBigInteger('recipient_id');
             $table->string('ip_address', 45)->nullable();
-            $table->timestamp('read_at')->nullable();
+            $table->timestamp('viewed_at')->nullable();
+            $table->timestamp('readed_at')->nullable();
             $table->timestamp('archived_at')->nullable();
             $table->timestamps();
 

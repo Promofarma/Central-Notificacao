@@ -6,6 +6,7 @@ namespace App\Filters;
 
 use App\Enums\NotificationRecipientArchiveStatus;
 use App\Enums\NotificationRecipientReadStatus;
+use App\Enums\NotificationRecipientViewedStatus;
 use App\Filters\Contracts\Filterable;
 use Illuminate\Database\Eloquent\Builder;
 
@@ -40,6 +41,13 @@ class NotificationRecipientFilter implements Filterable
                     NotificationRecipientArchiveStatus::Archived => $query->archived(),
                     NotificationRecipientArchiveStatus::Unarchived => $query->unarchived(),
                 },
+            )
+            ->when(
+                value: $this->getViewedStatus(),
+                callback: fn (Builder $query, NotificationRecipientViewedStatus $value): Builder => match ($value) {
+                    NotificationRecipientViewedStatus::Viewed => $query->viewed(),
+                    NotificationRecipientViewedStatus::Unviewed => $query->unviewed(),
+                }
             );
     }
 
@@ -51,6 +59,13 @@ class NotificationRecipientFilter implements Filterable
     public function getCategoryId(): ?int
     {
         return isset($this->data['category_id']) ? (int) $this->data['category_id'] : null;
+    }
+
+    public function getViewedStatus(): ?NotificationRecipientViewedStatus
+    {
+        $viewedStatus = $this->data['viewed_status'] ?? null;
+
+        return $viewedStatus ? NotificationRecipientViewedStatus::from($this->data['viewed_status']) : null;
     }
 
     public function getReadStatus(): ?NotificationRecipientReadStatus

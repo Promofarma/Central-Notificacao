@@ -7,7 +7,7 @@
         'opacity-50' => !$recipient->isRead(),
     ])
     {!! $recipient->isRead()
-        ? 'x-data x-tooltip="\'Visto em ' . $recipient->read_at . ' - IP: ' . $recipient->ip_address . '\'"'
+        ? 'x-data x-tooltip="\'Lida em ' . $recipient->readed_at . ' - IP: ' . $recipient->ip_address . '\'"'
         : '' !!}
 >
     P{{ $recipient->recipient->id }}
