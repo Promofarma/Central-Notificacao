@@ -40,6 +40,7 @@
 }
 
 .toast-item-header h3 {
+    color: #0f172a;
     font-size: 1rem;
     line-height: 1.5rem;
     font-weight: 600;
