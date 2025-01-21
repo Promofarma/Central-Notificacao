@@ -4,7 +4,7 @@
             <img
                 src="{{ asset('logo.webp') }}"
                 alt="Logo Promofarma"
-                class="object-contain w-full h-full"
+                class="object-contain w-full h-full max-w-10 max-h-10"
                 loading="lazy"
                 draggable="false"
             >
