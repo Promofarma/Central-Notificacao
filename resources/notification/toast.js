@@ -1,4 +1,4 @@
-import { http } from "../js/utils/http";
+import { http } from "../js/utils/http.js";
 
 const createContainer = () => {
     const container = document.createElement("div");
