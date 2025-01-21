@@ -2,7 +2,7 @@
     <header class="grid bg-white border-b h-14 place-content-center shrink-0 border-slate-200">
         <figure class="w-10 h-10 rounded-lg shadow-sm bg-primary-500 shadow-slate-300/10">
             <img
-                src="{{ asset('/public/logo.webp') }}"
+                src="{{ asset('logo.webp') }}"
                 alt="Logo Promofarma"
                 class="object-contain w-full h-full"
                 loading="lazy"
