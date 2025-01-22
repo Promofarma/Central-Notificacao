@@ -16,7 +16,7 @@ use Symfony\Component\HttpFoundation\BinaryFileResponse;
 Route::middleware('guest')->get('/', Login::class)->name('login');
 
 Route::group(['prefix' => 'recipient'], function (): void {
-    Route::get('/{recipientId}', RecipientIndex::class)->name('recipient.index');
+    Route::get('/{recipientId}/{notificationUuid?}', RecipientIndex::class)->name('recipient.index');
 });
 
 Route::group(['middleware' => 'auth'], function (): void {
