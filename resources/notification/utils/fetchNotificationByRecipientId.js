@@ -1,6 +1,6 @@
 import { http } from "../../js/utils/http";
 
-export default fetchNotificationByRecipientId = async (id, params = null) => {
+export const fetchNotificationByRecipientId = async (id, params = null) => {
     try {
         const { data } = await http.get(
             "/notification/recipient/" + id,

@@ -1,7 +1,7 @@
 import { baseUrl } from "../js/utils/baseUrl.js";
-import body from "./helpers/body.js";
-import fetchNotificationByRecipientId from "./helpers/fetchNotificationByRecipientId.js";
-import markAsViewed from "./helpers/markAsViewed.js";
+import body from "./utils/body.js";
+import { fetchNotificationByRecipientId } from "./utils/fetchNotificationByRecipientId.js";
+import { markAsViewed } from "./utils/markAsViewed.js";
 
 const createContainer = (tagName, ...classNames) => {
     const element = document.createElement(tagName);

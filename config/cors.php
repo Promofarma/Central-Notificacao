@@ -21,7 +21,7 @@ return [
 
     'allowed_methods' => ['GET', 'PATCH'],
 
-    'allowed_origins' => ['localhost', '*.promofarma.int'],
+    'allowed_origins' => ['http://localhost', 'http://intranet.promofarma.int'],
 
     'allowed_origins_patterns' => [],
 
