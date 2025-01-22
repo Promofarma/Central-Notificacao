@@ -1,124 +1,119 @@
-import { http } from "../js/utils/http.js";
+import { baseUrl } from "../js/utils/baseUrl.js";
+import body from "./helpers/body.js";
+import fetchNotificationByRecipientId from "./helpers/fetchNotificationByRecipientId.js";
+import markAsViewed from "./helpers/markAsViewed.js";
 
-const createContainer = () => {
-    const container = document.createElement("div");
+const createContainer = (tagName, ...classNames) => {
+    const element = document.createElement(tagName);
 
-    container.classList.add("toast-container");
+    element.classList.add(...classNames);
 
-    return container;
+    return element;
 };
 
-const createList = () => {
-    const list = document.createElement("ul");
+const createCloseButton = (toastItem) => {
+    const button = document.createElement("button");
 
-    list.classList.add("toast-list");
+    button.classList.add("toast-close-button");
 
-    return list;
-};
+    button.setAttribute("aria-label", "Fechar notificação");
 
-const createCloseButton = (listItem) => {
-    const closeButton = document.createElement("button");
+    button.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-x"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>`;
 
-    closeButton.classList.add("toast-close-button");
+    const handleClick = async (event) => {
+        event.preventDefault();
+        event.stopPropagation();
 
-    closeButton.setAttribute("aria-label", "Fechar notificação");
-
-    closeButton.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-x"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>`;
-
-    let isProcessing = false;
-
-    const handleClick = async () => {
-        isProcessing = true;
+        button.disabled = true;
 
         try {
-            const ip = async () => {
-                const { data } = await http.get(
-                    "https://api.ipify.org?format=json"
-                );
+            await markAsViewed(toastItem.id);
 
-                return data.ip;
-            };
+            button.removeEventListener("click", handleClick);
 
-            ip().then(async (ip) => {
-                await http.patch(
-                    `/notification/recipient/${listItem.id}/mark-as-viewed`,
-                    {
-                        viewed_at: new Date().toISOString(),
-                        ip_address: ip,
-                    }
-                );
-            });
-
-            closeButton.removeEventListener("click", handleClick);
-
-            listItem.remove();
+            toastItem.remove();
         } catch (err) {
             console.log(err);
         } finally {
-            isProcessing = false;
+            button.disabled = false;
         }
     };
 
-    closeButton.addEventListener("click", handleClick);
+    button.addEventListener("click", handleClick);
 
-    return closeButton;
+    return button;
 };
 
-const createListItem = ({ id, title, created_by, created_at }) => {
-    const listItem = document.createElement("li");
+const createToastItem = ({ id, uuid, title, created_by, created_at }) => {
+    const toastItem = document.createElement("li");
 
-    listItem.classList.add("toast-item");
+    toastItem.classList.add("toast-item");
 
-    listItem.setAttribute("id", id);
-    listItem.setAttribute("role", "alert");
-    listItem.setAttribute("aria-live", "assertive");
+    toastItem.setAttribute("id", id);
+    toastItem.setAttribute("role", "alert");
+    toastItem.setAttribute("aria-live", "assertive");
 
-    listItem.innerHTML = `
+    toastItem.innerHTML = `
         <header class="toast-item-header">
-            <h3>${title}</h3>
+            <div class="toast-item-header-container">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-6">
+                    <path fill-rule="evenodd" d="M9.401 3.003c1.155-2 4.043-2 5.197 0l7.355 12.748c1.154 2-.29 4.5-2.599 4.5H4.645c-2.309 0-3.752-2.5-2.598-4.5L9.4 3.003ZM12 8.25a.75.75 0 0 1 .75.75v3.75a.75.75 0 0 1-1.5 0V9a.75.75 0 0 1 .75-.75Zm0 8.25a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5Z" clip-rule="evenodd" />
+                </svg>
+                <h3>${title}</h3>
+            </div>
             <p>Enviado por <strong>${created_by}</strong> em ${created_at}</p>
         </header>
+        <footer>
+            <a href="${baseUrl}/recipient/${body.storeId}/${uuid}" target="_blank" rel="noopener noreferrer" class="toast-action-button">
+                Visualizar Notificação
+            </a>
+        </footer>
     `;
 
-    listItem.appendChild(createCloseButton(listItem));
+    toastItem.append(createCloseButton(toastItem));
 
-    return listItem;
+    return toastItem;
 };
 
-const initializeToast = () => {
-    const body = document.querySelector("body");
-    const store = body.getAttribute("data-store");
+const createToastFragment = (items) => {
+    const fragment = document.createDocumentFragment();
 
-    if (!store) {
-        console.log("Attribute [data-store] not defined in body");
+    fragment.append(...items.map(createToastItem));
+
+    return fragment;
+};
+
+const initToast = async () => {
+    const storeId = body.storeId;
+
+    if (!storeId) {
+        console.log(
+            "O atributo [data-store] não está definido no elemento body"
+        );
         return;
     }
 
-    const container = createContainer();
-
-    const list = createList();
-
-    const getUnviewedNotifications = async () => {
-        try {
-            const { data } = await http.get(
-                `/notification/recipient/${store}?viewed_status=unviewed`
-            );
-
-            return data;
-        } catch (error) {
-            return [];
-        }
-    };
-
-    getUnviewedNotifications().then(({ data }) => {
-        const items = data.map(createListItem);
-
-        items.forEach((item) => list.append(item));
+    const { data } = await fetchNotificationByRecipientId(storeId, {
+        params: {
+            viewed_status: "unviewed",
+        },
     });
 
-    container.append(list);
+    const schedulesForToday = data.filter(
+        ({ scheduled_at }) =>
+            scheduled_at === null ||
+            scheduled_at === new Date().toISOString().split("T")[0]
+    );
 
-    body.appendChild(container);
+    const toastContainer = createContainer("div", "toast-container");
+
+    const toastList = createContainer("ul", "toast-list");
+
+    toastContainer.appendChild(toastList);
+
+    toastList.append(createToastFragment(schedulesForToday));
+
+    body.el.appendChild(toastContainer);
 };
 
-initializeToast();
+initToast();

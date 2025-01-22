@@ -1,6 +1,5 @@
 import axios from "../../../node_modules/axios/dist/axios.js";
-
-const baseUrl = import.meta.env.VITE_API_URL;
+import { baseUrl } from "./baseUrl.js";
 
 export const http = axios.create({
     baseURL: baseUrl + "/api/v1",
