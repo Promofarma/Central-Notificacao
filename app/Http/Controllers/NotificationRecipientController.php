@@ -18,6 +18,7 @@ class NotificationRecipientController extends Controller
             ->select([
                 'id',
                 'notification_uuid',
+                'recipient_id',
                 'viewed_at',
                 'readed_at',
                 'created_at',

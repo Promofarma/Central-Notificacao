@@ -32,6 +32,6 @@ Route::group(['middleware' => 'auth'], function (): void {
 });
 
 Route::group(['prefix' => 'assets'], function (): void {
-    Route::get('notification-toast.js', fn (): BinaryFileResponse => AssetFileResponse::make('notification/toast.js', false)->toFileResponse());
+    Route::get('notification-toast.js', fn (): BinaryFileResponse => AssetFileResponse::make('notification/index.js', false)->toFileResponse());
     Route::get('notification-toast.css', fn (): BinaryFileResponse => AssetFileResponse::make('notification/toast.css', false)->toFileResponse());
 });

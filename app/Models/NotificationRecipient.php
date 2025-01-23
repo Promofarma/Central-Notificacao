@@ -16,6 +16,7 @@ class NotificationRecipient extends Model
     protected function casts(): array
     {
         return [
+            'recipient_id' => 'integer',
             'viewed_at' => 'datetime',
             'readed_at' => 'datetime',
             'archived_at' => 'datetime',

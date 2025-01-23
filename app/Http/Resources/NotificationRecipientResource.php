@@ -21,6 +21,7 @@ class NotificationRecipientResource extends JsonResource
             'uuid' => $this->notification->uuid,
             'title' => $this->notification->title,
             'content' => strip_tags($this->notification->content),
+            'recipient_id' => $this->recipient_id,
             'created_by' => $this->notification->user->name,
             'scheduled_at' => $this->notification->scheduled_at?->format('Y-m-d'),
             'viewed_at' => $this->viewed_at?->format('d/m/Y à\\s H:i'),

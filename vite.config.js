@@ -14,7 +14,7 @@ export default defineConfig({
                 "resources/css/app.css",
                 "resources/js/app.js",
                 "resources/notification/toast.css",
-                "resources/notification/toast.js",
+                "resources/notification/index.js",
             ],
             refresh: [...refreshPaths, "app/Livewire/**"],
         }),

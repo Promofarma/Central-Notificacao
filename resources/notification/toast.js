@@ -1,6 +1,4 @@
 import { baseUrl } from "../js/utils/baseUrl.js";
-import body from "./utils/body.js";
-import { fetchNotificationByRecipientId } from "./utils/fetchNotificationByRecipientId.js";
 import { markAsViewed } from "./utils/markAsViewed.js";
 
 const createContainer = (tagName, ...classNames) => {
@@ -9,6 +7,16 @@ const createContainer = (tagName, ...classNames) => {
     element.classList.add(...classNames);
 
     return element;
+};
+
+const handleViewed = () => {
+    const notificationCount = document.querySelector(".notification-count");
+
+    let total = Number.parseInt(notificationCount.textContent);
+
+    if (total === 0) return;
+
+    notificationCount.textContent = total - 1;
 };
 
 const createCloseButton = (toastItem) => {
@@ -29,6 +37,9 @@ const createCloseButton = (toastItem) => {
         try {
             await markAsViewed(toastItem.id);
 
+            // atualiza a contagem de notificação no badge do painel
+            handleViewed();
+
             button.removeEventListener("click", handleClick);
 
             toastItem.remove();
@@ -44,7 +55,14 @@ const createCloseButton = (toastItem) => {
     return button;
 };
 
-const createToastItem = ({ id, uuid, title, created_by, created_at }) => {
+const createToastItem = ({
+    id,
+    uuid,
+    title,
+    recipient_id,
+    created_by,
+    created_at,
+}) => {
     const toastItem = document.createElement("li");
 
     toastItem.classList.add("toast-item");
@@ -64,7 +82,7 @@ const createToastItem = ({ id, uuid, title, created_by, created_at }) => {
             <p>Enviado por <strong>${created_by}</strong> em ${created_at}</p>
         </header>
         <footer>
-            <a href="${baseUrl}/recipient/${body.storeId}/${uuid}" target="_blank" rel="noopener noreferrer" class="toast-action-button">
+            <a href="${baseUrl}/recipient/${recipient_id}/${uuid}" target="_blank" rel="noopener noreferrer" class="toast-action-button">
                 Visualizar Notificação
             </a>
         </footer>
@@ -83,7 +101,7 @@ const createToastFragment = (items) => {
     return fragment;
 };
 
-const initToast = async () => {
+export const initToast = async ({ body, notifications }) => {
     const storeId = body.storeId;
 
     if (!storeId) {
@@ -93,7 +111,7 @@ const initToast = async () => {
         return;
     }
 
-    const { data } = await fetchNotificationByRecipientId(storeId, {
+    const { data } = await notifications(storeId, {
         params: {
             viewed_status: "unviewed",
         },
@@ -115,5 +133,3 @@ const initToast = async () => {
 
     body.el.appendChild(toastContainer);
 };
-
-initToast();
