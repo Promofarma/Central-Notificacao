@@ -10,12 +10,27 @@ use Illuminate\Support\Facades\Hash;
 
 class DefaultUserSeeder extends Seeder
 {
-    public function run(): void
-    {
-        User::query()->create([
+    protected array $defaultUsers = [
+        [
             'name' => 'Vinicius Coutinho',
             'email' => 'vinicius@promofarma.com.br',
-            'password' => Hash::make('12345'),
-        ]);
+            'password' => '12345',
+        ],
+        [
+            'name' => 'Noreply',
+            'email' => 'noreply@promofarma.com.br',
+            'password' => 'Promo@2506',
+        ],
+    ];
+
+    public function run(): void
+    {
+        foreach ($this->defaultUsers as $user) {
+            User::query()->create([
+                'name' => $user['name'],
+                'email' => $user['email'],
+                'password' => Hash::make($user['password']),
+            ]);
+        }
     }
 }
