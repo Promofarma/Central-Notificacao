@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Seeder;
 use App\Models\Category;
+use Illuminate\Database\Seeder;
 
 class CategorySeeder extends Seeder
 {
@@ -16,11 +16,12 @@ class CategorySeeder extends Seeder
         'Comunicação e Marketing',
         'Treinamento e Padronização',
         'Organização e Operacional',
+        'Avisos Importantes',
     ];
 
     public function run(): void
     {
-        foreach ($this->categories as $index => $category) {
+        foreach (array_values($this->categories) as $category) {
             Category::query()->create([
                 'name' => $category,
                 'icon' => 'box',
