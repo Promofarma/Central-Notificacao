@@ -36,13 +36,6 @@ class NotificationRecipientFilter implements Filterable
                 },
             )
             ->when(
-                value: $this->getArchiveStatus(),
-                callback: fn (Builder $query, NotificationRecipientArchiveStatus $value): Builder => match ($value) {
-                    NotificationRecipientArchiveStatus::Archived => $query->archived(),
-                    NotificationRecipientArchiveStatus::Unarchived => $query->unarchived(),
-                },
-            )
-            ->when(
                 value: $this->getViewedStatus(),
                 callback: fn (Builder $query, NotificationRecipientViewedStatus $value): Builder => match ($value) {
                     NotificationRecipientViewedStatus::Viewed => $query->viewed(),
@@ -73,12 +66,5 @@ class NotificationRecipientFilter implements Filterable
         $readStatus = $this->data['read_status'] ?? null;
 
         return $readStatus ? NotificationRecipientReadStatus::from($readStatus) : null;
-    }
-
-    public function getArchiveStatus(): ?NotificationRecipientArchiveStatus
-    {
-        $archiveStatus = $this->data['archive_status'] ?? null;
-
-        return $archiveStatus ? NotificationRecipientArchiveStatus::from($archiveStatus) : null;
     }
 }

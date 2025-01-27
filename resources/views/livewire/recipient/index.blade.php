@@ -12,7 +12,15 @@
             x-show="tab === 'inbox'"
             x-cloak
         >
-            <x-recipient.inbox :$groupedRecipientNotifications />
+            <x-recipient.inbox :notification-recipient-items="$unarchivedNotificationRecipients" />
+        </x-recipient.sidebar-wrapper>
+        <x-recipient.sidebar-wrapper
+            title="Arquivadas"
+            icon="archive"
+            x-show="tab === 'archived'"
+            x-cloak
+        >
+            <x-recipient.inbox :notification-recipient-items="$archivedNotificationRecipients" />
         </x-recipient.sidebar-wrapper>
         <x-recipient.sidebar-wrapper
             title="Filtros"

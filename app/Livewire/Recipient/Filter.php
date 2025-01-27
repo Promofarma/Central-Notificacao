@@ -6,10 +6,10 @@ namespace App\Livewire\Recipient;
 
 use App\Enums\NotificationRecipientArchiveStatus;
 use App\Enums\NotificationRecipientReadStatus;
-use Filament\Forms\Components;
 use App\Filters\BaseFilterComponent;
 use App\Models\Category;
 use App\Models\User;
+use Filament\Forms\Components;
 
 class Filter extends BaseFilterComponent
 {
@@ -37,11 +37,6 @@ class Filter extends BaseFilterComponent
                 ->label('Status de leitura')
                 ->reactive()
                 ->options(NotificationRecipientReadStatus::toArray()),
-
-            $this->withHintClearAction(Components\Radio::make('archive_status'))
-                ->label('Status de arquivamento')
-                ->reactive()
-                ->options(NotificationRecipientArchiveStatus::toArray()),
         ];
     }
 }

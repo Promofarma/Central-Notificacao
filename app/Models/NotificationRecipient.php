@@ -68,6 +68,11 @@ class NotificationRecipient extends Model
         return $this->readed_at !== null;
     }
 
+    public function isViewed(): bool
+    {
+        return $this->viewed_at !== null;
+    }
+
     public function isArchived(): bool
     {
         return $this->archived_at !== null;

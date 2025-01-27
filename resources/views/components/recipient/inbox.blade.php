@@ -8,7 +8,7 @@
 
         _notificationListItems: [],
 
-        groupItems: $persist(@js($getGroupItems())).as('group-items'),
+        groupItems: @js($getGroupItems()),
 
         init() {
             this.cacheNotificationItems();
@@ -105,7 +105,7 @@
     x-on:filter-reseted.window="handleOnResetedFilters()"
     x-on:filter-updated.window="handleOnResetedFilters()"
 >
-    @forelse ($groupedRecipientNotifications as $groupName => $recipientNotifications)
+    @forelse ($notificationRecipientItems as $groupName => $recipientNotifications)
         <div
             class="flex flex-col"
             x-bind:class="isOpenGroupItem('{{ md5($groupName) }}') && 'flex-1 overflow-hidden'"
@@ -125,6 +125,7 @@
                 @foreach ($recipientNotifications as $recipientNotification)
                     <x-recipient.notification.item
                         :notification="$recipientNotification->notification"
+                        :is-viewed="$recipientNotification->isViewed()"
                         :is-read="$recipientNotification->isRead()"
                         :is-archived="$recipientNotification->isArchived()"
                         wire:key="notification-{{ $recipientNotification->notification->uuid }}"

@@ -5,15 +5,14 @@ declare(strict_types=1);
 namespace App\Livewire\Notification;
 
 use App\Actions\BindNotificationAttachments;
-
-use App\Livewire\Ui\Page\Create as PageCreate;
-use App\Models\Notification;
 use App\Actions\BindNotificationRecipients;
 use App\Actions\CreateNotificationSchedule;
 use App\DTO\NotificationDTO;
 use App\Forms\Schemas\NotificationFormSchema;
 use App\Helpers\ForgetCacheManyKeys;
+use App\Livewire\Ui\Page\Create as PageCreate;
 use App\Livewire\Ui\Toast\Toast;
+use App\Models\Notification;
 use App\Models\Recipient;
 
 class Create extends PageCreate
@@ -58,12 +57,9 @@ class Create extends PageCreate
         Toast::success(title: 'Notificação Criada com Sucesso!')->now();
 
         ForgetCacheManyKeys::make(
-            key: 'recipient.*.notifications',
+            key: 'notification_recipient:*',
             values: $this->getRecipientIdsBasedOnSelection(),
         )->forgetAll();
-
-        // temporary solution
-        $this->js('window.localStorage.removeItem("group-items");');
 
         $this->redirectRoute($this->routeName('index'));
     }

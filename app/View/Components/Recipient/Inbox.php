@@ -12,14 +12,13 @@ use Illuminate\View\Component;
 class Inbox extends Component
 {
     public function __construct(
-        public Collection $groupedRecipientNotifications
+        public Collection $notificationRecipientItems,
     ) {
     }
 
     public function getGroupItems(): Collection
     {
-        return $this->groupedRecipientNotifications
-            ->keys()
+        return $this->notificationRecipientItems->keys()
             ->flatMap(fn (string $groupName): array => [md5($groupName) => false]);
     }
 

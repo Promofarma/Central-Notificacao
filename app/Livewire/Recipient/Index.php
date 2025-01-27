@@ -24,64 +24,76 @@ class Index extends Page
     protected static ?string $title = 'Caixa de entrada';
 
     #[Locked]
-    /** Route parameter */
     public int $recipientId;
 
-    /** Selected notification uuid */
     public ?string $selected = null;
 
-    public function getNotificationRecipients(): Collection
+    public function getNotificationRecipientItems(): Collection
     {
-        return NotificationRecipient::query()
-            ->select([
+        return Cache::rememberForever(
+            key: $this->getCacheKey(),
+            callback: fn (): Collection => NotificationRecipient::query()->select([
                 'id',
                 'notification_uuid',
                 'recipient_id',
+                'viewed_at',
                 'readed_at',
                 'archived_at',
                 'created_at',
             ])
             ->with([
                 'notification' => fn ($query) => $query
-                        ->select([
-                            'uuid',
-                            'title',
-                            'content',
-                            'category_id',
-                            'user_id',
-                            'created_at',
-                        ])
-                        ->withCount('attachments')
-                        ->with([
-                            'user' => fn ($query) => $query->select([
-                                'id',
-                                'name',
-                            ]),
-                            'category' => fn ($query) => $query->select([
-                                'id',
-                                'name',
-                            ]),
+                    ->select([
+                        'uuid',
+                        'title',
+                        'content',
+                        'category_id',
+                        'user_id',
+                        'created_at',
+                    ])
+                    ->withCount('attachments')
+                    ->with([
+                        'user' => fn ($query) => $query->select([
+                            'id',
+                            'name',
                         ]),
+                        'category' => fn ($query) => $query->select([
+                            'id',
+                            'name',
+                        ]),
+                    ]),
             ])
             ->where('recipient_id', $this->recipientId)
             ->filter(new NotificationRecipientFilter($this->getFilterData()))
-            ->get();
+            ->orderBy('created_at', 'desc')
+            ->get(),
+        );
     }
 
-    public function getGroupedRecipientNotifications(): Collection
+    public function getUnarchivedNotificationRecipients(): Collection
     {
-        return Cache::rememberForever(
-            $this->getCacheKey(),
-            fn (): Collection => $this
-                ->getNotificationRecipients()
-                ->groupBy('notification.category.name')
-                ->sortByDesc(fn (Collection $group): int => $group->count())
-        );
+        $unarchivedNotificationRecipients = $this->getNotificationRecipientItems()
+            ->reject(fn (NotificationRecipient $notificationRecipient): bool => $notificationRecipient->archived_at !== null);
+
+        return $this->groupNotificationRecipientItemsByCategoryName($unarchivedNotificationRecipients);
+    }
+
+    public function getArchivedNotificationRecipients(): Collection
+    {
+        $archivedNotificationRecipients = $this->getNotificationRecipientItems()
+            ->filter(fn (NotificationRecipient $notificationRecipient): bool => $notificationRecipient->archived_at !== null);
+
+        return $this->groupNotificationRecipientItemsByCategoryName($archivedNotificationRecipients);
     }
 
     #[On('notification-readed')]
     #[On('notification-archived')]
-    public function forgetCacheOnNotificationEvent(): void
+    public function forgetCache(): void
+    {
+        Cache::forget($this->getCacheKey());
+    }
+
+    public function afterOnFilterDataReseted(): void
     {
         $this->forgetCache();
     }
@@ -91,25 +103,22 @@ class Index extends Page
         $this->forgetCache();
     }
 
-    public function afterOnFilterDataReseted(): void
+    private function groupNotificationRecipientItemsByCategoryName(Collection $notificationRecipientItems): Collection
     {
-        $this->forgetCache();
+        return $notificationRecipientItems->groupBy('notification.category.name')
+            ->sortByDesc(fn (Collection $notificationRecipientItems): int => $notificationRecipientItems->count());
+    }
+
+    private function getCacheKey(): string
+    {
+        return sprintf('notification_recipient:%d', $this->recipientId);
     }
 
     protected function getViewData(): array
     {
         return [
-            'groupedRecipientNotifications' => $this->getGroupedRecipientNotifications(),
+            'unarchivedNotificationRecipients' => $this->getUnarchivedNotificationRecipients(),
+            'archivedNotificationRecipients' => $this->getArchivedNotificationRecipients(),
         ];
-    }
-
-    private function forgetCache(): void
-    {
-        Cache::forget($this->getCacheKey());
-    }
-
-    private function getCacheKey(): string
-    {
-        return 'recipient.'.$this->recipientId.'.notifications';
     }
 }

@@ -1,5 +1,6 @@
  @props([
      'notification' => null,
+     'isViewed' => false,
      'isRead' => false,
      'isLocked' => false,
      'isArchived' => false,
@@ -26,9 +27,9 @@
              <h3 class="flex-1 w-32 text-sm font-bold truncate text-ellipsis">
                  @unless ($isRead)
                      <span
-                         class="relative inline-flex animate-pulse items-center justify-center bg-blue-200 rounded-full -top-0.5 left-0 size-3"
+                         class="relative inline-flex animate-pulse items-center justify-center bg-blue-300 rounded-full -top-0.5 left-0 size-3"
                      >
-                         <span class="size-1.5 rounded-full bg-blue-500 block"></span>
+                         <span class="size-1.5 rounded-full bg-blue-600 block"></span>
                      </span>
                  @endunless
                  {{ $notification->title }}
@@ -37,22 +38,37 @@
                  {{ $notification->formatted_created_at }}
              </span>
          </div>
-         <div class="flex items-center justify-between">
+         <div
+             class="flex items-center justify-between"
+             x-data=""
+         >
              <p class="w-32 text-sm truncate text-slate-400">
                  {{ strip_tags($notification->content) }}
              </p>
-             <div class="flex items-center gap-3 [&>svg]:stroke-slate-300 [&>svg]:size-4">
+             <div class="flex items-center gap-3 [&>svg]:size-4">
                  @if ($notification->attachments_count)
                      <x-lucide-paperclip />
                  @endif
+                 @if ($isViewed && !$isRead)
+                     <x-lucide-check-check
+                         class="stroke-slate-300"
+                         x-tooltip="'Vista'"
+                     />
+                 @endif
                  @if ($isRead)
-                     <x-lucide-check-check />
+                     <x-lucide-check-check
+                         class="stroke-blue-600"
+                         x-tooltip="'Vista e lida'"
+                     />
                  @endif
                  @if ($isArchived)
-                     <x-lucide-archive />
+                     <x-lucide-archive
+                         class="stroke-slate-300"
+                         x-tooltip="'Arquivada'"
+                     />
                  @endif
                  @if ($isLocked)
-                     <x-lucide-lock />
+                     <x-lucide-lock class="stroke-slate-300" />
                  @endif
              </div>
          </div>

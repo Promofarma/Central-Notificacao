@@ -23,7 +23,7 @@ final class CreateNotification
         );
 
         ForgetCacheManyKeys::make(
-            key: 'recipient.*.notifications',
+            key: 'notification_recipient:*',
             values: $recipientIds
         )->forgetAll();
 

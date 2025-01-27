@@ -58,7 +58,7 @@ trait InteractsWithFilterData
     {
     }
 
-    public function afteronFilterDataReseted(): void
+    public function afterOnFilterDataReseted(): void
     {
     }
 }
