@@ -9,9 +9,9 @@
      href="javascript:void(0)"
      {!! $attributes->merge([
          'class' =>
-             'flex items-center gap-3 p-3 border-b border-slate-200 transition-colors duration-150 hover:bg-slate-100 n-item',
+             'flex items-center gap-3 p-3 border-b border-slate-200 transition-colors duration-150 hover:bg-white n-item',
      ]) !!}
-     x-bind:class="selected === '{{ $notification->uuid }}' ? 'bg-slate-100' : 'opacity-80'"
+     x-bind:class="selected === '{{ $notification->uuid }}' ? 'bg-white' : 'opacity-80'"
      x-on:click.prevent="selected === '{{ $notification->uuid }}' || handleOnNotificationSelection('{{ $notification->uuid }}')"
  >
      <div class="inline-flex items-center justify-center text-sm font-bold text-white rounded-lg size-9 bg-slate-600">

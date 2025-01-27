@@ -6,8 +6,7 @@
 
 <button
     {!! $attributes->merge([
-        'class' =>
-            'grid cursor-pointer place-items-center gap-y-2 focus:outline-none group [&>*]:transition [&>*]:duration-200',
+        'class' => 'grid cursor-pointer place-items-center gap-y-2 focus:outline-none group',
     ]) !!}
     x-data="{
         isLoading: false,
@@ -18,28 +17,24 @@
 >
     @if ($iconName)
         <div
-            class="flex items-center justify-center rounded-lg w-9 h-9 group-hover:bg-primary-500 group-hover:text-white"
-            x-bind:class="tab === '{{ $tabId }}' && 'bg-primary-500 text-white'"
+            class="flex items-center justify-center rounded-lg w-9 h-9 shrink-0"
+            x-bind:class="tab === '{{ $tabId }}' ? 'bg-primary-500 text-white' : 'bg-slate-100 text-slate-400'"
         >
             <template x-if="!isLoading">
                 <x-dynamic-component
                     component="icon"
                     :name="'lucide-' . $iconName"
-                    class="w-6 h-6 transition duration-200 stroke-slate-400 group-hover:stroke-white"
-                    x-bind:class="tab === '{{ $tabId }}' && 'stroke-white'"
+                    class="w-5 h-5 transition duration-200"
                 />
             </template>
             <template x-if="isLoading">
-                <x-lucide-loader
-                    class="w-6 h-6 stroke-slate-400 group-hover:stroke-white animate-spin"
-                    x-bind:class="tab === '{{ $tabId }}' && 'stroke-white'"
-                />
+                <x-lucide-loader class="w-5 h-5 animate-spin" />
             </template>
         </div>
     @endif
     @if ($label)
         <span
-            class="text-xs font-medium text-slate-500 group-hover:text-slate-900"
+            class="text-xs font-medium text-slate-500"
             x-bind:class="tab === '{{ $tabId }}' && 'text-slate-900'"
         >{{ $label }}</span>
     @endif

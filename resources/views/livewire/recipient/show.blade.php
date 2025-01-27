@@ -25,23 +25,25 @@
             @endif
         </div>
     </header>
-    <div class="p-3 space-y-4">
-        <x-ui.container
-            title="Enviada por"
-            class="space-y-2"
-        >
-            <div class="prose max-w-none">
-                {{ $notification->user->name }}
+    <div class="space-y-4">
+        <div class="flex items-start justify-between p-3 border-b border-slate-200">
+            <div class="flex items-center gap-3">
+                <div
+                    class="inline-flex items-center justify-center text-sm font-bold text-white rounded-lg size-9 bg-slate-600">
+                    {{ $notification->user->name[0] }}
+                </div>
+                <div>
+                    <h3 class="text-sm font-bold">{{ $notification->user->name }}</h3>
+                    <span class="text-xs font-medium text-slate-400">{{ $notification->user->email }}</span>
+                </div>
             </div>
-        </x-ui.container>
-        <x-ui.container
-            title="Conteúdo"
-            class="space-y-2"
-        >
-            <div class="prose max-w-none">
-                {!! $notification->content !!}
-            </div>
-        </x-ui.container>
+            <span class="text-xs font-medium text-slate-500">
+                {{ $notification->formatted_created_at }}
+            </span>
+        </div>
+        <div class="p-3 prose max-w-none">
+            {!! $notification->content !!}
+        </div>
 
         @if ($notification->attachments->isNotEmpty())
             <x-ui.container
