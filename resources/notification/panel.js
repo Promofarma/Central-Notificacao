@@ -52,7 +52,7 @@ const updateNotificationPanelBody = async (notificationList) => {
         ".notification-panel-body"
     );
 
-    if (!notificationPanelBody) return;
+    if (!notificationPanelBody || !notificationList.length) return;
 
     notificationPanelBody.innerHTML = "";
 

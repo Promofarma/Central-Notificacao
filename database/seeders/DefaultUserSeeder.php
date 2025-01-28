@@ -21,12 +21,17 @@ class DefaultUserSeeder extends Seeder
             'email' => 'noreply@promofarma.com.br',
             'password' => 'Promo@2506',
         ],
+        [
+            'name' => 'Erica Molina',
+            'email' => 'erica.molina@promofarma.com.br',
+            'password' => '12345',
+        ],
     ];
 
     public function run(): void
     {
         foreach ($this->defaultUsers as $user) {
-            User::query()->create([
+            User::create([
                 'name' => $user['name'],
                 'email' => $user['email'],
                 'password' => Hash::make($user['password']),

@@ -10,22 +10,24 @@ use Illuminate\Database\Seeder;
 class CategorySeeder extends Seeder
 {
     protected array $categories = [
-        'Compras e Insumos',
-        'Manutenção e Financeiro',
-        'Logística e Estoque',
-        'Comunicação e Marketing',
-        'Treinamento e Padronização',
-        'Organização e Operacional',
-        'Avisos Importantes',
+        'Gestão de Compras e Insumos',
+        'Manutenção e Gestão Financeira',
+        'Controle de Logística e Estoque',
+        'Comunicação e Estratégias de Marketing',
+        'Treinamento e Padrões Operacionais',
+        'Organização e Operações Internas',
+        'Avisos e Informações Importantes',
+        'Destaques do Mês',
+        'Relatório de Abertura do Mês',
+        'Destaque: Foto da Loja TOP',
+        'Conquistas e Medalhas',
+        'Campanhas da Rede',
     ];
 
     public function run(): void
     {
-        foreach (array_values($this->categories) as $category) {
-            Category::query()->create([
-                'name' => $category,
-                'icon' => 'box',
-            ]);
+        foreach (array_values($this->categories) as $name) {
+            Category::create(['name' => $name]);
         }
     }
 }
