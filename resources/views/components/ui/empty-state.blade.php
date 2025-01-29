@@ -1,21 +1,18 @@
-@props([
-    'icon' => null,
-])
-<div
-    class="grid p-6 border-2 border-dashed rounded-lg select-none opacity-80 col-span-full place-items-center gap-y-3 border-slate-300">
-    @if ($icon)
-        <x-dynamic-component
-            component="icon"
-            :name="'lucide-' . $icon"
-            class="size-6 stroke-slate-500"
-        />
-    @endif
-
-    @isset($title)
-        <h3 class="text-sm font-bold text-slate-500">{{ $title }}</h3>
+<div class="flex flex-col items-center justify-center p-6 border border-dashed rounded-lg gap-y-3 border-slate-200">
+    @isset($icon)
+        <div
+            class="flex items-center justify-center shrink-0 p-2 rounded-lg bg-slate-200 text-slate-400 [&>svg]:size-6 [&>svg]:stroke-slate-400">
+            {{ $icon }}
+        </div>
     @endisset
-
+    @isset($title)
+        <h4 class="text-sm font-semibold text-slate-600">
+            {{ $title }}
+        </h4>
+    @endisset
     @isset($description)
-        <p class="text-xs text-slate-500">{{ $description }}</p>
+        <p class="text-xs text-slate-500">
+            {{ $description }}
+        </p>
     @endisset
 </div>

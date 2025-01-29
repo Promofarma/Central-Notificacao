@@ -1,50 +1,53 @@
-<section class="flex-1 bg-white">
+<section class="flex flex-col flex-1">
     <header
-        class="flex items-center justify-between h-full px-3 border-b shadow-sm max-h-14 border-slate-200 shadow-slate-300/10"
+        class="flex items-center justify-between h-full gap-3 px-4 border-b shadow-sm shrink-0 border-slate-200 max-h-14 shadow-slate-300/10"
     >
-        <h3 class="text-lg font-bold">{{ $notification->title }}</h3>
-        <div class="flex items-center gap-4">
+        @if ($notificationRecipient->isArchived())
+            <span class="inline-flex items-center gap-2 text-slate-600">
+                <x-lucide-archive class="size-4" />
+                <span class="text-xs font-medium">Arquivada</span>
+            </span>
+        @else
+            <livewire:recipient.archive
+                :notification-recipient="$notificationRecipient"
+                :wire:key="$notificationRecipient->id"
+            />
+        @endif
+        <div>
             @if ($notificationRecipient->isRead())
-                <span class="inline-flex items-center gap-2 text-slate-500">
-                    <x-lucide-check-check class="size-4" />
-                    <span class="text-xs font-medium">Lida em
-                        {{ $notificationRecipient->readed_at->diffForHumans() }}</span>
-                </span>
+                <x-ui.badge
+                    icon="check-check"
+                    color="success"
+                >Lida {{ $notificationRecipient->readed_at->diffForHumans() }} </x-ui.badge>
             @endif
 
-            @if ($notificationRecipient->isArchived())
-                <span class="inline-flex items-center gap-2 text-slate-600">
-                    <x-lucide-archive class="size-4" />
-                    <span class="text-xs font-medium">Arquivada</span>
-                </span>
-            @else
-                <livewire:recipient.archive
-                    :notification-recipient="$notificationRecipient"
-                    :wire:key="$notificationRecipient->id"
-                />
-            @endif
+            <x-ui.badge
+                icon="circle-dot"
+                color="info"
+            >{{ $notification->category->name }}</x-ui.badge>
+
         </div>
     </header>
-    <div class="space-y-4">
-        <div class="flex items-start justify-between p-3 border-b border-slate-200">
-            <div class="flex items-center gap-3">
-                <div
-                    class="inline-flex items-center justify-center text-sm font-bold text-white rounded-lg size-9 bg-slate-600">
-                    {{ $notification->user->name[0] }}
-                </div>
-                <div>
-                    <h3 class="text-sm font-bold">{{ $notification->user->name }}</h3>
-                    <span class="text-xs font-medium text-slate-400">{{ $notification->user->email }}</span>
+    <div class="flex items-start justify-between p-4 border-b border-slate-200 shrink-0">
+        <div class="flex items-start ">
+            <div class="flex items-start gap-4 text-sm">
+                <span class="relative flex w-10 h-10 overflow-hidden rounded-full shrink-0">
+                    <span class="flex items-center justify-center w-full h-full rounded-full bg-slate-200">
+                        {{ $notification->user->name[0] }}
+                    </span>
+                </span>
+                <div class="grid gap-1">
+                    <div class="font-semibold">{{ $notification->user->name }}</div>
+                    <div class="text-xs line-clamp-1">{{ $notification->title }}</div>
                 </div>
             </div>
-            <span class="text-xs font-medium text-slate-500">
-                {{ $notification->formatted_created_at }}
-            </span>
         </div>
-        <div class="p-3 prose max-w-none">
+        <div class="ml-auto text-xs text-slate-400">{{ $notification->formatted_created_at }}</div>
+    </div>
+    <div class="flex-1 h-px p-4 space-y-4 overflow-y-auto">
+        <div class="prose whitespace-normal prose-slate max-w-none">
             {!! $notification->content !!}
         </div>
-
         @if ($notification->attachments->isNotEmpty())
             <x-ui.container
                 title="Anexos"

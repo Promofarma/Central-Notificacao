@@ -38,6 +38,6 @@
             :wire:key="$selected"
         />
     @else
-        <x-recipient.content />
+        <x-recipient.content :categories="$categories" />
     @endif
 </main>

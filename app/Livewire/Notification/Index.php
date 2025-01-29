@@ -7,6 +7,7 @@ namespace App\Livewire\Notification;
 use App\Filters\Concerns\InteractsWithFilterData;
 use App\Filters\NotificationFilter;
 use App\Livewire\Ui\Page\Index as PageIndex;
+use App\Livewire\Ui\Toast\Toast;
 use App\Models\Notification;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
@@ -23,6 +24,8 @@ class Index extends PageIndex
     #[Computed]
     public function notifications(): Collection
     {
+        Toast::success()->now();
+
         return Notification::query()
             ->with('schedule')
             ->withCount([

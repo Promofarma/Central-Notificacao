@@ -7,6 +7,7 @@ namespace App\Livewire\Recipient;
 use App\Filters\Concerns\InteractsWithFilterData;
 use App\Filters\NotificationRecipientFilter;
 use App\Livewire\Ui\Page\Page;
+use App\Models\Category;
 use App\Models\NotificationRecipient;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
@@ -119,6 +120,7 @@ class Index extends Page
         return [
             'unarchivedNotificationRecipients' => $this->getUnarchivedNotificationRecipients(),
             'archivedNotificationRecipients' => $this->getArchivedNotificationRecipients(),
+            'categories' => Category::pluck('name'),
         ];
     }
 }

@@ -17,10 +17,11 @@ class NotificationCreateRequest extends FormRequest
     {
         return [
             'title' => 'required|string|max:60',
-            'content' => 'required|string|max:3000',
+            'content' => 'required|string',
             'category_id' => 'required|int|exists:categories,id',
             'user_id' => 'required|int|exists:users,id',
             'recipient_ids' => 'required|array|min:1',
+            'recipient_ids.*' => 'required|int|exists:recipients,id',
         ];
     }
 }
