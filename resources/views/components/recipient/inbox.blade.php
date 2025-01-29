@@ -134,10 +134,16 @@
             </div>
         </div>
     @empty
-        <div class="p-3 grid h-full place-content-center opacity-75">
-            <x-ui.empty-state icon="inbox">
+        <div class="flex items-center flex-1 justify-center p-3">
+            <x-ui.empty-state>
+                <x-slot:icon>
+                    <x-lucide-x />
+                </x-slot:icon>
+                <x-slot:title>
+                    Nenhuma notificação encontrada
+                </x-slot:title>
                 <x-slot:description>
-                    Sem notificações no momento.
+                    Não encontramos nenhuma registro.
                 </x-slot:description>
             </x-ui.empty-state>
         </div>

@@ -1,6 +1,6 @@
 <x-filament-notifications::notification
     :notification="$notification"
-    class="relative w-full max-w-sm p-4 overflow-hidden bg-white rounded-lg shadow-md pointer-events-auto shadow-slate-900/5 ring-1 ring-slate-400/10"
+    class="relative w-full max-w-sm p-4 overflow-hidden bg-white border rounded-lg shadow-sm pointer-events-auto shadow-slate-900/5 border-slate-200"
     x-transition:enter="ease-out duration-300"
     x-transition:enter-start="opacity-0 translate-x-4"
     x-transition:enter-end="opacity-100 translate-x-0"
@@ -14,15 +14,15 @@
                 <x-dynamic-component
                     name="icon"
                     :component="$icon"
-                    class="stroke-slate-600 size-4"
+                    class="stroke-slate-600 size-5"
                 />
             </div>
         @endif
         <div class="flex-1 space-y-1">
-            <h4 class="text-sm font-semibold">
+            <h4 class="text-sm font-semibold text-slate-600">
                 {{ $getTitle() }}
             </h4>
-            <p class="text-sm text-slate-500">
+            <p class="text-xs text-slate-500">
                 {{ $getBody() }}
             </p>
         </div>

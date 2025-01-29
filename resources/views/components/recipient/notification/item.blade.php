@@ -8,69 +8,62 @@
  <a
      href="javascript:void(0)"
      {!! $attributes->merge([
-         'class' =>
-             'flex items-center gap-3 p-3 border-b border-slate-200 transition-colors duration-150 hover:bg-white n-item',
+         'class' => 'block p-3 border-b border-slate-200 transition-colors duration-150 hover:bg-white n-item',
      ]) !!}
-     x-bind:class="selected === '{{ $notification->uuid }}' ? 'bg-white' : 'opacity-80'"
+     title="{{ $notification->title }}"
+     x-bind:class="{
+         'bg-white': selected === '{{ $notification->uuid }}' && 'bg-white',
+         'animate-pulse': isOpening
+     }"
      x-on:click.prevent="selected === '{{ $notification->uuid }}' || handleOnNotificationSelection('{{ $notification->uuid }}')"
  >
-     <div class="inline-flex items-center justify-center text-sm font-bold text-white rounded-lg size-9 bg-slate-600">
-         <template x-if="!isOpening">
-             <span>{{ $notification->user->name[0] }}</span>
-         </template>
-         <template x-if="isOpening">
-             <x-lucide-loader class="animate-spin size-5" />
-         </template>
-     </div>
-     <div class="flex-1 space-y-1">
-         <div class="flex items-center justify-between gap-3">
-             <h3 class="flex-1 w-32 text-sm font-bold truncate text-ellipsis">
+     <div class="flex items-start justify-between gap-3 mb-3">
+         <div class="grid gap-y-1 max-w-48">
+             <h3 class="mr-3 text-sm font-bold truncate text-slate-700">
                  @unless ($isRead)
-                     <span
-                         class="relative inline-flex animate-pulse items-center justify-center bg-blue-300 rounded-full -top-0.5 left-0 size-3"
-                     >
-                         <span class="size-1.5 rounded-full bg-blue-600 block"></span>
-                     </span>
+                     <span class="relative left-0 inline-block w-2 h-2 bg-blue-600 rounded-full -top-px"></span>
                  @endunless
                  {{ $notification->title }}
              </h3>
-             <span class="text-xs font-medium text-slate-400 shrink-0">
-                 {{ $notification->formatted_created_at }}
-             </span>
+             <span class="text-xs font-medium text-slate-500">{{ $notification->user->name }}</span>
          </div>
+         <span class="pt-px text-xs font-medium shrink-0 text-slate-500">{{ $notification->formatted_created_at }}</span>
+     </div>
+
+     <div class="flex items-center justify-between gap-x-3">
+         <p class="flex-1 text-xs font-semibold line-clamp-2 text-slate-400">
+             {{ Str::of($notification->content)->stripTags()->lower()->trim()->ucfirst() }}</p>
          <div
-             class="flex items-center justify-between"
              x-data=""
+             class="shrink-0 flex items-center gap-x-3 [&>svg]:size-4"
          >
-             <p class="w-32 text-sm truncate text-slate-400">
-                 {{ strip_tags($notification->content) }}
-             </p>
-             <div class="flex items-center gap-3 [&>svg]:size-4">
-                 @if ($notification->attachments_count)
-                     <x-lucide-paperclip />
-                 @endif
-                 @if ($isViewed && !$isRead)
-                     <x-lucide-check-check
-                         class="stroke-slate-300"
-                         x-tooltip="'Vista'"
-                     />
-                 @endif
-                 @if ($isRead)
-                     <x-lucide-check-check
-                         class="stroke-blue-600"
-                         x-tooltip="'Vista e lida'"
-                     />
-                 @endif
-                 @if ($isArchived)
-                     <x-lucide-archive
-                         class="stroke-slate-300"
-                         x-tooltip="'Arquivada'"
-                     />
-                 @endif
-                 @if ($isLocked)
-                     <x-lucide-lock class="stroke-slate-300" />
-                 @endif
-             </div>
+             @if ($notification->attachments_count)
+                 <x-lucide-paperclip
+                     class="stroke-slate-400"
+                     x-tooltip="'Anexos: {{ $notification->attachments_count }}'"
+                 />
+             @endif
+
+             @if ($isViewed && !$isRead)
+                 <x-lucide-check
+                     class="stroke-slate-400"
+                     x-tooltip="'Vista'"
+                 />
+             @endif
+
+             @if ($isRead)
+                 <x-lucide-check-check
+                     class="stroke-blue-600"
+                     x-tooltip="'Lida'"
+                 />
+             @endif
+
+             @if ($isArchived)
+                 <x-lucide-archive
+                     class="stroke-slate-400"
+                     x-tooltip="'Arquivada'"
+                 />
+             @endif
          </div>
      </div>
  </a>

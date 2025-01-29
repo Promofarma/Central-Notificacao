@@ -33,9 +33,10 @@ class Show extends Component
             ->select(['id', 'notification_uuid', 'recipient_id', 'readed_at', 'archived_at', 'created_at'])
             ->with([
                 'notification' => fn ($query) => $query
-                        ->select(['uuid', 'title', 'content', 'user_id', 'created_at'])
+                        ->select(['uuid', 'title', 'content', 'user_id', 'category_id', 'created_at'])
                         ->with([
                             'user' => fn ($query) => $query->select(['id', 'name', 'email']),
+                            'category' => fn ($query) => $query->select(['id', 'name']),
                             'attachments' => fn ($query) => $query->select(['id', 'file_name', 'size', 'extension', 'path', 'notification_uuid', 'created_at']),
                         ]),
             ])

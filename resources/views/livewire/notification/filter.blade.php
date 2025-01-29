@@ -1,17 +1,19 @@
 <x-filter.wrapper :$activeFilters>
     <x-slot:target>
-        <x-ui.button
-            icon="filter"
-            x-ref="target"
-            x-bind:class="{
-                'ring ring-primary-200': isOpen,
-            }"
-        >
-            Filtros
-        </x-ui.button>
+        <div class="flex justify-end pr-0.5">
+            <x-ui.button
+                icon="filter"
+                x-ref="target"
+                x-bind:class="{
+                    'ring ring-primary-200': isOpen,
+                }"
+            >
+                Filtros
+            </x-ui.button>
+        </div>
     </x-slot:target>
     <div
-        class="absolute z-10 mt-4 bg-white divide-y rounded-lg shadow-lg divide-slate-200 w-80 ring-1 ring-slate-300/60 shadow-slate-300/60"
+        class="absolute z-10 mt-3 bg-white border rounded-md shadow w-80 border-slate-200 shadow-black/5"
         x-show="isOpen"
         x-transition:enter="transition ease-out duration-200 transform"
         x-transition:enter-start="opacity-0 -translate-y-2"
@@ -23,11 +25,8 @@
         x-cloak
         @click.outside="isOpen = false"
     >
-        <div class="flex items-center justify-between px-5 py-4">
-            <div class="flex items-center gap-3">
-                <x-lucide-filter class="size-4" />
-                <h4 class="text-sm font-semibold text-slate-700">Filtros</h4>
-            </div>
+        <div class="flex items-center justify-between p-4">
+            <h4 class="text-base font-semibold text-slate-600">Filtros</h4>
             <x-ui.button
                 size="small"
                 icon="trash"
@@ -38,7 +37,7 @@
                 Limpar Filtros
             </x-ui.button>
         </div>
-        <div class="px-5 py-6 space-y-6">
+        <div class="p-4 space-y-6">
             {{ $this->form }}
         </div>
     </div>

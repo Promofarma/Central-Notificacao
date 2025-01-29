@@ -17,10 +17,7 @@
                 wire:ignore.self
             />
         </span>
-        <span class="flex-1 text-sm font-semibold truncate max-w-52">{{ $label }}</span>
+        <span class="flex-1 text-sm font-semibold truncate max-w-48">{{ $label }}</span>
     </div>
-    <x-ui.badge
-        color="white"
-        class="justify-center text-xs w-7 shrink-0"
-    >{{ $count > 99 ? '99+' : $count }}</x-ui.badge>
+    <span class="text-xs font-bold text-slate-400">{{ $count > 99 ? '99+' : $count }}</span>
 </button>
