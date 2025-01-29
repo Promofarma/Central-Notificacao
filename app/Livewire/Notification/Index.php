@@ -24,8 +24,6 @@ class Index extends PageIndex
     #[Computed]
     public function notifications(): Collection
     {
-        Toast::success()->now();
-
         return Notification::query()
             ->with('schedule')
             ->withCount([
