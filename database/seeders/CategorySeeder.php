@@ -10,18 +10,19 @@ use Illuminate\Database\Seeder;
 class CategorySeeder extends Seeder
 {
     protected array $categories = [
-        'Gestão de Compras e Insumos',
-        'Manutenção e Gestão Financeira',
-        'Controle de Logística e Estoque',
-        'Comunicação e Estratégias de Marketing',
-        'Treinamento e Padrões Operacionais',
-        'Organização e Operações Internas',
-        'Avisos e Informações Importantes',
+        'Compras e Insumos',
+        'Manutenção Financeira',
+        'Logística e Estoque',
+        'Marketing e Comunicação',
+        'Treinamento e Padrões',
+        'Operações Internas',
+        'Avisos e Informações',
         'Destaques do Mês',
-        'Relatório de Abertura do Mês',
-        'Destaque: Foto da Loja TOP',
-        'Conquistas e Medalhas',
-        'Campanhas da Rede',
+        'Relatório Mensal',
+        'Foto da Loja TOP',
+        'Conquistas e Premiações',
+        'Campanhas da Rede',
+        'Precificação',
     ];
 
     public function run(): void

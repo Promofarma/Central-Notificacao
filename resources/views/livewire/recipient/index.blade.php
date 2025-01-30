@@ -3,9 +3,9 @@
         x-data="{
             tab: $persist('inbox').as('recipient-tab'),
         }"
-        class="flex flex-grow max-w-sm border-r border-slate-200"
+        class="flex flex-grow max-w-md border-r border-slate-200"
     >
-        <x-recipient.mini-sidebar />
+        <x-recipient.mini-sidebar :recipient-id="$recipientId" />
         <x-recipient.sidebar-wrapper
             title="Caixa de Entrada"
             icon="inbox"

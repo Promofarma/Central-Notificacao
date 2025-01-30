@@ -11,21 +11,19 @@ use Illuminate\Support\Facades\Hash;
 class DefaultUserSeeder extends Seeder
 {
     protected array $defaultUsers = [
-        [
-            'name' => 'Vinicius Coutinho',
-            'email' => 'vinicius@promofarma.com.br',
-            'password' => '12345',
-        ],
-        [
-            'name' => 'Noreply',
-            'email' => 'noreply@promofarma.com.br',
-            'password' => 'Promo@2506',
-        ],
-        [
-            'name' => 'Erica Molina',
-            'email' => 'erica.molina@promofarma.com.br',
-            'password' => '12345',
-        ],
+        ['name' => 'Vinicius Coutinho', 'email' => 'vinicius@promofarma.com.br'],
+        ['name' => 'Noreply', 'email' => 'noreply@promofarma.com.br'],
+        ['name' => 'Erica Molina', 'email' => 'erica.molina@promofarma.com.br'],
+        ['name' => 'Anizio',  'email' => 'anizio@promofarma.com.br'],
+        ['name' => 'Janaina Costa',  'email' => 'janaina.costa@promofarma.com.br'],
+        ['name' => 'Tatiana Galete',  'email' => 'tatiana.galete@promofarma.com.br'],
+        ['name' => 'Raquel Silva',  'email' => 'raquel.silva@promofarma.com.br'],
+        ['name' => 'Vanessa Lumy',  'email' => 'vanessa.lumy@promofarma.com.br'],
+        ['name' => 'Raquel Fernandes',  'email' => 'raquel.fernandes@promofarma.com.br'],
+        ['name' => 'Everton Silva',  'email' => 'everton.silva@promofarma.com.br'],
+        ['name' => 'Antonio Correia',  'email' => 'antonio.correia@promofarma.com.br'],
+        ['name' => 'Isabella Fabris',  'email' => 'isabella.fabris@promofarma.com.br'],
+        ['name' => 'Denis',  'email' => 'supevisor@promofarma.com.br'],
     ];
 
     public function run(): void
@@ -34,7 +32,7 @@ class DefaultUserSeeder extends Seeder
             User::create([
                 'name' => $user['name'],
                 'email' => $user['email'],
-                'password' => Hash::make($user['password']),
+                'password' => Hash::make(12345),
             ]);
         }
     }
