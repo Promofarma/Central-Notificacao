@@ -18,7 +18,7 @@
      x-on:click.prevent="selected === '{{ $notification->uuid }}' || handleOnNotificationSelection('{{ $notification->uuid }}')"
  >
      <div class="flex items-start justify-between gap-3 mb-3">
-         <div class="grid gap-y-1 max-w-48">
+         <div class="grid gap-y-1 max-w-56">
              <h3 class="mr-3 text-sm font-bold truncate text-slate-700">
                  @unless ($isRead)
                      <span class="relative left-0 inline-block w-2 h-2 bg-blue-600 rounded-full -top-px"></span>
