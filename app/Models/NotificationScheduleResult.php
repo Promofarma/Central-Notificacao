@@ -33,15 +33,24 @@ class NotificationScheduleResult extends Model
         );
     }
 
+    protected function displayShippingAt(): Attribute
+    {
+        return Attribute::get(
+            fn (mixed $value = null, array $attributes): ?string => $attributes['shipping_at']
+                ? 'às '.Carbon::parse($attributes['shipping_at'])->format('H:i')
+                : null
+        );
+    }
+
     public function schedule(): BelongsTo
     {
         return $this->belongsTo(NotificationSchedule::class);
     }
 
-    public function deadline(): float
+    public function deadline(): int
     {
         $diffInDays = now()->diffInDays($this->scheduled_at);
 
-        return round($diffInDays);
+        return (int) round($diffInDays);
     }
 }

@@ -1,6 +1,7 @@
 <div
     x-data="{
         imagePath: null,
+
     }"
     class="flex items-center gap-3 p-3 bg-white rounded-lg shadow-sm ring-1 ring-slate-200/50 shadow-slate-300/10"
 >

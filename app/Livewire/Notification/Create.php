@@ -54,7 +54,10 @@ class Create extends PageCreate
             );
         }
 
-        Toast::success(title: 'Notificação Criada com Sucesso!')->now();
+        Toast::success(
+            title: 'Tudo certo!',
+            body:'Sua notificação foi criada com sucesso. 🎉'
+        )->now();
 
         ForgetCacheManyKeys::make(
             key: 'notification_recipient:*',

@@ -20,7 +20,12 @@ abstract class GenerateNotifications
         /** Remove a primeira data para não gerar notificação duplicada, pois ela já foi gerada */
         $toCollection->shift();
 
-        $results = $this->filter($toCollection, $schedule)->map(fn (Carbon $date): array => $this->toArray($date))->values();
+        $results = $this->filter($toCollection, $schedule)
+            ->map(fn (Carbon $date): array => [
+                ...$this->toArray($date),
+                'shipping_at' => $schedule->shipping_hour,
+            ])
+            ->values();
 
         $schedule->results()->createMany($results);
     }

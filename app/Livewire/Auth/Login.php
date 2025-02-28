@@ -6,10 +6,10 @@ namespace App\Livewire\Auth;
 
 use App\Livewire\Ui\Page\Page;
 use App\Livewire\Ui\Toast\Toast;
+use Filament\Forms\Components;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Form;
-use Filament\Forms\Components;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -28,7 +28,7 @@ class Login extends Page implements HasForms
 
     protected static ?string $title = 'Acesse sua conta';
 
-    protected const REDIRECT_TO = 'dashboard';
+    protected const REDIRECT_TO_ROUTE = 'notification.index';
 
     public ?array $data = [];
 
@@ -65,7 +65,7 @@ class Login extends Page implements HasForms
 
     public function handleFormSubmit(Request $request): Redirector|RedirectResponse
     {
-        if (!$this->attemptLogin($this->getCredentials(), $this->isRememberMe())) {
+        if (! $this->attemptLogin($this->getCredentials(), $this->isRememberMe())) {
             Toast::error(
                 body: 'E-mail ou senha inválidos. Verifique suas credenciais e tente novamente.'
             )->now();
@@ -75,7 +75,7 @@ class Login extends Page implements HasForms
 
         $request->session()->regenerate();
 
-        return to_route(static::REDIRECT_TO);
+        return to_route(static::REDIRECT_TO_ROUTE);
     }
 
     protected function getCredentials(): array
