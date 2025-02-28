@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace App\Forms\Schemas;
 
+use App\Enums\AcceptedFileTypes;
+use App\Models\Category;
+use App\Models\Recipient;
 use Filament\Forms\Components;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
 use Illuminate\Support\Number;
 use Illuminate\Support\Str;
-use App\Enums\AcceptedFileTypes;
-use App\Models\Recipient;
-use App\Models\Category;
 
 class NotificationFormSchema
 {
@@ -44,7 +44,7 @@ class NotificationFormSchema
                                     'redo',
                                     'undo',
                                 ])
-                                ->hint(fn (Components\RichEditor $component): string => 'Máximo de caracteres: ' . $component->getMaxLength())
+                                ->hint(fn (Components\RichEditor $component): string => 'Máximo de caracteres: '.$component->getMaxLength())
                                 ->placeholder('Escreva o conteúdo da notificação'),
 
                             Components\FileUpload::make('attachments')
@@ -55,7 +55,7 @@ class NotificationFormSchema
                                 ->previewable(false)
                                 ->directory('notification-attachments')
                                 ->acceptedFileTypes(AcceptedFileTypes::keys())
-                                ->hint(fn (Components\FileUpload $component): string => 'Tamanho máximo: ' . Number::fileSize($component->getMaxSize() * 1024))
+                                ->hint(fn (Components\FileUpload $component): string => 'Tamanho máximo: '.Number::fileSize($component->getMaxSize() * 1024))
                                 ->helperText('Arquivos aceitos: Imagem, PDF, Excel, Word, PowerPoint'),
                         ]),
 
@@ -64,7 +64,7 @@ class NotificationFormSchema
                         ->schema([
                             Components\Select::make('recipient_ids')
                                 ->label('Destinatários')
-                                ->required(fn (Get $get): bool => !$get('all_recipients'))
+                                ->required(fn (Get $get): bool => ! $get('all_recipients'))
                                 ->multiple()
                                 ->options(Recipient::orderBy('id')->pluck('name', 'id'))
                                 ->optionsLimit(fn (Components\Select $component) => count($component->getOptions()))
@@ -158,7 +158,6 @@ class NotificationFormSchema
                                                     ->prefixIcon('lucide-calendar')
                                                     ->visible(fn (Get $get): bool => $get('interval') === 'monthly'),
 
-
                                             Components\DatePicker::make('start_date')
                                                 ->label('Início da recorrência')
                                                 ->required()
@@ -184,6 +183,12 @@ class NotificationFormSchema
                                                 })
                                                 ->prefixIcon('lucide-calendar-range')
                                                 ->closeOnDateSelection(),
+
+                                            Components\TimePicker::make('shipping_hour')
+                                                ->label('Hora de envio')
+                                                ->seconds(false)
+                                                ->prefixIcon('lucide-clock')
+                                                ->columnSpanFull(),
 
                                         ])
                                         ->visible(fn (Get $get): bool => $get('recurrent_send')),

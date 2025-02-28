@@ -24,6 +24,7 @@ class NotificationRecipientResource extends JsonResource
             'recipient_id' => $this->recipient_id,
             'created_by' => $this->notification->user->name,
             'scheduled_at' => $this->notification->scheduled_at?->format('Y-m-d'),
+            'shipping_at' => $this->notification->shipping_at,
             'viewed_at' => $this->viewed_at?->format('d/m/Y à\\s H:i'),
             'readed_at' => $this->readed_at?->format('d/m/Y à\\s H:i'),
             'created_at' => $this->notification->created_at->format('d/m/Y à\\s H:i'),

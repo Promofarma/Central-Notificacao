@@ -117,11 +117,23 @@ export const initToast = async ({ body, notifications }) => {
         },
     });
 
-    const schedulesForToday = data.filter(
-        ({ scheduled_at }) =>
-            scheduled_at === null ||
-            scheduled_at === new Date().toISOString().split("T")[0]
-    );
+    const schedulesForToday = data
+        .filter(
+            ({ scheduled_at }) =>
+                scheduled_at === null ||
+                scheduled_at === new Date().toISOString().split("T")[0]
+        )
+        .filter(({ shipping_at }) => {
+            if (shipping_at === null) return true;
+
+            const now = new Date();
+
+            const time = `${String(now.getHours()).padStart(2, "0")}:${String(
+                now.getMinutes()
+            ).padStart(2, "0")}:00`;
+
+            return shipping_at === time;
+        });
 
     const toastContainer = createContainer("div", "toast-container");
 

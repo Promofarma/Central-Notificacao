@@ -25,6 +25,7 @@
                         scope="row"
                     >
                         {{ $result->display_scheduled_at }}
+                        {{ $result->display_shipping_at }}
                         @if ($result->deadline() > 0)
                             <span class="font-medium text-slate-400">(Daqui à {{ $result->deadline() }}
                                 {{ Str::plural('dia', $result->deadline()) }})</span>

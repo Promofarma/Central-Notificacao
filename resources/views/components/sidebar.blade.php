@@ -1,5 +1,5 @@
 <!-- Sidebar -->
-<aside class="flex flex-col sm:p-4 gap-y-6 grow w-full max-w-16 sm:max-w-20 md:max-w-56 xl:max-w-64">
+<aside class="flex flex-col w-full sm:p-4 gap-y-6 grow max-w-16 sm:max-w-20 md:max-w-56 xl:max-w-64">
     <!-- Navigation -->
     <nav
         class="flex flex-col flex-1 gap-y-3"
@@ -21,18 +21,19 @@
         }"
     >
         <!-- Section Header -->
-        <h3 class="text-xs font-medium tracking-wide text-center md:text-start md:px-3 text-slate-500">Menu
+        <h3 class="text-xs font-medium tracking-wide text-center md:text-start md:px-3 text-slate-500">
+            Menu
         </h3>
 
         <!-- Links -->
-        <a
+        {{-- <a
             href="{{ route('dashboard') }}"
             resource-name="dashboard"
             class="flex items-center text-sm px-3 py-2 md:gap-3 justify-center md:justify-start rounded-lg font-medium text-slate-500 transition-colors duration-150 hover:bg-white hover:shadow-sm hover:shadow-slate-300/10 hover:ring-1 hover:ring-slate-200 hover:text-slate-900 focus:outline-none [&>svg]:size-5"
         >
             <x-heroicon-s-home />
             <span class="hidden md:block">Dashboard</span>
-        </a>
+        </a> --}}
 
         <a
             href="{{ route('notification.index') }}"

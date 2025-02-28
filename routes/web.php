@@ -5,7 +5,7 @@ declare(strict_types=1);
 use App\Helpers\AssetFileResponse;
 use App\Http\Controllers\LogoutController;
 use App\Livewire\Auth\Login;
-use App\Livewire\Dashboard\Dashboard;
+// use App\Livewire\Dashboard\Dashboard; // TODO: implement dashboard
 use App\Livewire\Notification\Create;
 use App\Livewire\Notification\Index;
 use App\Livewire\Notification\Show;
@@ -22,7 +22,8 @@ Route::group(['prefix' => 'recipient'], function (): void {
 Route::group(['middleware' => 'auth'], function (): void {
     Route::get('/logout', LogoutController::class)->name('logout');
 
-    Route::get('/dashboard', Dashboard::class)->name('dashboard');
+    Route::redirect('/dashboard', '/notifications');
+    // Route::get('/dashboard', Dashboard::class)->name('dashboard'); // TODO: implement dashboard
 
     Route::group(['prefix' => 'notifications'], function (): void {
         Route::get('/', Index::class)->name('notification.index');
