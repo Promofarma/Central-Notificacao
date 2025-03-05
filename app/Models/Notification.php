@@ -29,7 +29,7 @@ class Notification extends Model
             'data' => 'array',
             'category_id' => 'integer',
             'user_id' => 'integer',
-            'scheduled_at' => 'date',
+            'scheduled_date' => 'date',
         ];
     }
 

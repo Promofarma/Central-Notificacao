@@ -15,7 +15,7 @@ return new class() extends Migration {
             $table->id();
             $table->foreignIdFor(NotificationSchedule::class)->constrained()->cascadeOnDelete();
             $table->uuid('notification_uuid')->nullable();
-            $table->date('scheduled_at');
+            $table->date('scheduled_date');
             $table->string('status')->default(ScheduleResultStatus::Pending);
             $table->timestamp('canceled_at')->nullable();
             $table->timestamp('created_at')->nullable();

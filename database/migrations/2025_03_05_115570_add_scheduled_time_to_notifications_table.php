@@ -10,14 +10,14 @@ return new class extends Migration {
     public function up(): void
     {
         Schema::table('notifications', function (Blueprint $table): void {
-            $table->time('shipping_at')->after('scheduled_at')->nullable();
+            $table->time('scheduled_time')->after('scheduled_date')->nullable();
         });
     }
 
     public function down(): void
     {
         Schema::table('notifications', function (Blueprint $table): void {
-            $table->dropColumn('shipping_at');
+            $table->dropColumn('scheduled_time');
         });
     }
 };

@@ -9,15 +9,15 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration {
     public function up(): void
     {
-        Schema::table('notification_schedules', function (Blueprint $table): void {
-            $table->time('shipping_hour')->after('end_date')->nullable();
+        Schema::table('notification_schedule_results', function (Blueprint $table): void {
+            $table->time('scheduled_time')->after('scheduled_date')->nullable();
         });
     }
 
     public function down(): void
     {
-        Schema::table('notification_schedules', function (Blueprint $table): void {
-            $table->dropColumn('shipping_hour');
+        Schema::table('notification_schedule_results', function (Blueprint $table) {
+            $table->dropColumn('scheduled_time');
         });
     }
 };
