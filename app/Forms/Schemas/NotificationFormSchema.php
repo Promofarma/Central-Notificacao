@@ -59,7 +59,7 @@ class NotificationFormSchema
                 Components\FileUpload::make('attachments')
                     ->label('Anexos')
                     ->multiple()
-                    ->maxSize(8192) // 8MB
+                    ->maxSize(10240) // 10MB
                     ->maxFiles(5)
                     ->previewable(false)
                     ->directory('notification-attachments')
