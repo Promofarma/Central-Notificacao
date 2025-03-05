@@ -30,8 +30,8 @@ class NotificationRecipientController extends Controller
                         'title',
                         'content',
                         'user_id',
-                        'scheduled_at',
-                        'shipping_at',
+                        'scheduled_date',
+                        'scheduled_time',
                         'created_at',
                     ])
                     ->with('user:id,name'),

@@ -57,7 +57,7 @@ abstract class Create extends Page implements HasForms
     {
         $modelClass = $this->getModel();
 
-        if (!is_subclass_of($modelClass, Model::class)) {
+        if (! is_subclass_of($modelClass, Model::class)) {
             throw new \Exception('Class must be an instance of Model');
         }
 
@@ -73,7 +73,7 @@ abstract class Create extends Page implements HasForms
 
     protected function getTitle(): ?string
     {
-        return 'Criar ' . __($this->resolveResourceNameSingular());
+        return 'Criar '.__($this->resolveResourceNameSingular());
     }
 
     protected function getHeaderActions(): array

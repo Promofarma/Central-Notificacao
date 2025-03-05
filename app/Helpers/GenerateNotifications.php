@@ -22,19 +22,12 @@ abstract class GenerateNotifications
 
         $results = $this->filter($toCollection, $schedule)
             ->map(fn (Carbon $date): array => [
-                ...$this->toArray($date),
-                'shipping_at' => $schedule->shipping_hour,
+                'scheduled_date' => $date->format('Y-m-d'),
+                'scheduled_time' => $schedule->scheduled_time,
             ])
             ->values();
 
         $schedule->results()->createMany($results);
-    }
-
-    protected function toArray(Carbon $date): array
-    {
-        return [
-            'scheduled_at' => $date->format('Y-m-d'),
-        ];
     }
 
     abstract protected function filter(Collection $collection, NotificationSchedule $schedule): Collection;

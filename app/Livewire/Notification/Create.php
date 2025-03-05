@@ -14,6 +14,7 @@ use App\Livewire\Ui\Page\Create as PageCreate;
 use App\Livewire\Ui\Toast\Toast;
 use App\Models\Notification;
 use App\Models\Recipient;
+use Illuminate\Support\Carbon;
 
 class Create extends PageCreate
 {
@@ -28,8 +29,9 @@ class Create extends PageCreate
 
     protected function prepareDataForCreate(array $data): array
     {
-        if ($data['recurrent_send']) {
-            $data['scheduled_at'] = $data['recurrence']['start_date'] !== now()->format('Y-m-d') ? $data['recurrence']['start_date'] : null;
+        if ($data['is_recurrent'] && (Carbon::parse($data['recurrence']['start_date'])->isToday())) {
+            $data['scheduled_date'] = $data['recurrence']['start_date'];
+            $data['scheduled_time'] = $data['recurrence']['scheduled_time'];
         }
 
         return NotificationDTO::fromArray($data)->toArray();
@@ -37,32 +39,16 @@ class Create extends PageCreate
 
     protected function afterCreate(): void
     {
-        (new BindNotificationRecipients())->handle(
-            notification: $this->record,
-            recipientIds: $this->getRecipientIdsBasedOnSelection()
-        );
+        $this->bindRecipients();
 
-        (new BindNotificationAttachments())->handle(
-            notification: $this->record,
-            attachments: $this->data['attachments']
-        );
+        $this->bindAttachments();
 
-        if ($this->data['recurrent_send']) {
-            (new CreateNotificationSchedule())->handle(
-                notification: $this->record,
-                data: $this->data['recurrence']
-            );
-        }
+        $this->resolveRecurrentSend();
 
         Toast::success(
             title: 'Tudo certo!',
             body:'Sua notificação foi criada com sucesso. 🎉'
         )->now();
-
-        ForgetCacheManyKeys::make(
-            key: 'notification_recipient:*',
-            values: $this->getRecipientIdsBasedOnSelection(),
-        )->forgetAll();
 
         $this->redirectRoute($this->routeName('index'));
     }
@@ -72,8 +58,28 @@ class Create extends PageCreate
         return NotificationFormSchema::get();
     }
 
-    private function getRecipientIdsBasedOnSelection(): array
+    private function bindRecipients(): void
     {
-        return $this->data['all_recipients'] ? Recipient::pluck('id')->toArray() : $this->data['recipient_ids'];
+        $recipientIds = $this->data['send_to_all_recipients']
+            ? Recipient::pluck('id')->toArray()
+            : $this->data['recipient_ids'];
+
+        (new BindNotificationRecipients())->handle($this->record, $recipientIds);
+
+        ForgetCacheManyKeys::make('notification_recipient:*', $recipientIds)->forgetAll();
+    }
+
+    private function bindAttachments(): void
+    {
+        (new BindNotificationAttachments())->handle($this->record, $this->data['attachments']);
+    }
+
+    private function resolveRecurrentSend(): void
+    {
+        if (! $this->data['is_recurrent']) {
+            return;
+        }
+
+        (new CreateNotificationSchedule())->handle($this->record, $this->data['recurrence']);
     }
 }

@@ -18,26 +18,27 @@ class NotificationScheduleResult extends Model
     {
         return [
             'status' => ScheduleResultStatus::class,
-            'scheduled_at' => 'date',
+            'scheduled_date' => 'date',
+            'scheduled_time' => 'date',
             'canceled_at' => 'datetime',
             'created_at' => 'datetime',
         ];
     }
 
-    protected function displayScheduledAt(): Attribute
+    protected function displayScheduledDate(): Attribute
     {
         return Attribute::get(
-            fn (mixed $value = null, array $attributes): ?string => $attributes['scheduled_at']
-                ? Carbon::parse($attributes['scheduled_at'])->format('d \\d\\e M Y')
+            fn (mixed $value = null, array $attributes): ?string => $attributes['scheduled_date']
+                ? Carbon::parse($attributes['scheduled_date'])->format('d \\d\\e M Y')
                 : null
         );
     }
 
-    protected function displayShippingAt(): Attribute
+    protected function displayScheduledTime(): Attribute
     {
         return Attribute::get(
-            fn (mixed $value = null, array $attributes): ?string => $attributes['shipping_at']
-                ? 'às '.Carbon::parse($attributes['shipping_at'])->format('H:i')
+            fn (mixed $value = null, array $attributes): ?string => $attributes['scheduled_time']
+                ? 'às '.Carbon::parse($attributes['scheduled_time'])->format('H:i')
                 : null
         );
     }
@@ -49,7 +50,7 @@ class NotificationScheduleResult extends Model
 
     public function deadline(): int
     {
-        $diffInDays = now()->diffInDays($this->scheduled_at);
+        $diffInDays = now()->diffInDays($this->scheduled_date);
 
         return (int) round($diffInDays);
     }

@@ -4,8 +4,7 @@ declare(strict_types=1);
 
 namespace App\Helpers;
 
-use Filament\Forms\Components\DatePicker;
-use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components;
 use Filament\Notifications\Notification;
 use Filament\Support\Colors\Color;
 use Filament\Support\Facades\FilamentColor;
@@ -26,11 +25,15 @@ class FilamentSetup
 
     public function configureFormFields(): self
     {
-        TextInput::configureUsing(function (TextInput $component): void {
+        Components\TextInput::configureUsing(function (Components\TextInput $component): void {
             $component->autocomplete(false);
         });
 
-        DatePicker::configureUsing(function (DatePicker $component): void {
+        Components\Select::configureUsing(function (Components\Select $component): void {
+            $component->native(false);
+        });
+
+        Components\DatePicker::configureUsing(function (Components\DatePicker $component): void {
             $component->prefixIcon('lucide-calendar')
                 ->native(false)
                 ->placeholder(today()->format(static::DATE_FORMAT))

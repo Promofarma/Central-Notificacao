@@ -24,8 +24,8 @@
                         class="px-3 py-1.5 text-xs text-ellipsis font-bold text-left"
                         scope="row"
                     >
-                        {{ $result->display_scheduled_at }}
-                        {{ $result->display_shipping_at }}
+                        {{ $result->display_scheduled_date }}
+                        {{ $result->display_scheduled_time }}
                         @if ($result->deadline() > 0)
                             <span class="font-medium text-slate-400">(Daqui à {{ $result->deadline() }}
                                 {{ Str::plural('dia', $result->deadline()) }})</span>
@@ -41,7 +41,7 @@
                     </td>
                     <td class="px-3 py-1.5 text-xs text-ellipsis">
                         <div class="flex justify-end">
-                            @if ($result->status === ScheduleResultStatus::Pending && today()->lt($result->scheduled_at))
+                            @if ($result->status === ScheduleResultStatus::Pending && today()->lt($result->scheduled_date))
                                 <livewire:notification.schedule.cancel
                                     :$result
                                     wire:key="{{ $result->id }}"
