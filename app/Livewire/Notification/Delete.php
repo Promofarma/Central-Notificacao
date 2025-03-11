@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Livewire\Notification;
 
+use App\Actions\DeleteNotification;
 use App\Livewire\Ui\Toast\Toast;
 use App\Models\Notification;
 use Illuminate\Auth\Access\AuthorizationException;
@@ -21,12 +22,12 @@ class Delete extends Component
     #[Locked]
     public Notification $notification;
 
-    public function delete(): void
+    public function delete(DeleteNotification $action): void
     {
         try {
             $this->authorize('delete', $this->notification);
 
-            $this->notification->delete();
+            $action->handle($this->notification);
 
             $this->dispatch('notification-deleted');
         } catch (QueryException $exception) {
