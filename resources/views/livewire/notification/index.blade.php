@@ -5,7 +5,7 @@
     <x-slot:sub-header>
         <livewire:notification.filter />
     </x-slot:sub-header>
-    <div class="grid grid-cols-1 gap-y-6">
+    <div class="grid grid-cols-2 gap-6">
         @forelse ($this->notifications as $notification)
             <x-notification.item
                 :$notification
