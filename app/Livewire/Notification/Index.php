@@ -7,11 +7,11 @@ namespace App\Livewire\Notification;
 use App\Filters\Concerns\InteractsWithFilterData;
 use App\Filters\NotificationFilter;
 use App\Livewire\Ui\Page\Index as PageIndex;
-use App\Livewire\Ui\Toast\Toast;
 use App\Models\Notification;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Computed;
+use Livewire\Attributes\On;
 
 class Index extends PageIndex
 {
@@ -22,6 +22,7 @@ class Index extends PageIndex
     protected static ?string $title = 'Notificações';
 
     #[Computed]
+    #[On('notification-deleted')]
     public function notifications(): Collection
     {
         return Notification::query()

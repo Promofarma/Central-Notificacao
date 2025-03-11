@@ -38,15 +38,22 @@
                 </div>
             </div>
         </div>
-        @if ($notification?->schedule)
-            <x-ui.badge
-                color="info"
-                class="absolute top-0 right-3"
-                icon="repeat"
-            >
-                Notificação recorrente
-            </x-ui.badge>
-        @endif
+        <div class="absolute top-0 flex items-center gap-3 right-3">
+            @if ($notification?->schedule)
+                <x-ui.badge
+                    color="info"
+                    icon="repeat"
+                >
+                    Notificação recorrente
+                </x-ui.badge>
+            @endif
+            @can('delete', $notification)
+                <livewire:notification.delete
+                    :$notification
+                    wire:key="{{ $notification->uuid }}"
+                />
+            @endcan
+        </div>
     </div>
     <div class="p-4 bg-slate-50">
         <dd class="flex items-center gap-3">
