@@ -38,6 +38,7 @@ class NotificationRecipientController extends Controller
             ])
             ->where('recipient_id', $recipientId)
             ->filter(new NotificationRecipientFilter($request->validated()))
+            ->orderBy('created_at', 'desc')
             ->get();
 
         $resources = NotificationRecipientResource::collection($recipients);
