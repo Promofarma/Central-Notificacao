@@ -31,7 +31,7 @@
      </div>
 
      <div class="flex items-center justify-between gap-x-3">
-         <p class="flex-1 text-xs font-semibold line-clamp-2 text-slate-400">
+         <p class="flex-1 text-xs font-semibold line-clamp-1 max-w-72 text-slate-400">
              {!! Str::of(html_entity_decode($notification->content))->stripTags()->lower()->trim()->ucfirst() !!}</p>
          <div
              x-data=""
