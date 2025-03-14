@@ -104,12 +104,13 @@
     class="flex flex-col flex-1 overflow-hidden"
     x-on:filter-reseted.window="handleOnResetedFilters()"
     x-on:filter-updated.window="handleOnResetedFilters()"
+    x-on:open-group.window="({ detail }) => toggleGroupItem(detail)"
 >
     @forelse ($notificationRecipientItems as $groupName => $recipientNotifications)
         <div
             class="flex flex-col"
             x-bind:class="isOpenGroupItem('{{ md5($groupName) }}') && 'flex-1 overflow-hidden'"
-            x-on:click.outside="selected || closeGroupItem('{{ md5($groupName) }}')"
+            {{-- x-on:click.outside="selected || closeGroupItem('{{ md5($groupName) }}')" --}}
             wire:key="{{ $getGroupItems()->keys()->join('-') }}"
         >
             <x-recipient.group-button
@@ -134,7 +135,7 @@
             </div>
         </div>
     @empty
-        <div class="flex items-center flex-1 justify-center p-3">
+        <div class="flex items-center justify-center flex-1 p-3">
             <x-ui.empty-state>
                 <x-slot:icon>
                     <x-lucide-x />

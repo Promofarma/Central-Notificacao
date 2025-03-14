@@ -21,9 +21,14 @@ class NotificationAttachment extends Model
         return in_array($this->extension, ['jpg', 'jpeg', 'png', 'gif']);
     }
 
+    public function isPdf(): bool
+    {
+        return $this->extension === 'pdf';
+    }
+
     protected function path(): Attribute
     {
-        return Attribute::get(fn (string $value): string => asset('storage/' . $value));
+        return Attribute::get(fn (string $value): string => asset('storage/'.$value));
     }
 
     protected function size(): Attribute

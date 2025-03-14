@@ -16,7 +16,7 @@
     <div class="space-y-6">
         <x-ui.container title="Conteúdo">
             <div class="prose max-w-none prose-slate">
-                {!! $notification->content !!}
+                {!! html_entity_decode($notification->content) !!}
             </div>
         </x-ui.container>
 

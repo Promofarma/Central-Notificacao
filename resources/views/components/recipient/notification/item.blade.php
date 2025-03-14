@@ -32,7 +32,7 @@
 
      <div class="flex items-center justify-between gap-x-3">
          <p class="flex-1 text-xs font-semibold line-clamp-2 text-slate-400">
-             {{ Str::of($notification->content)->stripTags()->lower()->trim()->ucfirst() }}</p>
+             {!! Str::of(html_entity_decode($notification->content))->stripTags()->lower()->trim()->ucfirst() !!}</p>
          <div
              x-data=""
              class="shrink-0 flex items-center gap-x-3 [&>svg]:size-4"
