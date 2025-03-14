@@ -18,7 +18,7 @@ class NotificationAttachment extends Model
 
     public function isImage(): bool
     {
-        return in_array($this->extension, ['jpg', 'jpeg', 'png', 'gif']);
+        return in_array(strtolower($this->extension), ['jpg', 'jpeg', 'png', 'gif']);
     }
 
     public function isPdf(): bool
