@@ -54,7 +54,8 @@ class NotificationFormSchema
                     ->maxLength(3000)
                     ->toolbarButtons(['bold', 'italic', 'underline', 'link', 'bulletList', 'orderedList', 'redo', 'undo'])
                     ->hint(fn (Components\RichEditor $component): string => 'Máximo de caracteres: '.$component->getMaxLength())
-                    ->placeholder('Escreva o conteúdo da notificação'),
+                    ->placeholder('Escreva o conteúdo da notificação')
+                    ->dehydrateStateUsing(fn (string $state): string => html_entity_decode($state)),
 
                 Components\FileUpload::make('attachments')
                     ->label('Anexos')

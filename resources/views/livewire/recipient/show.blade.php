@@ -44,19 +44,12 @@
         </div>
         <div class="ml-auto text-xs text-slate-400">{{ $notification->formatted_created_at }}</div>
     </div>
-    <div class="flex-1 h-px p-4 space-y-4 overflow-y-auto">
-        <div class="prose whitespace-normal prose-slate max-w-none">
-            {!! $notification->content !!}
+    <div class="flex-1 h-px space-y-4 overflow-y-auto">
+        <div class="p-4 prose whitespace-normal prose-slate max-w-none">
+            {!! html_entity_decode($notification->content) !!}
         </div>
-        @if ($notification->attachments->isNotEmpty())
-            <x-ui.container
-                title="Anexos"
-                class="space-y-2"
-            >
-                @foreach ($notification->attachments as $attachment)
-                    <x-notification.attachment.item :attachment="$attachment" />
-                @endforeach
-            </x-ui.container>
+        @if (filled($attachments = $notification->attachments))
+            <x-notification.attachment.viewer :$attachments />
         @endif
     </div>
 </section>

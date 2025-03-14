@@ -9,7 +9,7 @@
     x-cloak
 >
     <div
-        class="relative flex items-center justify-center max-w-[30vw] max-h-[30vh]"
+        class="relative flex items-center justify-center max-w-[600px] max-h-[600px]"
         x-show="imagePath"
         x-transition.opacity
         x-cloak
@@ -17,8 +17,10 @@
         <img
             x-bind:src="imagePath"
             alt="Imagem do Anexo"
-            class="object-contain object-center w-full h-full max-w-full max-h-full select-none cursor-zoom-out"
+            class="object-contain object-center w-full h-full select-none cursor-zoom-out"
             draggable="false"
+            width="600"
+            height="600"
             @click.away="imagePath = null"
             @keydown.escape.window="imagePath = null"
         />
