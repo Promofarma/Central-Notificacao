@@ -120,7 +120,9 @@ class Index extends Page
         return [
             'unarchivedNotificationRecipients' => $this->getUnarchivedNotificationRecipients(),
             'archivedNotificationRecipients' => $this->getArchivedNotificationRecipients(),
-            'categories' => Category::withCount(['notifications as notifications_unread_count' => fn ($query) => $query->whereHas('recipients', fn ($query) => $query->unread())])->get(),
+            'categories' => Category::withCount([
+                'notifications as notifications_unread_count' => fn ($query) => $query->whereHas('recipients', fn ($query) => $query->unread()->where('recipient_id', $this->recipientId)),
+            ])->get(),
         ];
     }
 }
