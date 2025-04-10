@@ -6,6 +6,7 @@ namespace App\Models;
 
 use App\Filters\Concerns\HasFilter;
 use App\Helpers\FormatsTimestamps;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -63,5 +64,16 @@ class Notification extends Model
     public function schedule(): HasOne
     {
         return $this->hasOne(NotificationSchedule::class);
+    }
+
+    public function scopeScheduled(Builder $query): Builder
+    {
+        $today = today();
+
+        return $query->whereDate('scheduled_date', '<=', $today)
+            ->orWhere(function (Builder $query) use ($today): Builder {
+                return $query->whereNull('scheduled_date')
+                    ->whereDate('created_at', '<=', $today);
+            });
     }
 }
