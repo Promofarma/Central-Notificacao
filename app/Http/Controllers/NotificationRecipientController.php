@@ -37,6 +37,7 @@ class NotificationRecipientController extends Controller
                     ->with('user:id,name'),
             ])
             ->where('recipient_id', $recipientId)
+            ->whereHas('notification', fn ($query) => $query->scheduled())
             ->filter(new NotificationRecipientFilter($request->validated()))
             ->orderBy('created_at', 'desc')
             ->get();

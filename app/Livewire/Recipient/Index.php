@@ -43,28 +43,23 @@ class Index extends Page
                 'created_at',
             ])
             ->with([
-                'notification' => fn ($query) => $query
-                    ->select([
-                        'uuid',
-                        'title',
-                        'content',
-                        'category_id',
-                        'user_id',
-                        'created_at',
-                    ])
-                    ->withCount('attachments')
+                'notification' => fn ($query) => $query->select([
+                    'uuid',
+                    'title',
+                    'content',
+                    'category_id',
+                    'scheduled_date',
+                    'user_id',
+                    'created_at',
+                ])
                     ->with([
-                        'user' => fn ($query) => $query->select([
-                            'id',
-                            'name',
-                        ]),
-                        'category' => fn ($query) => $query->select([
-                            'id',
-                            'name',
-                        ]),
-                    ]),
+                        'user' => fn ($query) => $query->select(['id', 'name']),
+                        'category' => fn ($query) => $query->select(['id', 'name']),
+                    ])
+                    ->withCount('attachments'),
             ])
             ->where('recipient_id', $this->recipientId)
+            ->whereHas('notification', fn ($query) => $query->scheduled())
             ->filter(new NotificationRecipientFilter($this->getFilterData()))
             ->orderBy('created_at', 'desc')
             ->get(),
