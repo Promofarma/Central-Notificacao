@@ -1,16 +1,35 @@
-<div class="space-y-6">
-    <header class="flex flex-col items-start gap-3 md:flex-row md:items-center md:justify-between">
-        <h2 class="text-xl font-bold tracking-tight sm:text-2xl lg:text-3xl">
+@props([
+'title' => 'title',
+'headerButtons' => [],
+])
+<section
+    class="
+        flex
+        flex-col
+        [&>*:not(header)]:flex-1
+        [&>*:not(header)]:h-px
+        [&>*:not(header)]:overflow-y-auto
+        [&>*:not(header)]:overflow-x-auto
+        [&>*:not(header)::-webkit-scrollbar]:w-1
+        [&>*:not(header)::-webkit-scrollbar-track]:bg-secondary
+        [&>*:not(header)::-webkit-scrollbar-thumb]:bg-primary
+    ">
+    <header @class(['flex items-center px-4 h-14 shrink-0' , 'justify-between'=> filled($headerButtons),
+        ])>
+        <h2 class="text-lg font-bold">
             {{ $title }}
         </h2>
-        <div class="flex items-center gap-x-3">
-            @foreach ($headerActions as $headerAction)
-                {!! $headerAction !!}
+        @if (filled($headerButtons))
+        <div class="flex items-center gap-2">
+            @foreach ($headerButtons as $button)
+            {!! $button !!}
             @endforeach
         </div>
+        @endif
+
     </header>
     @isset($subHeader)
-        {!! $subHeader !!}
+    {{ $subHeader }}
     @endisset
     {{ $slot }}
-</div>
+</section>

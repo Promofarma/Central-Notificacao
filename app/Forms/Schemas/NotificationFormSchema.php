@@ -12,7 +12,6 @@ use Filament\Forms\Components;
 use Filament\Forms\Components\Component;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
-use Illuminate\Support\Collection;
 use Illuminate\Support\HtmlString;
 use Illuminate\Support\Number;
 use Illuminate\Support\Str;
@@ -45,7 +44,7 @@ class NotificationFormSchema
                     ->label('Título')
                     ->required()
                     ->maxLength(60)
-                    ->dehydrateStateUsing(fn (string $state): string => Str::of($state)->lower()->ucfirst()->trim()->value())
+                    ->dehydrateStateUsing(fn(string $state): string => Str::of($state)->lower()->ucfirst()->trim()->value())
                     ->placeholder('Digite o título da notificação'),
 
                 Components\RichEditor::make('content')
@@ -53,9 +52,9 @@ class NotificationFormSchema
                     ->required()
                     ->maxLength(3000)
                     ->toolbarButtons(['bold', 'italic', 'underline', 'link', 'bulletList', 'orderedList', 'redo', 'undo'])
-                    ->hint(fn (Components\RichEditor $component): string => 'Máximo de caracteres: '.$component->getMaxLength())
+                    ->hint(fn(Components\RichEditor $component): string => 'Máximo de caracteres: ' . $component->getMaxLength())
                     ->placeholder('Escreva o conteúdo da notificação')
-                    ->dehydrateStateUsing(fn (string $state): string => html_entity_decode($state)),
+                    ->dehydrateStateUsing(fn(string $state): string => html_entity_decode($state)),
 
                 Components\FileUpload::make('attachments')
                     ->label('Anexos')
@@ -65,7 +64,7 @@ class NotificationFormSchema
                     ->previewable(false)
                     ->directory('notification-attachments')
                     ->acceptedFileTypes(AcceptedFileTypes::keys())
-                    ->hint(fn (Components\FileUpload $component): string => 'Tamanho máximo: '.Number::fileSize($component->getMaxSize() * 1024))
+                    ->hint(fn(Components\FileUpload $component): string => 'Tamanho máximo: ' . Number::fileSize($component->getMaxSize() * 1024))
                     ->helperText('Arquivos aceitos: Imagem, PDF, Excel, Word, PowerPoint'),
             ]);
     }
@@ -76,11 +75,11 @@ class NotificationFormSchema
             ->schema([
                 Components\Select::make('recipient_ids')
                     ->label('Destinatários')
-                    ->required(fn (Get $get): bool => ! $get('send_to_all_recipients'))
+                    ->required(fn(Get $get): bool => ! $get('send_to_all_recipients'))
                     ->multiple()
                     ->options(Recipient::orderBy('id')->pluck('name', 'id'))
-                    ->optionsLimit(fn (Components\Select $component) => count($component->getOptions()))
-                    ->disabled(fn (Get $get): bool => $get('send_to_all_recipients')),
+                    ->optionsLimit(fn(Components\Select $component) => count($component->getOptions()))
+                    ->disabled(fn(Get $get): bool => $get('send_to_all_recipients')),
 
                 Components\Select::make('category_id')
                     ->label('Categoria')
@@ -146,9 +145,9 @@ class NotificationFormSchema
                                     $scheduledDateTime->format('H:i'),
                                 ));
                             })
-                            ->visible(fn (Get $get): bool => $get('scheduled_date') != null),
+                            ->visible(fn(Get $get): bool => $get('scheduled_date') != null),
                     ])
-                    ->visible(fn (Get $get): bool => $get('is_scheduled')),
+                    ->visible(fn(Get $get): bool => $get('is_scheduled')),
 
                 Components\Checkbox::make('is_recurrent')
                     ->label('Repetir envio?')
@@ -198,7 +197,7 @@ class NotificationFormSchema
                             ])
                             ->columnSpanFull()
                             ->live()
-                            ->visible(fn (Get $get): bool => $get('interval') === 'weekly'),
+                            ->visible(fn(Get $get): bool => $get('interval') === 'weekly'),
 
                         Components\Select::make('interval_day')
                             ->label('Selecione o dia para envio')
@@ -208,7 +207,7 @@ class NotificationFormSchema
                             ->columnSpanFull()
                             ->prefixIcon('lucide-calendar')
                             ->live()
-                            ->visible(fn (Get $get): bool => $get('interval') === 'monthly'),
+                            ->visible(fn(Get $get): bool => $get('interval') === 'monthly'),
 
                         Components\DatePicker::make('start_date')
                             ->label('Início da recorrência')
@@ -216,55 +215,55 @@ class NotificationFormSchema
                             ->minDate(today())
                             ->prefixIcon('lucide-calendar-range')
                             ->closeOnDateSelection()
-                            ->disabled(fn (Get $get) => is_null($get('interval'))),
+                            ->disabled(fn(Get $get) => is_null($get('interval'))),
 
                         Components\DatePicker::make('end_date')
                             ->label('Término da recorrência')
                             ->required()
-                            ->minDate(fn (): Carbon => today()->addMonth())
+                            ->minDate(fn(): Carbon => today()->addMonth())
                             ->prefixIcon('lucide-calendar-range')
                             ->closeOnDateSelection()
-                            ->disabled(fn (Get $get) => is_null($get('interval')) || is_null($get('start_date'))),
+                            ->disabled(fn(Get $get) => is_null($get('interval')) || is_null($get('start_date'))),
 
                         Components\TimePicker::make('scheduled_time')
                             ->label('Hora de envio')
                             ->seconds(false)
                             ->prefixIcon('lucide-clock')
                             ->columnSpanFull()
-                            ->disabled(fn (Get $get) => is_null($get('interval'))),
+                            ->disabled(fn(Get $get) => is_null($get('interval'))),
                     ])
                     ->lazy()
-                    ->visible(fn (Get $get): bool => $get('is_recurrent')),
+                    ->visible(fn(Get $get): bool => $get('is_recurrent')),
 
                 Components\Placeholder::make('recurrent_placeholder')
-                        ->hiddenLabel()
-                        ->content(function (Get $get): ?HtmlString {
-                            $interval = $get('recurrence.interval');
+                    ->hiddenLabel()
+                    ->content(function (Get $get): ?HtmlString {
+                        $interval = $get('recurrence.interval');
 
-                            $period = collect([$get('recurrence.start_date'), $get('recurrence.end_date')])
-                                ->filter(fn (?string $date): bool => $date != null)
-                                ->map(fn (string $date): string => Carbon::parse($date)->format('d/m/Y'))
-                                ->implode(' a ');
+                        $period = collect([$get('recurrence.start_date'), $get('recurrence.end_date')])
+                            ->filter(fn(?string $date): bool => $date != null)
+                            ->map(fn(string $date): string => Carbon::parse($date)->format('d/m/Y'))
+                            ->implode(' a ');
 
-                            $daysOfWeek = collect($get('recurrence.interval_days_of_week'))
-                                ->map(fn (string $day) => __(ucfirst($day)));
+                        $daysOfWeek = collect($get('recurrence.interval_days_of_week'))
+                            ->map(fn(string $day) => __(ucfirst($day)));
 
-                            $base = Str::of('A notificação será enviada ')
-                                ->when($interval === 'daily', fn (Stringable $str): Stringable => $str->append('todos os dias'))
-                                ->when($interval === 'weekly', fn (Stringable $str): Stringable => $str->append('semanalmente, na ')->append($daysOfWeek->implode(', ')))
-                                ->when($interval === 'monthly', fn (Stringable $str): Stringable => $str->append('mensalmente, no dia '.$get('recurrence.interval_day').' de cada mês'))
-                                ->append(', de '.$period)
-                                ->when($get('recurrence.scheduled_time') ?? '00:00', fn (Stringable $str, string $time): Stringable => $str->append(' às '.$time));
+                        $base = Str::of('A notificação será enviada ')
+                            ->when($interval === 'daily', fn(Stringable $str): Stringable => $str->append('todos os dias'))
+                            ->when($interval === 'weekly', fn(Stringable $str): Stringable => $str->append('semanalmente, na ')->append($daysOfWeek->implode(', ')))
+                            ->when($interval === 'monthly', fn(Stringable $str): Stringable => $str->append('mensalmente, no dia ' . $get('recurrence.interval_day') . ' de cada mês'))
+                            ->append(', de ' . $period)
+                            ->when($get('recurrence.scheduled_time') ?? '00:00', fn(Stringable $str, string $time): Stringable => $str->append(' às ' . $time));
 
-                            return new HtmlString('<p class="text-xs font-medium text-gray-500 break-words">'.$base->value().'</p>');
-                        })
-                        ->visible(fn (Get $get): bool => $get('is_recurrent') && match ($get('recurrence.interval')) {
-                            'daily' => ($get('recurrence.start_date') !== null && $get('recurrence.end_date') !== null),
-                            'weekly' => ($get('recurrence.start_date') !== null && $get('recurrence.end_date') !== null && count($get('recurrence.interval_days_of_week')) > 0),
-                            'monthly' => ($get('recurrence.start_date') !== null && $get('recurrence.end_date') !== null && $get('recurrence.interval_day') !== null),
-                            default => false,
-                        })
-                        ->columnSpanFull(),
+                        return new HtmlString('<p class="text-xs font-medium text-gray-500 break-words">' . $base->value() . '</p>');
+                    })
+                    ->visible(fn(Get $get): bool => $get('is_recurrent') && match ($get('recurrence.interval')) {
+                        'daily' => ($get('recurrence.start_date') !== null && $get('recurrence.end_date') !== null),
+                        'weekly' => ($get('recurrence.start_date') !== null && $get('recurrence.end_date') !== null && count($get('recurrence.interval_days_of_week')) > 0),
+                        'monthly' => ($get('recurrence.start_date') !== null && $get('recurrence.end_date') !== null && $get('recurrence.interval_day') !== null),
+                        default => false,
+                    })
+                    ->columnSpanFull(),
             ]);
     }
 }

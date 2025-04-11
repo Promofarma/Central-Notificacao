@@ -29,7 +29,7 @@ class Index extends PageIndex
             ->with('schedule')
             ->withCount([
                 'recipients',
-                'recipients as recipients_read_count' => fn ($query) => $query->read(),
+                'recipients as recipients_read_count' => fn($query) => $query->read(),
                 'attachments',
             ])
             ->where('user_id', Auth::id())
