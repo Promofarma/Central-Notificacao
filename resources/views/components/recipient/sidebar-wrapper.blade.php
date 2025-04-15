@@ -2,17 +2,22 @@
     'title' => null,
     'icon' => null,
 ])
-<div {!! $attributes->merge(['class' => 'flex flex-col flex-1 bg-slate-50']) !!}>
+<div {!! $attributes->merge(['class' => 'flex flex-col flex-1 bg-gray-50']) !!}>
     <div
-        class="flex items-center h-full gap-3 px-4 py-3 border-b shadow-md max-h-14 shrink-0 border-slate-200 shadow-slate-300/10">
+        class="flex items-center h-full gap-3 px-4 py-3 border-b border-gray-200 shadow-md max-h-14 shrink-0 shadow-gray-300/10">
         @if ($icon)
             <x-dynamic-component
                 name="icon"
-                component="lucide-{{ $icon }}"
-                class="size-5 stroke-slate-500"
+                :component="$icon"
+                class="text-gray-500 size-5"
             />
         @endif
-        <h3 class="text-lg font-bold">{{ $title }}</h3>
+        <x-ui.heading
+            level="3"
+            size="lg"
+        >
+            {{ $title }}
+        </x-ui.heading>
     </div>
     {{ $slot }}
 </div>

@@ -1,11 +1,11 @@
 <div
     x-data="{
         imagePath: null,
-
+    
     }"
-    class="flex items-center gap-3 p-3 bg-white rounded-lg shadow-sm ring-1 ring-slate-200/50 shadow-slate-300/10"
+    class="flex items-center gap-3 p-3 bg-white rounded-lg shadow-sm ring-1 ring-gray-200/50 shadow-gray-300/10"
 >
-    <div class="flex items-center justify-center overflow-hidden rounded-lg size-10 shrink-0 bg-slate-100">
+    <div class="flex items-center justify-center overflow-hidden bg-gray-100 rounded-lg size-10 shrink-0">
         @if ($attachment->isImage())
             <img
                 src="{{ $attachment->path }}"
@@ -15,13 +15,13 @@
                 @click="imagePath = '{{ $attachment->path }}'"
             />
         @else
-            <x-lucide-file class="size-6 stroke-slate-600" />
+            <x-heroicon-s-document class="size-6 stroke-gray-600" />
         @endif
     </div>
 
     <div class="grid flex-1 gap-2">
-        <h3 class="text-sm font-medium text-slate-700">{{ $attachment->file_name }}</h3>
-        <ul class="flex items-center text-xs gap-x-4 text-slate-500">
+        <h3 class="text-sm font-medium text-gray-700">{{ $attachment->file_name }}</h3>
+        <ul class="flex items-center text-xs text-gray-500 gap-x-4">
             <li>Tamanho: <strong>{{ $attachment->size }}</strong></li>
             <li>Extensão: <strong>{{ $attachment->extension }}</strong></li>
         </ul>
@@ -30,16 +30,16 @@
     <div class="flex gap-3 shrink-0">
         @if ($attachment->isImage())
             <x-ui.button
-                size="small"
+                size="sm"
                 icon="eye"
-                color="white"
+                color="gray"
                 @click="imagePath = '{{ $attachment->path }}'"
             />
         @endif
         <x-ui.button
-            size="small"
-            icon="download"
-            color="white"
+            size="sm"
+            icon="arrow-down-tray"
+            color="gray"
             @click="window.open('{{ $attachment->path }}', '_blank');"
         />
     </div>

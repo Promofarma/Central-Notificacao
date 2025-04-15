@@ -1,12 +1,12 @@
 @props([
     'tabId' => null,
-    'iconName' => null,
+    'icon' => null,
     'label' => null,
 ])
 
 <button
     {!! $attributes->merge([
-        'class' => 'grid cursor-pointer place-items-center gap-y-2 focus:outline-none group',
+        'class' => 'grid cursor-pointer place-items-center gap-y-1.5 focus:outline-none group',
     ]) !!}
     x-data="{
         isLoading: false,
@@ -15,27 +15,26 @@
     x-on:filter-updated.window="setTimeout(() => isLoading = false, 1000)"
     x-bind:disabled="isLoading"
 >
-    @if ($iconName)
+    @if ($icon)
         <div
-            class="flex items-center justify-center rounded-lg w-9 h-9 shrink-0"
-            x-bind:class="tab === '{{ $tabId }}' ? 'bg-primary-500 text-white' : 'bg-slate-100 text-slate-400'"
+            class="flex items-center justify-center w-10 h-10 rounded-full shrink-0"
+            x-bind:class="tab === '{{ $tabId }}' ? 'bg-primary-600 text-white' : 'bg-gray-100 text-gray-500'"
         >
             <template x-if="!isLoading">
                 <x-dynamic-component
                     component="icon"
-                    :name="'lucide-' . $iconName"
+                    :name="$icon"
                     class="w-5 h-5 transition duration-200"
                 />
             </template>
             <template x-if="isLoading">
-                <x-lucide-loader class="w-5 h-5 animate-spin" />
+                <x-ui.spinner />
             </template>
         </div>
     @endif
     @if ($label)
-        <span
-            class="text-xs font-medium text-slate-500"
-            x-bind:class="tab === '{{ $tabId }}' && 'text-slate-900'"
-        >{{ $label }}</span>
+        <x-ui.text size="xs">
+            {{ $label }}
+        </x-ui.text>
     @endif
 </button>

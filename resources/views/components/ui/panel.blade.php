@@ -1,13 +1,9 @@
-<div class="relative h-screen">
+<div class="flex flex-col h-screen">
     <x-header />
-    <div class="relative flex gap-6 px-6 h-[calc(100%-3.5rem)]">
-        <x-sidebar />
-        <!-- Main -->
-        <main
-            class="flex flex-col flex-1 [&>:first-child::-webkit-scrollbar]:w-1.5 [&>:first-child::-webkit-scrollbar-track]:bg-slate-200 [&>:first-child::-webkit-scrollbar-thumb]:bg-slate-400 [&>:first-child::-webkit-scrollbar-thumb]:rounded-lg [&>:first-child]:flex-1 [&>:first-child]:overflow-y-auto [&>:first-child]:py-4 [&>:first-child]:pr-0.5 [&>:first-child]:pl-1 [&>:first-child]:h-0"
-        >
+    <div class="flex flex-1 overflow-hidden">
+        <x-ui.sidebar />
+        <main class="flex-1 p-6 overflow-y-auto">
             {{ $slot }}
         </main>
-        <!-- Main -->
     </div>
 </div>

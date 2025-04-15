@@ -3,21 +3,23 @@
     'count' => 0,
 ])
 <button
-    class="flex items-center justify-between p-3 transition-colors duration-150 border-b cursor-pointer text-slate-600 gap-x-3 hover:bg-white border-slate-200 focus:outline-none shrink-0"
-    x-bind:class="isOpenGroupItem('{{ md5($label) }}') && 'bg-white text-slate-900'"
+    class="flex items-center justify-between p-3 text-gray-600 transition-colors duration-150 border-b border-gray-200 cursor-pointer gap-x-3 hover:bg-white focus:outline-none shrink-0"
+    x-bind:class="isOpenGroupItem('{{ md5($label) }}') && 'bg-white text-gray-900'"
     role="button"
     title="Grupo: {{ $label }}"
     {!! $attributes !!}
 >
-    <div class="flex items-center gap-3">
-        <span class="inline-flex items-center justify-center p-1 rounded-lg bg-slate-200">
-            <x-lucide-chevron-down
-                class="transition-transform duration-200 size-4 stroke-slate-400"
-                x-bind:class="isOpenGroupItem('{{ md5($label) }}') ? 'rotate-0' : '-rotate-90'"
+    <div class="flex items-center gap-1.5">
+        <span class="inline-flex items-center justify-center p-1 bg-gray-100 rounded-lg">
+            <x-heroicon-m-chevron-down
+                class="text-gray-700 transition-transform duration-200 size-5"
+                x-bind:class="isOpenGroupItem('{{ md5($label) }}') ? 'rotate-0' : '-rotate-180'"
                 wire:ignore.self
             />
         </span>
-        <span class="flex-1 text-sm font-semibold truncate max-w-48">{{ $label }}</span>
+        <div class="flex-1 truncate max-w-48">
+            <x-ui.text size="sm">{{ $label }}</x-ui.text>
+        </div>
     </div>
-    <span class="text-xs font-bold text-slate-400">{{ $count > 99 ? '99+' : $count }}</span>
+    <x-ui.badge size="sm">{{ $count > 99 ? '99+' : $count }}</x-ui.badge>
 </button>

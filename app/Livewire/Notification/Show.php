@@ -4,34 +4,41 @@ declare(strict_types=1);
 
 namespace App\Livewire\Notification;
 
-use App\Livewire\Ui\Page\Page;
+use App\Livewire\Component\Pages\Concerns\InteractsWithAuthenticatedUser;
+use App\Livewire\Component\Pages\Panel;
 use App\Models\Notification;
 use App\View\Components\Ui\Button;
 use Illuminate\View\Compilers\BladeCompiler;
 use Livewire\Attributes\Locked;
 
-class Show extends Page
+final class Show extends Panel
 {
-    protected static string $layout = 'components.layouts.app';
+    use InteractsWithAuthenticatedUser;
 
     protected static string $view = 'livewire.notification.show';
 
     #[Locked]
     public Notification $notification;
 
-    protected function getTitle(): ?string
+    public function getTitle(): ?string
     {
         return $this->notification->title;
     }
 
-    protected function getHeaderActions(): array
+    public function getHeaderButtons(): array
     {
         return [
             BladeCompiler::renderComponent(new Button(
                 text: 'Voltar',
                 icon: 'arrow-left',
-                color: 'white',
+                color: 'gray',
                 href: route('notification.index'),
+            )),
+
+            BladeCompiler::renderComponent(new Button(
+                text: 'Editar',
+                icon: 'pencil',
+                href: route('notification.edit', $this->notification),
             )),
         ];
     }

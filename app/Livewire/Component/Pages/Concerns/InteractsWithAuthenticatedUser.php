@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Auth;
 
 trait InteractsWithAuthenticatedUser
 {
-    public function user(string $name = null): User
+    public function user(?string $name = null): User
     {
         return Auth::guard($name)->user();
     }

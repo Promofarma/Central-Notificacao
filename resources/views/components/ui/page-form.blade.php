@@ -7,7 +7,7 @@
     :$title
     :$headerButtons
 >
-    <div class="p-5">
+    <div>
         <form
             id="{{ $formId }}"
             wire:submit="handleOnSubmit"

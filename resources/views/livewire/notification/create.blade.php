@@ -1,5 +1,5 @@
-<x-ui.create-page
+<x-ui.page-form
     :$title
-    :$headerActions
+    :$headerButtons
     :$formId
 />

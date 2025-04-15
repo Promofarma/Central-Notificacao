@@ -2,11 +2,14 @@
 
 namespace App\Models;
 
+use App\Observers\TeamObserver;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
-class Team extends Model
+#[ObservedBy(TeamObserver::class)]
+final class Team extends Model
 {
     public function leader(): BelongsTo
     {

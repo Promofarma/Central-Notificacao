@@ -1,11 +1,11 @@
 <section class="flex flex-col flex-1">
     <header
-        class="flex items-center justify-between h-full gap-3 px-4 border-b shadow-sm shrink-0 border-slate-200 max-h-14 shadow-slate-300/10"
+        class="flex items-center justify-between h-full gap-3 px-4 border-b border-gray-200 shadow-sm shrink-0 max-h-14 shadow-gray-300/10"
     >
         @if ($notificationRecipient->isArchived())
-            <span class="inline-flex items-center gap-2 text-slate-600">
-                <x-lucide-archive class="size-4" />
-                <span class="text-xs font-medium">Arquivada</span>
+            <span class="inline-flex items-center gap-1.5">
+                <x-heroicon-m-archive-box class="text-gray-500 size-4" />
+                <x-ui.text size="xs">Arquivada</x-ui.text>
             </span>
         @else
             <livewire:recipient.archive
@@ -13,26 +13,23 @@
                 :wire:key="$notificationRecipient->id"
             />
         @endif
-        <div>
+        <div class="flex items-center gap-3">
             @if ($notificationRecipient->isRead())
                 <x-ui.badge
-                    icon="check-check"
+                    icon="heroicon-m-check"
                     color="success"
-                >Lida {{ $notificationRecipient->readed_at->diffForHumans() }} </x-ui.badge>
+                >
+                    Lida {{ $notificationRecipient->readed_at->diffForHumans() }}
+                </x-ui.badge>
             @endif
-
-            <x-ui.badge
-                icon="circle-dot"
-                color="info"
-            >{{ $notification->category->name }}</x-ui.badge>
-
+            <x-ui.badge color="gray">{{ $notification->category->name }}</x-ui.badge>
         </div>
     </header>
-    <div class="flex items-start justify-between p-4 border-b border-slate-200 shrink-0">
-        <div class="flex items-start ">
+    <div class="flex items-start justify-between p-4 shrink-0">
+        <div class="flex items-start">
             <div class="flex items-start gap-4 text-sm">
                 <span class="relative flex w-10 h-10 overflow-hidden rounded-full shrink-0">
-                    <span class="flex items-center justify-center w-full h-full rounded-full bg-slate-200">
+                    <span class="flex items-center justify-center w-full h-full bg-gray-200 rounded-full">
                         {{ $notification->user->name[0] }}
                     </span>
                 </span>
@@ -42,10 +39,10 @@
                 </div>
             </div>
         </div>
-        <div class="ml-auto text-xs text-slate-400">{{ $notification->formatted_created_at }}</div>
+        <div class="ml-auto text-xs text-gray-400">{{ $notification->formatted_created_at }}</div>
     </div>
     <div class="flex-1 h-px space-y-4 overflow-y-auto">
-        <div class="p-4 prose whitespace-normal prose-slate max-w-none">
+        <div class="p-4 prose whitespace-normal prose-gray max-w-none">
             {!! html_entity_decode($notification->content) !!}
         </div>
         @if (filled($attachments = $notification->attachments))

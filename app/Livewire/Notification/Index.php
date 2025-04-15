@@ -6,35 +6,54 @@ namespace App\Livewire\Notification;
 
 use App\Filters\Concerns\InteractsWithFilterData;
 use App\Filters\NotificationFilter;
-use App\Livewire\Ui\Page\Index as PageIndex;
-use App\Models\Notification;
+use App\Livewire\Component\Pages\Concerns\InteractsWithAuthenticatedUser;
+use App\Livewire\Component\Pages\Panel;
+use App\Queries\TeamMembersNotificationsQuery;
+use App\View\Components\Ui\Button;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\View\Compilers\BladeCompiler;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\On;
 
-class Index extends PageIndex
+final class Index extends Panel
 {
+    use InteractsWithAuthenticatedUser;
     use InteractsWithFilterData;
 
     protected static string $view = 'livewire.notification.index';
 
     protected static ?string $title = 'Notificações';
 
+    public function getHeaderButtons(): array
+    {
+        return [
+            BladeCompiler::renderComponent(
+                component: new Button(
+                    text: 'Filtros',
+                    icon: 'funnel',
+                    color: 'gray',
+                    id: 'trigger',
+                    alpineExtraAttributes: ['@click.prevent' => '$dispatch(\'open-filter\')'],
+                )
+            ),
+
+            BladeCompiler::renderComponent(
+                component: new Button(
+                    text: 'Adicionar Notificação',
+                    href: route('notification.create'),
+                    icon: 'plus',
+                    visible: $this->canCreate('notification')
+                ),
+            ),
+        ];
+    }
+
     #[Computed]
     #[On('notification-deleted')]
     public function notifications(): Collection
     {
-        return Notification::query()
-            ->with('schedule')
-            ->withCount([
-                'recipients',
-                'recipients as recipients_read_count' => fn($query) => $query->read(),
-                'attachments',
-            ])
-            ->where('user_id', Auth::id())
-            ->whereNull('parent_uuid')
-            ->orderBy('created_at', 'desc')
+        return (new TeamMembersNotificationsQuery(user: Auth::user()))->builder()
             ->filter(new NotificationFilter($this->getFilterData()))
             ->get();
     }

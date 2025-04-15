@@ -1,76 +1,84 @@
 <div
     x-data="{
         isOpening: false,
-
+    
         delay: 1000,
-
+    
         selected: null,
-
+    
         _notificationListItems: [],
-
+    
         groupItems: @js($getGroupItems()),
-
+    
         init() {
             this.cacheNotificationItems();
-
+    
             this.$watch('isOpening', (value) => value ? this.disableButtons() : this.enableButtons());
         },
-
+    
         toggleGroupItem(key) {
             if (!this.keyExists(key)) return;
-
-            this.groupItems[key] = !this.groupItems[key];
+    
+    
+            Object.keys(this.groupItems).forEach(k => {
+                this.groupItems[k] = false;
+            });
+    
+    
+            if (!this.groupItems[key]) {
+                this.groupItems[key] = true;
+            }
         },
-
+    
         isOpenGroupItem(key) {
             return this.groupItems[key];
         },
-
+    
         closeGroupItem(key) {
             if (!this.keyExists(key)) return;
-
+    
             if (!this.isOpenGroupItem(key)) return;
-
+    
             this.groupItems[key] = false;
         },
-
+    
         keyExists(key) {
             return key in this.groupItems;
         },
-
+    
         cacheNotificationItems() {
             if (!this.$el) return;
-
+    
             const notificationItems = this.$el.querySelectorAll('.n-item') ?? [];
             this._notificationListItems = Array.from(notificationItems);
         },
-
+    
         get notificationListItems() {
             return this._notificationListItems;
         },
-
+    
         enableButtons() {
             this.notificationListItems.forEach((item) => {
                 item.classList.remove('pointer-events-none');
             });
         },
-
+    
         disableButtons() {
             this.notificationListItems.forEach((item) => {
                 item.classList.add('pointer-events-none');
             });
         },
-
+    
         handleOnNotificationSelection(uuid) {
             if (!uuid || this.isOpening) return;
-
+    
             this.isOpening = true;
-
+    
             let timeout = null;
-
+    
             try {
                 this.selected = uuid;
-
+    
                 timeout = setTimeout(async () => {
                     try {
                         await $wire.set('selected', uuid);
@@ -86,10 +94,10 @@
                 if (timeout) clearTimeout(timeout);
             }
         },
-
+    
         handleOnResetedFilters() {
             this.selected = null;
-
+    
             const reset = async () => {
                 try {
                     await $wire.set('selected', null);
@@ -97,19 +105,19 @@
                     console.error('Failed to reset filters:', err);
                 }
             };
-
+    
             reset();
         }
     }"
-    class="flex flex-col flex-1 overflow-hidden"
+    class="flex flex-col flex-1 overflow-hidden bg-gray-50"
     x-on:filter-reseted.window="handleOnResetedFilters()"
     x-on:filter-updated.window="handleOnResetedFilters()"
     x-on:open-group.window="({ detail }) => toggleGroupItem(detail)"
 >
     @forelse ($notificationRecipientItems as $groupName => $recipientNotifications)
         <div
-            class="flex flex-col"
-            x-bind:class="isOpenGroupItem('{{ md5($groupName) }}') && 'flex-1 overflow-hidden'"
+            class="flex flex-col transition-all duration-300"
+            x-bind:class="isOpenGroupItem('{{ md5($groupName) }}') ? 'flex-1 overflow-hidden' : 'h-auto'"
             {{-- x-on:click.outside="selected || closeGroupItem('{{ md5($groupName) }}')" --}}
             wire:key="{{ $getGroupItems()->keys()->join('-') }}"
         >

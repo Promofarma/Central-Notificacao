@@ -1,6 +1,7 @@
  <x-ui.button
-     size="small"
-     icon="archive"
+     size="sm"
+     icon="archive-box-arrow-down"
+     color="gray"
      wire:click="archive"
      wire-target="archive"
  >

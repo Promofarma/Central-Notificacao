@@ -25,7 +25,7 @@
         <x-ui.button
             type="submit"
             form="login-form"
-            size="large"
+            size="lg"
             full-size
             wire-target="handleFormSubmit"
         >

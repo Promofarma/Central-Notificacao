@@ -1,36 +1,36 @@
 <?php
 
-declare(strict_types=1);
+namespace App\FormSchema;
 
-namespace App\Forms\Schemas;
-
+use App\FormSchema\Contracts\FormSchemaContract;
 use App\Enums\AcceptedFileTypes;
-use App\Models\Category;
 use App\Models\Recipient;
 use Carbon\Carbon;
 use Filament\Forms\Components;
 use Filament\Forms\Components\Component;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\HtmlString;
 use Illuminate\Support\Number;
 use Illuminate\Support\Str;
 use Illuminate\Support\Stringable;
 
-class NotificationFormSchema
+final class NotificationFormSchema implements FormSchemaContract
 {
-    public static function get(): array
+    public function getComponents(): array
     {
         return [
             Components\Grid::make(12)
                 ->schema([
                     self::makeContent()->columnSpan([
                         'md' => 7,
-                        '3xl' => 9,
+                        '2xl' => 9,
                     ]),
                     self::makeAside()->columnSpan([
                         'md' => 5,
-                        '3xl' => 3,
+                        '2xl' => 3,
                     ]),
                 ]),
         ];
@@ -65,7 +65,8 @@ class NotificationFormSchema
                     ->directory('notification-attachments')
                     ->acceptedFileTypes(AcceptedFileTypes::keys())
                     ->hint(fn(Components\FileUpload $component): string => 'Tamanho máximo: ' . Number::fileSize($component->getMaxSize() * 1024))
-                    ->helperText('Arquivos aceitos: Imagem, PDF, Excel, Word, PowerPoint'),
+                    ->helperText('Arquivos aceitos: Imagem, PDF, Excel, Word, PowerPoint')
+                    ->visibleOn('create'),
             ]);
     }
 
@@ -73,18 +74,58 @@ class NotificationFormSchema
     {
         return Components\Grid::make(1)
             ->schema([
+                \App\Forms\Components\TargetType::make('target_type')
+                    ->label('Por')
+                    ->required()
+                    ->reactive()
+                    ->default('recipients')
+                    ->options([
+                        'recipients' => 'Lojas',
+                        'groups' => 'Grupos',
+                    ])
+                    ->descriptions([
+                        'recipients' => 'Selecione uma por uma.',
+                        'groups' => 'Escolha um grupo de lojas já configurado.'
+                    ])
+                    ->icons([
+                        'recipients' => 'heroicon-s-users',
+                        'groups' => 'heroicon-s-user-group'
+                    ])
+                    ->afterStateUpdated(function (Get $get, Set $set): void {
+                        self::resetRecipientIdsIfNecessary($get, $set);
+                    })
+                    ->visibleOn('create'),
+
                 Components\Select::make('recipient_ids')
-                    ->label('Destinatários')
+                    ->label(fn(Get $get): ?string => match ($get('target_type')) {
+                        'recipients' => 'Lojas',
+                        'groups' => 'Grupos',
+                        default => null,
+                    })
                     ->required(fn(Get $get): bool => ! $get('send_to_all_recipients'))
                     ->multiple()
-                    ->options(Recipient::orderBy('id')->pluck('name', 'id'))
+                    ->options(function (Get $get): Collection {
+                        /** @var \App\Models\User $currentUser */
+                        $currentUser = Auth::user();
+
+                        return match ($get('target_type')) {
+                            'groups' => $currentUser->groups()->active()->pluck('name', 'id'),
+                            default => Recipient::orderBy('id')->pluck('name', 'id'),
+                        };
+                    })
                     ->optionsLimit(fn(Components\Select $component) => count($component->getOptions()))
-                    ->disabled(fn(Get $get): bool => $get('send_to_all_recipients')),
+                    ->disabled(fn(Get $get): bool => $get('send_to_all_recipients') || !$get('target_type'))
+                    ->visibleOn('create'),
 
                 Components\Select::make('category_id')
                     ->label('Categoria')
                     ->required()
-                    ->options(Category::pluck('name', 'id')),
+                    ->options(function (): Collection {
+                        /** @var \App\Models\User $currentUser */
+                        $currentUser = Auth::user();
+
+                        return $currentUser->getTeamCategories();
+                    }),
 
                 self::makeOptions(),
             ]);
@@ -95,14 +136,16 @@ class NotificationFormSchema
         return Components\Fieldset::make('options')
             ->label('Opções')
             ->columns(1)
+            ->visibleOn('create')
             ->schema([
                 Components\Checkbox::make('send_to_all_recipients')
                     ->label('Enviar para todos os destinatários?')
                     ->reactive()
                     ->helperText('Marque esta opção para selecionar todos os destinatários automaticamente.')
-                    ->afterStateUpdated(function (Set $set): void {
-                        $set('recipient_ids', []);
-                    }),
+                    ->afterStateUpdated(function (Get $get, Set $set): void {
+                        self::resetRecipientIdsIfNecessary($get, $set);
+                    })
+                    ->disabled(fn(Get $get): bool => $get('target_type') === 'groups'),
 
                 Components\Checkbox::make('is_scheduled')
                     ->label('Programar envio?')
@@ -265,5 +308,14 @@ class NotificationFormSchema
                     })
                     ->columnSpanFull(),
             ]);
+    }
+
+    private static function resetRecipientIdsIfNecessary(Get $get, Set $set): void
+    {
+        if ($get('target_type') === 'groups' || ($get('target_type') === 'recipients' && $get('send_to_all_recipients'))) {
+            if (!empty($get('recipient_ids'))) {
+                $set('recipient_ids', []);
+            }
+        }
     }
 }

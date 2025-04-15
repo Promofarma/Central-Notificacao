@@ -9,7 +9,7 @@ use App\Models\Category;
 use App\Models\Recipient;
 use Filament\Forms\Components;
 
-class Filter extends BaseFilterComponent
+final class Filter extends BaseFilterComponent
 {
     protected function getView(): string
     {
@@ -20,9 +20,9 @@ class Filter extends BaseFilterComponent
     {
         return [
             $this->withHintClearAction(Components\TextInput::make('title'))
-                 ->label('Título')
-                 ->live(onBlur: true)
-                 ->placeholder('Pesquise pelo título da notificação'),
+                ->label('Título')
+                ->live(onBlur: true)
+                ->placeholder('Pesquise pelo título da notificação'),
 
             $this->withHintClearAction(Components\Select::make('recipient_ids'))
                 ->label('Destinatários')
@@ -32,10 +32,10 @@ class Filter extends BaseFilterComponent
                 ->optionsLimit(Recipient::count()),
 
             $this->withHintClearAction(Components\Select::make('category_id'))
-                 ->label('Categoria')
-                 ->live(onBlur: true)
-                 ->native(false)
-                 ->options(Category::pluck('name', 'id')),
+                ->label('Categoria')
+                ->live(onBlur: true)
+                ->native(false)
+                ->options(Category::pluck('name', 'id')),
 
             Components\Grid::make(1)
                 ->reactive()

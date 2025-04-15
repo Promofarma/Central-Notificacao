@@ -56,8 +56,8 @@ abstract class BasePage extends Component implements AccessControlContract
             view: $this->getView(),
             data: $this->mergeDefaultViewData($this->getViewData()),
         )
-        ->title($this->getTitle())
-        ->layout($this->getLayout());
+            ->title($this->getTitle())
+            ->layout($this->getLayout());
     }
 
     protected function mergeDefaultViewData(): array

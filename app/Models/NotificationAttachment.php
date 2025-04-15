@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Number;
 
-class NotificationAttachment extends Model
+final class NotificationAttachment extends Model
 {
     public function notification(): BelongsTo
     {
@@ -28,11 +28,11 @@ class NotificationAttachment extends Model
 
     protected function path(): Attribute
     {
-        return Attribute::get(fn (string $value): string => asset('storage/'.$value));
+        return Attribute::get(fn(string $value): string => asset('storage/' . $value));
     }
 
     protected function size(): Attribute
     {
-        return Attribute::get(fn (int $value): string => Number::fileSize($value));
+        return Attribute::get(fn(int $value): string => Number::fileSize($value));
     }
 }

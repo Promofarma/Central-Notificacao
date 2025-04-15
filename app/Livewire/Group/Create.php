@@ -2,12 +2,16 @@
 
 namespace App\Livewire\Group;
 
-use Livewire\Component;
+use App\Livewire\Component\Pages\BaseCreatePage;
+use App\Models\Group;
+use Illuminate\Database\Eloquent\Model;
 
-class Create extends Component
+final class Create extends BaseCreatePage
 {
-    public function render()
+    protected static string $view = 'livewire.group.create';
+
+    public function getModel(): Model
     {
-        return view('livewire.group.create');
+        return new Group;
     }
 }

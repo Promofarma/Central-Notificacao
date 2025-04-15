@@ -1,19 +1,28 @@
-<x-filter.wrapper :$activeFilters>
-    <x-slot:target>
-        <div class="flex justify-end pr-0.5">
-            <x-ui.button
-                icon="filter"
-                x-ref="target"
-                x-bind:class="{
-                    'ring ring-primary-200': isOpen,
-                }"
-            >
-                Filtros
-            </x-ui.button>
-        </div>
-    </x-slot:target>
+<div x-data="{
+    filterData: $wire.entangle('filterData'),
+
+    isOpen: false,
+
+    isFilled() {
+        return this.checkPropertiesIsFilled(this.filterData);
+    },
+
+    checkPropertiesIsFilled(obj) {
+        return Object.values(obj).some((value) => {
+            if (Array.isArray(value)) {
+                return value.length > 0;
+            }
+
+            if (typeof value === 'object' && value !== null) {
+                return this.checkPropertiesIsFilled(value);
+            }
+
+            return value !== null && value !== '';
+        });
+    }
+}">
     <div
-        class="absolute z-10 mt-3 bg-white border rounded-md shadow w-80 border-slate-200 shadow-black/5"
+        class="absolute z-10 mt-3 bg-white rounded-md shadow ring-1 w-80 ring-gray-200 shadow-black/5"
         x-show="isOpen"
         x-transition:enter="transition ease-out duration-200 transform"
         x-transition:enter-start="opacity-0 -translate-y-2"
@@ -21,14 +30,15 @@
         x-transition:leave="transition ease-out duration-200"
         x-transition:leave-start="opacity-100"
         x-transition:leave-end="opacity-0"
-        x-anchor.bottom-start="$refs.target"
         x-cloak
+        x-anchor.bottom-start="document.getElementById('trigger')"
+        x-on:open-filter.window="isOpen = !isOpen"
         @click.outside="isOpen = false"
     >
         <div class="flex items-center justify-between p-4">
-            <h4 class="text-base font-semibold text-slate-600">Filtros</h4>
+            <x-ui.heading level="4">Filtros</x-ui.heading>
             <x-ui.button
-                size="small"
+                size="sm"
                 icon="trash"
                 wire:click="handleFilterReset"
                 wire-target="handleFilterReset"
@@ -41,4 +51,4 @@
             {{ $this->form }}
         </div>
     </div>
-</x-filter.wrapper>
+</div>

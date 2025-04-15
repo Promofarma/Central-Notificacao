@@ -1,47 +1,83 @@
 <x-ui.page
     :$title
-    :$headerActions
+    :$headerButtons
 >
-    <x-slot:sub-header>
-        <div class="w-full mx-auto md:max-w-sm">
-            <x-ui.badge
-                icon="info"
-                color="white"
-            >
-                Criado por: <strong>{{ $notification->user->name }}</strong> em
-                <strong>{{ $notification->formatted_created_at }}</strong>
-            </x-ui.badge>
+    <div class="grid colsgrid-cols-1 md:grid-cols-3">
+
+        <div class="space-y-4 md:col-span-7 2xl:col-span-9">
+            <x-ui.heading
+                level="3"
+                size="base"
+            >Conteúdo</x-ui.heading>
+            <div class="prose prose-gray max-w-none">
+                {!! $notification->content !!}
+            </div>
         </div>
-    </x-slot:sub-header>
-    <div class="space-y-6">
-        <x-ui.container title="Conteúdo">
-            <div class="prose max-w-none prose-slate">
-                {!! html_entity_decode($notification->content) !!}
-            </div>
-        </x-ui.container>
 
-        @if ($notification->attachments->isNotEmpty())
-            <x-ui.container title="Anexos">
-                <div class="grid grid-cols-2 gap-3">
-                    @foreach ($notification->attachments as $attachment)
-                        <x-notification.attachment.item :$attachment />
-                    @endforeach
+        <div class="space-y-6 md:col-span-5 2xl:col-span-3">
+            <dl class="space-y-4">
+                <div class="space-y-1">
+                    <dt>
+                        <x-ui.text
+                            variant="strong"
+                            size="xs"
+                        >Categoria:</x-ui.text>
+                    </dt>
+                    <dd>
+                        <x-ui.badge>{{ $notification->category->name }}</x-ui.badge>
+                    </dd>
                 </div>
-            </x-ui.container>
-        @endif
 
-        <x-ui.container title="Destinatários">
-            <div class="flex flex-wrap items-center gap-3">
-                @foreach ($notification->recipients as $recipient)
-                    <x-notification.recipient.item :$recipient />
-                @endforeach
-            </div>
-        </x-ui.container>
+                <div class="space-y-1">
+                    <dt>
+                        <x-ui.text
+                            variant="strong"
+                            size="xs"
+                        >Criado por:</x-ui.text>
+                    </dt>
+                    <dd>
+                        <x-ui.text>{{ $notification->user->name }}</x-ui.text>
+                    </dd>
+                </div>
 
-        @if (filled($schedule = $notification->schedule))
-            <x-ui.container title="Lista de Notificações Agendadas">
-                <livewire:notification.schedule.index :results="$schedule->results" />
-            </x-ui.container>
-        @endif
+                <div class="space-y-1">
+                    <dt>
+                        <x-ui.text
+                            variant="strong"
+                            size="xs"
+                        >Criado em:</x-ui.text>
+                    </dt>
+                    <dd>
+                        <x-ui.text>{{ $notification->formatted_created_at }}</x-ui.text>
+                    </dd>
+                </div>
+
+                <div class="space-y-1">
+                    <dt>
+                        <x-ui.text
+                            variant="strong"
+                            size="xs"
+                        >Tipo de envio:</x-ui.text>
+                    </dt>
+                    <dd>
+                        <x-ui.text>{{ $notification->send_type->label() }}</x-ui.text>
+                    </dd>
+                </div>
+
+                <div class="space-y-1">
+                    <dt>
+                        <x-ui.text
+                            variant="strong"
+                            size="xs"
+                        >Destinatários:</x-ui.text>
+                    </dt>
+                    <dd class="grid grid-cols-9 gap-2">
+                        @foreach ($notification->recipients as $recipient)
+                            <x-notification.recipient.item :$recipient />
+                        @endforeach
+                    </dd>
+                </div>
+            </dl>
+        </div>
     </div>
 </x-ui.page>

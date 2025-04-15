@@ -2,12 +2,16 @@
 
 namespace App\Livewire\Group;
 
-use Livewire\Component;
+use App\Livewire\Component\Pages\BaseEditPage;
+use App\Models\Group;
+use Illuminate\Database\Eloquent\Model;
 
-class Edit extends Component
+final class Edit extends BaseEditPage
 {
-    public function render()
+    protected static string $view = 'livewire.group.edit';
+
+    public function getModel(): Model
     {
-        return view('livewire.group.edit');
+        return new Group;
     }
 }

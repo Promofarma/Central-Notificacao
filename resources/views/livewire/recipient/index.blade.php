@@ -3,12 +3,12 @@
         x-data="{
             tab: $persist('inbox').as('recipient-tab'),
         }"
-        class="flex flex-grow max-w-md border-r border-slate-200"
+        class="flex flex-grow max-w-md border-r border-gray-200"
     >
         <x-recipient.mini-sidebar :recipient-id="$recipientId" />
         <x-recipient.sidebar-wrapper
             title="Caixa de Entrada"
-            icon="inbox"
+            icon="heroicon-s-inbox"
             x-show="tab === 'inbox'"
             x-cloak
         >
@@ -16,7 +16,7 @@
         </x-recipient.sidebar-wrapper>
         <x-recipient.sidebar-wrapper
             title="Arquivadas"
-            icon="archive"
+            icon="heroicon-s-archive-box"
             x-show="tab === 'archived'"
             x-cloak
         >
@@ -24,7 +24,7 @@
         </x-recipient.sidebar-wrapper>
         <x-recipient.sidebar-wrapper
             title="Filtros"
-            icon="filter"
+            icon="heroicon-s-funnel"
             x-show="tab === 'filters'"
             x-cloak
         >

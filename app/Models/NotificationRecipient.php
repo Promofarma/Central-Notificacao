@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class NotificationRecipient extends Model
+final class NotificationRecipient extends Model
 {
     use HasFilter;
 

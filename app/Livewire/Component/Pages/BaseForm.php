@@ -44,8 +44,8 @@ abstract class BaseForm extends Panel implements HasModelContract, HasForms
         return BladeCompiler::renderComponent(
             new Button(
                 text: 'Voltar',
-                icon: 'undo-2',
-                color: 'white',
+                icon: 'arrow-uturn-left',
+                color: 'gray',
                 href: route($this->getResourceRouteName(ResourceOperation::Index))
             )
         );
@@ -57,7 +57,7 @@ abstract class BaseForm extends Panel implements HasModelContract, HasForms
             new Button(
                 type: 'submit',
                 text: 'Salvar',
-                icon: 'save',
+                icon: 'check',
                 formId: $this->getFormId(),
                 wireTarget: 'handleOnSubmit',
             )
@@ -103,17 +103,16 @@ abstract class BaseForm extends Panel implements HasModelContract, HasForms
 
     public function canAccess(): bool
     {
-        return true;
-        // $resource = $this->getSingularModelName();
+        $resource = $this->getSingularModelName();
 
-        // return match ($this->getResourceOperation()) {
-        //     ResourceOperation::Edit => $this->canUpdate($resource),
-        //     ResourceOperation::Create  => $this->canCreate($resource),
-        //     default => throw new \InvalidArgumentException('Invalid Resource Operation'),
-        // };
+        return match ($this->getResourceOperation()) {
+            ResourceOperation::Edit => $this->canUpdate($resource),
+            ResourceOperation::Create  => $this->canCreate($resource),
+            default => throw new \InvalidArgumentException('Invalid Resource Operation'),
+        };
     }
 
-    public function mount(?int $id = null): void
+    public function mount(int|string|null $id = null): void
     {
         parent::mount();
 
@@ -125,7 +124,7 @@ abstract class BaseForm extends Panel implements HasModelContract, HasForms
         return $this->record;
     }
 
-    protected function resolveModel(?int $id = null): void
+    protected function resolveModel(int|string|null $id = null): void
     {
         $this->record = $id
             ? $this->getModel()->findOrFail($id)
