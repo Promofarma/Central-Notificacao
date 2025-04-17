@@ -6,9 +6,7 @@ use App\Helpers\AssetFileResponse;
 use App\Http\Controllers\LogoutController;
 use App\Livewire\Auth\Login;
 // use App\Livewire\Dashboard\Dashboard; // TODO: implement dashboard
-use App\Livewire\Notification\Create;
-use App\Livewire\Notification\Index;
-use App\Livewire\Notification\Show;
+
 use App\Livewire\Recipient\Index as RecipientIndex;
 use Illuminate\Support\Facades\Route;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
@@ -25,14 +23,18 @@ Route::group(['middleware' => 'auth'], function (): void {
     Route::redirect('/dashboard', '/notifications');
     // Route::get('/dashboard', Dashboard::class)->name('dashboard'); // TODO: implement dashboard
 
-    Route::group(['prefix' => 'notifications'], function (): void {
-        Route::get('/', Index::class)->name('notification.index');
-        Route::get('/create', Create::class)->name('notification.create');
-        Route::get('/{notification}', Show::class)->name('notification.show');
-    });
+    Route::group(['prefix' => 'notifications'], base_path('routes/features/notification.php'));
+    Route::group(['prefix' => 'groups'], routes: base_path('routes/features/group.php'));
+
+    Route::group(['prefix' => 'users'], routes: base_path('routes/admin/user.php'));
+    Route::group(['prefix' => 'recipients'], routes: base_path('routes/admin/recipient.php'));
+    Route::group(['prefix' => 'teams'], routes: base_path('routes/admin/team.php'));
+    Route::group(['prefix' => 'categories'], routes: base_path('routes/admin/category.php'));
+    Route::group(['prefix' => 'roles'], routes: base_path('routes/admin/role.php'));
+    Route::group(['prefix' => 'permissions'], routes: base_path('routes/admin/permission.php'));
 });
 
 Route::group(['prefix' => 'assets'], function (): void {
-    Route::get('notification-toast.js', fn (): BinaryFileResponse => AssetFileResponse::make('notification/index.js', false)->toFileResponse());
-    Route::get('notification-toast.css', fn (): BinaryFileResponse => AssetFileResponse::make('notification/toast.css', false)->toFileResponse());
+    Route::get('notification-toast.js', fn(): BinaryFileResponse => AssetFileResponse::make('notification/index.js', false)->toFileResponse());
+    Route::get('notification-toast.css', fn(): BinaryFileResponse => AssetFileResponse::make('notification/toast.css', false)->toFileResponse());
 });

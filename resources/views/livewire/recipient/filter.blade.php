@@ -3,7 +3,7 @@
         {{ $this->form }}
 
         <x-ui.button
-            size="small"
+            size="sm"
             icon="trash"
             wire:click="handleFilterReset"
             wire-target="handleFilterReset"

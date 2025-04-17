@@ -22,9 +22,6 @@ export default {
             fontFamily: {
                 sans: ["Inter", ...defaultTheme.fontFamily.sans],
             },
-            backgroundImage: {
-                "grid-pattern": "url('/public/grid-pattern.png')",
-            },
         },
     },
     plugins: [aspectRatio, forms, typography],

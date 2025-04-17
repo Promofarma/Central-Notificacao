@@ -7,8 +7,13 @@ namespace App\Policies;
 use App\Models\Notification;
 use App\Models\User;
 
-class NotificationPolicy
+final class NotificationPolicy
 {
+    public function update(User $user, Notification $notification): bool
+    {
+        return $user->id === $notification->user_id;
+    }
+
     public function delete(User $user, Notification $notification): bool
     {
         return $user->id === $notification->user_id;

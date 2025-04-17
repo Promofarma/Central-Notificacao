@@ -5,11 +5,12 @@ declare(strict_types=1);
 namespace App\Livewire\Notification;
 
 use App\Filters\BaseFilterComponent;
-use App\Models\Category;
 use App\Models\Recipient;
+use App\Models\User;
 use Filament\Forms\Components;
+use Illuminate\Support\Facades\Auth;
 
-class Filter extends BaseFilterComponent
+final class Filter extends BaseFilterComponent
 {
     protected function getView(): string
     {
@@ -20,9 +21,15 @@ class Filter extends BaseFilterComponent
     {
         return [
             $this->withHintClearAction(Components\TextInput::make('title'))
-                 ->label('Título')
-                 ->live(onBlur: true)
-                 ->placeholder('Pesquise pelo título da notificação'),
+                ->label('Título')
+                ->live(onBlur: true)
+                ->placeholder('Pesquise pelo título da notificação'),
+
+            $this->withHintClearAction(Components\Select::make('user_ids'))
+                ->label('Usuário')
+                ->live(onBlur: true)
+                ->multiple()
+                ->options($this->getCurrentUser()->getTeamUsers()),
 
             $this->withHintClearAction(Components\Select::make('recipient_ids'))
                 ->label('Destinatários')
@@ -32,10 +39,10 @@ class Filter extends BaseFilterComponent
                 ->optionsLimit(Recipient::count()),
 
             $this->withHintClearAction(Components\Select::make('category_id'))
-                 ->label('Categoria')
-                 ->live(onBlur: true)
-                 ->native(false)
-                 ->options(Category::pluck('name', 'id')),
+                ->label('Categoria')
+                ->live(onBlur: true)
+                ->native(false)
+                ->options($this->getCurrentUser()->getTeamCategories()),
 
             Components\Grid::make(1)
                 ->reactive()
@@ -47,5 +54,10 @@ class Filter extends BaseFilterComponent
                         ->label('Até'),
                 ]),
         ];
+    }
+
+    private function getCurrentUser(): User
+    {
+        return Auth::user();
     }
 }

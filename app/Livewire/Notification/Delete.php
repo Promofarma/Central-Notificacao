@@ -15,7 +15,7 @@ use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
 
-class Delete extends Component
+final class Delete extends Component
 {
     use AuthorizesRequests;
 

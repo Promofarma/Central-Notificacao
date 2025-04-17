@@ -4,36 +4,19 @@ declare(strict_types=1);
 
 namespace App\Livewire\Ui\Modal;
 
-use Illuminate\Contracts\View\Factory;
-use Illuminate\Contracts\View\View;
-use Livewire\Attributes\On;
+use App\Livewire\Ui\Concerns\HasOpenState;
+use App\Livewire\Ui\Contracts\Openable;
 use Livewire\Component;
 
-abstract class Modal extends Component
+abstract class Modal extends Component implements Openable
 {
-    public bool $isOpen = false;
+    use HasOpenState;
 
-    #[On('open-modal')]
-    public function open(): void
+    final public function registerListeners(): array
     {
-        $this->isOpen = true;
-    }
-
-    #[On('close-modal')]
-    public function close(): void
-    {
-        $this->isOpen = false;
-    }
-
-    abstract protected function getView(): string;
-
-    protected function getViewData(): array
-    {
-        return [];
-    }
-
-    public function render(): View|Factory
-    {
-        return view($this->getView(), $this->getViewData());
+        return [
+            'open-modal' => 'open',
+            'close-modal' => 'close',
+        ];
     }
 }

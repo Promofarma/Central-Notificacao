@@ -35,5 +35,7 @@ class DefaultUserSeeder extends Seeder
                 'password' => Hash::make(12345),
             ]);
         }
+
+        $user = User::first()->assignRole('admin');
     }
 }

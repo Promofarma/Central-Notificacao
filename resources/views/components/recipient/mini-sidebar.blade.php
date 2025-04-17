@@ -1,7 +1,7 @@
-<div class="flex bg-white flex-col w-full border-r gap-y-4 shrink-0 max-w-[5rem] border-slate-200">
-    <header class="grid bg-white border-b h-14 place-content-center shrink-0 border-slate-200">
+<div class="flex bg-white flex-col w-full border-r gap-y-4 shrink-0 max-w-[5.5rem] border-gray-200">
+    <header class="grid bg-white border-b border-gray-200 h-14 place-content-center shrink-0">
         <a href="{{ route('recipient.index', $recipientId) }}">
-            <figure class="w-10 h-10 rounded-lg shadow-sm bg-primary-500 shadow-slate-300/10">
+            <figure class="w-10 h-10 rounded-full shadow-sm bg-primary-600">
                 <img
                     src="{{ asset('logo.webp') }}"
                     alt="Logo Promofarma"
@@ -15,19 +15,19 @@
     <nav class="flex flex-col items-center gap-y-4">
         <x-recipient.mini-sidebar-button
             tabId="inbox"
-            icon-name="inbox"
+            icon="heroicon-s-inbox"
             label="Caixa de Entrada"
             @click="tab = 'inbox'"
         />
         <x-recipient.mini-sidebar-button
             tabId="archived"
-            icon-name="archive"
+            icon="heroicon-s-archive-box"
             label="Arquivadas"
             @click="tab = 'archived'"
         />
         <x-recipient.mini-sidebar-button
             tabId="filters"
-            icon-name="filter"
+            icon="heroicon-s-funnel"
             label="Filtros"
             @click="tab = 'filters'"
         />

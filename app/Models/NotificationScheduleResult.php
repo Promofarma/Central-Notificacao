@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Carbon;
 
-class NotificationScheduleResult extends Model
+final class NotificationScheduleResult extends Model
 {
     public $timestamps = false;
 
@@ -28,7 +28,7 @@ class NotificationScheduleResult extends Model
     protected function displayScheduledDate(): Attribute
     {
         return Attribute::get(
-            fn (mixed $value = null, array $attributes): ?string => $attributes['scheduled_date']
+            fn(mixed $value = null, array $attributes): ?string => $attributes['scheduled_date']
                 ? Carbon::parse($attributes['scheduled_date'])->format('d \\d\\e M Y')
                 : null
         );
@@ -37,8 +37,8 @@ class NotificationScheduleResult extends Model
     protected function displayScheduledTime(): Attribute
     {
         return Attribute::get(
-            fn (mixed $value = null, array $attributes): ?string => $attributes['scheduled_time']
-                ? 'às '.Carbon::parse($attributes['scheduled_time'])->format('H:i')
+            fn(mixed $value = null, array $attributes): ?string => $attributes['scheduled_time']
+                ? 'às ' . Carbon::parse($attributes['scheduled_time'])->format('H:i')
                 : null
         );
     }

@@ -5,11 +5,11 @@
     <div
         x-data="{
             imagePath: null,
-
+        
             slides: @js($images),
-
+        
             currentSlideIndex: 1,
-
+        
             previous() {
                 if (this.currentSlideIndex > 1) {
                     this.currentSlideIndex = this.currentSlideIndex - 1
@@ -17,7 +17,7 @@
                     this.currentSlideIndex = this.slides.length
                 }
             },
-
+        
             next() {
                 if (this.currentSlideIndex < this.slides.length) {
                     this.currentSlideIndex = this.currentSlideIndex + 1
@@ -26,7 +26,7 @@
                 }
             },
         }"
-        class="relative w-full overflow-hidden border-gray-200 border-y"
+        class="relative w-full overflow-hidden"
     >
         <button
             type="button"

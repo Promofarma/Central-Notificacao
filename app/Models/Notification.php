@@ -4,16 +4,21 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Enums\NotificationSendType;
 use App\Filters\Concerns\HasFilter;
 use App\Helpers\FormatsTimestamps;
+use App\Observers\NotificationObserver;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Support\Str;
 
-class Notification extends Model
+#[ObservedBy(NotificationObserver::class)]
+final class Notification extends Model
 {
     use FormatsTimestamps;
     use HasFilter;
@@ -31,14 +36,8 @@ class Notification extends Model
             'category_id' => 'integer',
             'user_id' => 'integer',
             'scheduled_date' => 'date',
+            'scheduled_time' => 'datetime',
         ];
-    }
-
-    protected static function booted(): void
-    {
-        static::creating(function (Model $model): void {
-            $model->uuid = Str::orderedUuid()->toString();
-        });
     }
 
     public function recipients(): HasMany
@@ -64,6 +63,15 @@ class Notification extends Model
     public function schedule(): HasOne
     {
         return $this->hasOne(NotificationSchedule::class);
+    }
+
+    protected function sendType(): Attribute
+    {
+        return Attribute::get(fn(): NotificationSendType => match (true) {
+            filled($this->schedule) => NotificationSendType::RECURRING,
+            filled($this->scheduled_date) => NotificationSendType::SCHEDULED,
+            default => NotificationSendType::SENT,
+        });
     }
 
     public function scopeScheduled(Builder $query): Builder

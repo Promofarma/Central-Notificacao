@@ -9,10 +9,11 @@ use Closure;
 use Illuminate\Contracts\View\View;
 use Illuminate\View\Component;
 
-class Item extends Component
+final class Item extends Component
 {
     public function __construct(
-        public NotificationAttachment $attachment
+        public NotificationAttachment $attachment,
+        public string $direction = 'row',
     ) {
     }
 

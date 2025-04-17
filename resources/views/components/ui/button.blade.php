@@ -1,48 +1,43 @@
 @php
     $textOrSlot = $text ?? (isset($slot) ? $slot : null);
 @endphp
-<{{ $getTag() }}
-    {{ $attributes->class([
-            'px-2 py-[0.188rem] text-xs' => $size === 'small',
-            'px-3 py-[0.313rem] text-sm font-semibold' => $size === 'medium',
-            'px-4 py-2 text-base font-semibold' => $size === 'large',
-            'bg-white border border-slate-200 active:bg-slate-200 text-slate-900 hover:bg-slate-50' => $color === 'white',
-            'bg-primary-500 text-white active:bg-primary-700 hover:bg-primary-600' => $color === 'primary',
-            'bg-green-500 text-white active:bg-green-700 hover:bg-green-600' => $color === 'success',
-            'bg-red-500 text-white active:bg-red-700 hover:bg-red-600' => $color === 'danger',
-            'bg-amber-500 text-white active:bg-amber-700 hover:bg-amber-600' => $color === 'warning',
-            'bg-sky-500 text-white active:bg-sky-700 hover:bg-sky-600' => $color === 'info',
-            'rounded' => $shape === 'rounded',
-            'rounded-full' => $shape === 'circular',
-            'gap-2' => $icon && $textOrSlot != '',
-            'flex-row-reverse' => $iconPosition === 'after',
-            'w-full' => $fullSize,
-            'max-w-max' => !$fullSize,
-        ])->merge(
-            array_merge($getTagAttributes(), [
-                'class' =>
-                    'flex items-center cursor-pointer justify-center overflow-hidden text-center align-middle transition duration-150 disabled:opacity-60 focus:outline-none',
-            ]),
-        ) }}
->
-    @if ($icon)
-        <!-- Icon -->
-        <x-dynamic-component
-            component="icon"
-            :name="$getIcon()"
-            class="stroke-current {{ $getIconSize() }}"
-            wire:loading.remove
-            wire:target="{{ $wireTarget }}"
-        />
-        <!-- Icon -->
-    @endif
-    <!-- Text or Slot -->
-    <x-lucide-loader
-        class="stroke-current animate-spin {{ $getIconSize() }}"
-        wire:loading
-        wire:target="{{ $wireTarget }}"
-    />
-    <span
-        @if ($wireTarget) wire:target="{{ $wireTarget }}" wire:loading.remove @endif>{{ $textOrSlot }}</span>
-    <!-- Text or Slot -->
+<{{ $getTag() }} {!! $attributes->class([
+        'px-2 h-6 text-xs' => $size === 'sm',
+        'px-3 h-8 text-sm' => $size === 'default',
+        'px-4 text-base h-10' => $size === 'lg',
+        'bg-white ring-1 shadow-xs ring-gray-950/10 text-gray-950 hover:bg-gray-50 active:bg-gray-100/75' =>
+            $color === 'gray',
+        'bg-primary-600 text-white hover:bg-primary-700 active:bg-primary-800' => $color === 'primary',
+        'bg-green-500 text-white hover:bg-green-600 active:bg-green-800' => $color === 'success',
+        'bg-red-500 text-white hover:bg-red-600 active:bg-red-800' => $color === 'danger',
+        'bg-amber-500 text-white hover:bg-amber-600 active:bg-amber-800' => $color === 'warning',
+        'bg-sky-500 text-white hover:bg-sky-600 active:bg-sky-800' => $color === 'info',
+        'rounded' => $shape === 'rounded',
+        'rounded-full' => $shape === 'circular',
+        'w-full' => $fullSize,
+        'max-w-max' => !$fullSize,
+    ])->merge(
+        array_merge($getTagAttributes(), [
+            'class' =>
+                'relative flex items-center cursor-pointer justify-center whitespace-nowrap overflow-hidden text-center tracking-wide font-medium align-middle transition duration-75 focus:outline-none disabled:pointer-events-none disabled:opacity-75 data-[loading]:opacity-75 data-[loading]:pointer-events-none',
+        ]),
+    ) !!}>
+    <div @class([
+        'flex items-center gap-2' => $icon && $textOrSlot != '',
+        'flex-row-reverse' => $iconPosition === 'after',
+        '[[data-loading]>&]:opacity-0',
+    ])>
+        @if ($icon)
+            <x-dynamic-component
+                component="icon"
+                :name="$getIcon()"
+                class="stroke-current {{ $getIconSize() }}"
+            />
+        @endif
+        {{ $textOrSlot }}
+    </div>
+
+    <div class="[[data-loading]>&]:opacity-100 opacity-0 absolute inset-0 flex items-center justify-center">
+        <x-ui.spinner />
+    </div>
     </{{ $getTag() }}>

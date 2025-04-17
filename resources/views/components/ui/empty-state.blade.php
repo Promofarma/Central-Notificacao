@@ -1,18 +1,25 @@
-<div class="flex flex-col items-center justify-center p-6 border border-dashed rounded-lg gap-y-3 border-slate-200">
+<div class="flex flex-col items-center justify-center p-6 text-center opacity-90 gap-y-3">
     @isset($icon)
-        <div
-            class="flex items-center justify-center shrink-0 p-2 rounded-lg bg-slate-200 text-slate-400 [&>svg]:size-6 [&>svg]:stroke-slate-400">
+        <div class="flex items-center justify-center w-12 h-12 p-2 bg-gray-100 rounded-full text-gray-700 [&>svg]:size-6">
             {{ $icon }}
         </div>
     @endisset
+
     @isset($title)
-        <h4 class="text-sm font-semibold text-slate-600">
+        <x-ui.heading
+            level="4"
+            size="base"
+        >
             {{ $title }}
-        </h4>
+        </x-ui.heading>
     @endisset
+
     @isset($description)
-        <p class="text-xs text-slate-500">
+        <x-ui.text
+            size="xs"
+            variant="subtle"
+        >
             {{ $description }}
-        </p>
+        </x-ui.text>
     @endisset
 </div>

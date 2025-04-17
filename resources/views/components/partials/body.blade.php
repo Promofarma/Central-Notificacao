@@ -1,4 +1,4 @@
-<body class="text-base antialiased bg-slate-50 text-slate-900">
+<body class="text-base antialiased text-gray-950 bg-gray-50">
     {{ $slot }}
 
     @livewire('notifications')

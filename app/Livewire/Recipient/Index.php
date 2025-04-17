@@ -6,7 +6,7 @@ namespace App\Livewire\Recipient;
 
 use App\Filters\Concerns\InteractsWithFilterData;
 use App\Filters\NotificationRecipientFilter;
-use App\Livewire\Ui\Page\Page;
+use App\Livewire\Component\Pages\BasePage;
 use App\Models\Category;
 use App\Models\NotificationRecipient;
 use Illuminate\Support\Collection;
@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\Cache;
 use Livewire\Attributes\Locked;
 use Livewire\Attributes\On;
 
-class Index extends Page
+final class Index extends BasePage
 {
     use InteractsWithFilterData;
 
@@ -110,7 +110,7 @@ class Index extends Page
         return sprintf('notification_recipient:%d', $this->recipientId);
     }
 
-    protected function getViewData(): array
+    public function getViewData(): array
     {
         return [
             'unarchivedNotificationRecipients' => $this->getUnarchivedNotificationRecipients(),

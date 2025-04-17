@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Livewire\Auth;
 
-use App\Livewire\Ui\Page\Page;
+use App\Livewire\Component\Pages\BasePage;
 use App\Livewire\Ui\Toast\Toast;
 use Filament\Forms\Components;
 use Filament\Forms\Concerns\InteractsWithForms;
@@ -18,17 +18,17 @@ use Livewire\Features\SupportRedirects\Redirector;
 /**
  * @property Form $form
  */
-class Login extends Page implements HasForms
+final class Login extends BasePage implements HasForms
 {
     use InteractsWithForms;
+
+    protected const REDIRECT_TO_ROUTE = 'notification.index';
 
     protected static string $layout = 'components.layouts.guest';
 
     protected static string $view = 'livewire.auth.login';
 
     protected static ?string $title = 'Acesse sua conta';
-
-    protected const REDIRECT_TO_ROUTE = 'notification.index';
 
     public ?array $data = [];
 
@@ -63,19 +63,19 @@ class Login extends Page implements HasForms
         $this->form->fill();
     }
 
-    public function handleFormSubmit(Request $request): Redirector|RedirectResponse
+    public function handleFormSubmit(Request $request)
     {
         if (! $this->attemptLogin($this->getCredentials(), $this->isRememberMe())) {
             Toast::error(
                 body: 'E-mail ou senha inválidos. Verifique suas credenciais e tente novamente.'
             )->now();
 
-            return back();
+            return;
         }
 
         $request->session()->regenerate();
 
-        return to_route(static::REDIRECT_TO_ROUTE);
+        return $this->redirectRoute(self::REDIRECT_TO_ROUTE, navigate: true);
     }
 
     protected function getCredentials(): array

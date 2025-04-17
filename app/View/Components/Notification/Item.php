@@ -10,12 +10,11 @@ use Illuminate\Contracts\View\View;
 use Illuminate\Support\Number;
 use Illuminate\View\Component;
 
-class Item extends Component
+final class Item extends Component
 {
     public function __construct(
         public Notification $notification,
-    ) {
-    }
+    ) {}
 
     public function getPercentageRead(): string
     {
