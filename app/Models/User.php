@@ -67,4 +67,13 @@ final class User extends Authenticatable
             ->unique('id')
             ->pluck('name', 'id');
     }
+
+    public function getTeamUsers(): Collection
+    {
+        return $this->load('teams.users')
+            ->teams
+            ->flatMap(fn(Team $team): Collection => $team->users)
+            ->unique('id')
+            ->pluck('name', 'id');
+    }
 }

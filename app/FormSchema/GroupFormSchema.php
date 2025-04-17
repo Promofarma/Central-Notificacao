@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace App\FormSchema;
 
@@ -29,8 +29,9 @@ final class GroupFormSchema implements FormSchemaContract
             Components\CheckboxList::make('recipients')
                 ->label('Lojas')
                 ->required()
+                ->searchable()
                 ->bulkToggleable()
-                ->columns(3)
+                ->columns(2)
                 ->relationship('recipients', 'name')
                 ->visibleOn('edit')
         ];

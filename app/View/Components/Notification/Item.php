@@ -4,21 +4,14 @@ declare(strict_types=1);
 
 namespace App\View\Components\Notification;
 
-use App\Enums\NotificationSendType;
 use App\Models\Notification;
 use Closure;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Number;
 use Illuminate\View\Component;
 
-class Item extends Component
+final class Item extends Component
 {
-    public const SENT = 'sent';
-
-    public const SCHEDULED = 'scheduled';
-
-    public const RECURRING = 'recurring';
-
     public function __construct(
         public Notification $notification,
     ) {}

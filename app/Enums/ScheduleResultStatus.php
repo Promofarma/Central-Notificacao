@@ -17,18 +17,27 @@ enum ScheduleResultStatus: string implements Arrayable
 
     case Cancelled = 'cancelled';
 
-    public static function icon(ScheduleResultStatus $value): string
+    public function label(): string
     {
-        return match ($value) {
-            self::Pending => 'circle-dot',
-            self::Created => 'check',
-            self::Cancelled => 'x',
+        return match ($this) {
+            self::Pending => 'Pendente',
+            self::Created => 'Criado',
+            self::Cancelled => 'Cancelado',
         };
     }
 
-    public static function color(ScheduleResultStatus $value): string
+    public function icon(): string
     {
-        return match ($value) {
+        return match ($this) {
+            self::Pending => 'heroicon-m-clock',
+            self::Created => 'heroicon-m-check',
+            self::Cancelled => 'heroicon-m-x-mark',
+        };
+    }
+
+    public function color(): string
+    {
+        return match ($this) {
             self::Pending => 'warning',
             self::Created => 'success',
             self::Cancelled => 'danger',

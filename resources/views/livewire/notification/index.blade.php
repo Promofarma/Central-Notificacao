@@ -2,7 +2,7 @@
     :$title
     :$headerButtons
 >
-    <div>
+    <div x-on:notification-deleted.window="console.log($event.detail)">
         <livewire:notification.filter />
 
         <div @class([
@@ -30,4 +30,6 @@
             @endforelse
         </div>
     </div>
+    <livewire:notification.modal.show />
+    <livewire:notification.drawer.edit />
 </x-ui.page>

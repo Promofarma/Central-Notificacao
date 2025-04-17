@@ -3,6 +3,7 @@
     'color' => 'gray',
     'icon' => null,
     'variant' => null,
+    'fullSize' => false,
 ])
 
 <span @class([
@@ -17,6 +18,7 @@
     'text-gray-700 bg-gray-400/20' => $color === 'gray',
     'rounded-full px-3' => $variant === 'pill',
     'rounded-md px-2' => blank($variant),
+    'w-full' => $fullSize,
     'font-medium whitespace-nowrap inline-flex items-center justify-center [&>svg]:size-4 [&>svg]:shrink-0',
 ])>
     @if ($icon)

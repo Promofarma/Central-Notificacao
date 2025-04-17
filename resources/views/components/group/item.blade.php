@@ -3,7 +3,7 @@
 <div
     {!! $attributes->merge([
         'class' =>
-            'bg-white rounded-lg p-5 ring-1 ring-gray-200 shadow-sm relative flex flex-col items-center text-center gap-y-4',
+            'bg-white rounded-lg p-4 ring-1 ring-gray-200 shadow-sm relative flex flex-col items-center text-center gap-y-4',
     ]) !!}
     @click.away="isOpen = false"
 >
@@ -85,7 +85,7 @@
                 @can('update group')
                     <div class="p-2">
                         <x-ui.button
-                            :href="route('group.edit', $group)"
+                            @click.prevent="$wire.dispatchTo('group.drawer.edit', 'open-drawer', { id: '{{ $group->id }}' } )"
                             size="sm"
                             icon="pencil"
                             color="gray"
@@ -118,4 +118,6 @@
             {{ $group->status->label() }}
         </x-ui.badge>
     </div>
+
+    <livewire:group.drawer.edit />
 </div>

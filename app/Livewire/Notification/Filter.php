@@ -5,9 +5,10 @@ declare(strict_types=1);
 namespace App\Livewire\Notification;
 
 use App\Filters\BaseFilterComponent;
-use App\Models\Category;
 use App\Models\Recipient;
+use App\Models\User;
 use Filament\Forms\Components;
+use Illuminate\Support\Facades\Auth;
 
 final class Filter extends BaseFilterComponent
 {
@@ -24,6 +25,12 @@ final class Filter extends BaseFilterComponent
                 ->live(onBlur: true)
                 ->placeholder('Pesquise pelo título da notificação'),
 
+            $this->withHintClearAction(Components\Select::make('user_ids'))
+                ->label('Usuário')
+                ->live(onBlur: true)
+                ->multiple()
+                ->options($this->getCurrentUser()->getTeamUsers()),
+
             $this->withHintClearAction(Components\Select::make('recipient_ids'))
                 ->label('Destinatários')
                 ->live(onBlur: true)
@@ -35,7 +42,7 @@ final class Filter extends BaseFilterComponent
                 ->label('Categoria')
                 ->live(onBlur: true)
                 ->native(false)
-                ->options(Category::pluck('name', 'id')),
+                ->options($this->getCurrentUser()->getTeamCategories()),
 
             Components\Grid::make(1)
                 ->reactive()
@@ -47,5 +54,10 @@ final class Filter extends BaseFilterComponent
                         ->label('Até'),
                 ]),
         ];
+    }
+
+    private function getCurrentUser(): User
+    {
+        return Auth::user();
     }
 }

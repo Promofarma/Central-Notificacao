@@ -50,6 +50,7 @@ final class Index extends Panel
     }
 
     #[Computed]
+    #[On('notification-updated')]
     #[On('notification-deleted')]
     public function notifications(): Collection
     {

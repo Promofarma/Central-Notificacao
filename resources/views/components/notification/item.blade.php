@@ -1,11 +1,8 @@
 @use('\App\Enums\NotificationSendType')
 
-<div
-    href="{{ route('notification.show', $notification) }}"
-    {!! $attributes->merge([
-        'class' => 'bg-white rounded-lg ring-1 ring-gray-200 shadow-sm relative flex flex-col justify-between',
-    ]) !!}
->
+<div {!! $attributes->merge([
+    'class' => 'bg-white rounded-lg ring-1 ring-gray-200 shadow-sm relative flex flex-col justify-between',
+]) !!}>
     <div class="p-4 space-y-4">
         <div class="flex items-center gap-3">
             <div
@@ -142,7 +139,7 @@
                 @can('update', $notification)
                     <div class="p-2 space-y-2">
                         <x-ui.button
-                            :href="route('notification.show', $notification)"
+                            @click.prevent="$wire.dispatchTo('notification.modal.show', 'open-modal', { notification: '{{ $notification->uuid }}' } )"
                             size="sm"
                             icon="eye"
                             color="gray"
@@ -154,7 +151,7 @@
                         </x-ui.button>
 
                         <x-ui.button
-                            :href="route('notification.edit', $notification)"
+                            @click.prevent="$wire.dispatchTo('notification.drawer.edit', 'open-drawer', { id: '{{ $notification->uuid }}' } )"
                             size="sm"
                             icon="pencil"
                             color="gray"

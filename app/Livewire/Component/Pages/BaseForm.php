@@ -7,6 +7,7 @@ namespace App\Livewire\Component\Pages;
 use App\FormSchema\Contracts\FormSchemaContract;
 use App\Livewire\Component\Pages\Concerns\InteractsWithAuthenticatedUser;
 use App\Livewire\Component\Pages\Concerns\ProvidesModelNames;
+use App\Livewire\Component\Pages\Concerns\ResolvesModelFormSchema;
 use App\Livewire\Component\Pages\Contracts\HasModelContract;
 use App\Livewire\Component\Pages\Enums\ResourceOperation;
 use App\View\Components\Ui\Button;
@@ -16,22 +17,24 @@ use Filament\Forms\Form;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\View\Compilers\BladeCompiler;
 use Livewire\Attributes\Locked;
+use InvalidArgumentException;
 
 /**
  * @property Form $form
  */
-abstract class BaseForm extends Panel implements HasModelContract, HasForms
+abstract class BaseForm extends Panel implements HasForms, HasModelContract
 {
-    use ProvidesModelNames;
-    use InteractsWithForms;
     use InteractsWithAuthenticatedUser;
+    use InteractsWithForms;
+    use ProvidesModelNames;
+    use ResolvesModelFormSchema;
 
     public ?array $data = [];
 
     #[Locked]
     public ?Model $record = null;
 
-    public function getHeaderButtons(): array
+    final public function getHeaderButtons(): array
     {
         return [
             $this->getBackButton(),
@@ -64,62 +67,43 @@ abstract class BaseForm extends Panel implements HasModelContract, HasForms
         );
     }
 
-    public function getViewData(): array
+    final public function getViewData(): array
     {
         return [
             'formId' => $this->getFormId(),
         ];
     }
 
-    public function form(Form $form): Form
+    final public function form(Form $form): Form
     {
         return $form
             ->statePath('data')
-            ->schema($this->getFormSchema()->getComponents())
+            ->schema($this->getFormSchemaClass()->getComponents())
             ->model($this->getRecord())
             ->operation(
                 operation: $this->getResourceOperation()->value,
             );
     }
 
-    protected function getFormSchema(): FormSchemaContract
-    {
-        $formSchemaClassName = sprintf(
-            '\\App\\FormSchema\\%sFormSchema',
-            $this->getSingularModelName()
-        );
-
-        if (! class_exists($formSchemaClassName)) {
-            throw new \InvalidArgumentException(
-                sprintf(
-                    'A class [%s] not found',
-                    $formSchemaClassName
-                )
-            );
-        }
-
-        return new $formSchemaClassName();
-    }
-
-    public function canAccess(): bool
+    final public function canAccess(): bool
     {
         $resource = $this->getSingularModelName();
 
         return match ($this->getResourceOperation()) {
             ResourceOperation::Edit => $this->canUpdate($resource),
             ResourceOperation::Create  => $this->canCreate($resource),
-            default => throw new \InvalidArgumentException('Invalid Resource Operation'),
+            default => throw new InvalidArgumentException('Invalid Resource Operation'),
         };
     }
 
-    public function mount(int|string|null $id = null): void
+    final public function mount(int|string|null $id = null): void
     {
         parent::mount();
 
         $this->resolveModel($id);
     }
 
-    public function getRecord(): ?Model
+    final public function getRecord(): ?Model
     {
         return $this->record;
     }

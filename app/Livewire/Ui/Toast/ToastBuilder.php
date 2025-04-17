@@ -6,7 +6,7 @@ namespace App\Livewire\Ui\Toast;
 
 use Filament\Notifications\Notification;
 
-class ToastBuilder
+final class ToastBuilder
 {
     public function __construct(
         protected ?Notification $notification = null,
@@ -17,7 +17,7 @@ class ToastBuilder
         $this->notification = $notification ?? new Notification(uniqid());
     }
 
-    protected static function getIconPackageName(): string
+    private static function getIconPackageName(): string
     {
         return 'lucide';
     }
@@ -53,14 +53,14 @@ class ToastBuilder
 
     public function icon(string $icon): self
     {
-        $this->icon = sprintf('%s-%s', static::getIconPackageName(), strtolower($icon));
+        $this->icon = sprintf('%s-%s', self::getIconPackageName(), strtolower($icon));
 
         return $this;
     }
 
-    public static function create(string $title = null): self
+    public static function create(?string $title = null): self
     {
-        return app(static::class, [
+        return app(self::class, [
             'title' => $title,
         ]);
     }

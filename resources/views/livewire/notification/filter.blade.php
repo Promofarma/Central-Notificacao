@@ -31,7 +31,7 @@
         x-transition:leave-start="opacity-100"
         x-transition:leave-end="opacity-0"
         x-cloak
-        x-anchor.bottom-start="document.getElementById('trigger')"
+        x-anchor.bottom-end.offset.4="document.getElementById('trigger')"
         x-on:open-filter.window="isOpen = !isOpen"
         @click.outside="isOpen = false"
     >

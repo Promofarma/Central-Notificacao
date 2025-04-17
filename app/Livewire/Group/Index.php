@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace App\Livewire\Group;
 
@@ -35,6 +35,7 @@ final class Index extends Panel
     }
 
     #[Computed]
+    #[On('group-updated')]
     #[On('group-deleted')]
     public function userGroups(): Collection
     {

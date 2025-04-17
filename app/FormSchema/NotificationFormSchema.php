@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace App\FormSchema;
 
@@ -23,16 +23,20 @@ final class NotificationFormSchema implements FormSchemaContract
     {
         return [
             Components\Grid::make(12)
-                ->schema([
-                    self::makeContent()->columnSpan([
-                        'md' => 7,
-                        '2xl' => 9,
-                    ]),
-                    self::makeAside()->columnSpan([
-                        'md' => 5,
-                        '2xl' => 3,
-                    ]),
-                ]),
+                ->schema(function (string $operation) {
+                    $isEdit = $operation === 'edit';
+
+                    return [
+                        self::makeContent()->columnSpan([
+                            'md' => $isEdit ? 12 : 7,
+                            '2xl' => $isEdit ? 12 : 8,
+                        ]),
+                        self::makeAside()->columnSpan([
+                            'md' => $isEdit ? 12 : 5,
+                            '2xl' =>  $isEdit ? 12 : 4,
+                        ]),
+                    ];
+                }),
         ];
     }
 
@@ -93,8 +97,7 @@ final class NotificationFormSchema implements FormSchemaContract
                     ])
                     ->afterStateUpdated(function (Get $get, Set $set): void {
                         self::resetRecipientIdsIfNecessary($get, $set);
-                    })
-                    ->visibleOn('create'),
+                    }),
 
                 Components\Select::make('recipient_ids')
                     ->label(fn(Get $get): ?string => match ($get('target_type')) {
@@ -114,8 +117,7 @@ final class NotificationFormSchema implements FormSchemaContract
                         };
                     })
                     ->optionsLimit(fn(Components\Select $component) => count($component->getOptions()))
-                    ->disabled(fn(Get $get): bool => $get('send_to_all_recipients') || !$get('target_type'))
-                    ->visibleOn('create'),
+                    ->disabled(fn(Get $get): bool => $get('send_to_all_recipients') || !$get('target_type')),
 
                 Components\Select::make('category_id')
                     ->label('Categoria')
@@ -128,7 +130,8 @@ final class NotificationFormSchema implements FormSchemaContract
                     }),
 
                 self::makeOptions(),
-            ]);
+            ])
+            ->visibleOn('create');
     }
 
     private static function makeOptions(): Component
@@ -188,7 +191,7 @@ final class NotificationFormSchema implements FormSchemaContract
                                     $scheduledDateTime->format('H:i'),
                                 ));
                             })
-                            ->visible(fn(Get $get): bool => $get('scheduled_date') != null),
+                            ->visible(fn(Get $get): bool => $get('scheduled_date') !== null),
                     ])
                     ->visible(fn(Get $get): bool => $get('is_scheduled')),
 
@@ -284,7 +287,7 @@ final class NotificationFormSchema implements FormSchemaContract
                         $interval = $get('recurrence.interval');
 
                         $period = collect([$get('recurrence.start_date'), $get('recurrence.end_date')])
-                            ->filter(fn(?string $date): bool => $date != null)
+                            ->filter(fn(?string $date): bool => $date !== null)
                             ->map(fn(string $date): string => Carbon::parse($date)->format('d/m/Y'))
                             ->implode(' a ');
 
@@ -312,10 +315,15 @@ final class NotificationFormSchema implements FormSchemaContract
 
     private static function resetRecipientIdsIfNecessary(Get $get, Set $set): void
     {
-        if ($get('target_type') === 'groups' || ($get('target_type') === 'recipients' && $get('send_to_all_recipients'))) {
-            if (!empty($get('recipient_ids'))) {
-                $set('recipient_ids', []);
-            }
+        $targetType = $get('target_type');
+
+        if ($targetType === 'groups') {
+            $set('recipient_ids', []);
+            $set('send_to_all_recipients', false);
+        }
+
+        if ($targetType === 'recipients') {
+            $set('recipient_ids', []);
         }
     }
 }

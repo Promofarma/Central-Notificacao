@@ -7,7 +7,7 @@ namespace App\Filters;
 use App\Filters\Contracts\Filterable;
 use Illuminate\Database\Eloquent\Builder;
 
-class NotificationFilter implements Filterable
+final class NotificationFilter implements Filterable
 {
     public function __construct(
         protected readonly array $data
@@ -20,6 +20,10 @@ class NotificationFilter implements Filterable
             ->when(
                 value: $this->getTitle(),
                 callback: fn (Builder $query, string $value) => $query->where('title', 'like', "%{$value}%"),
+            )
+            ->when(
+                value: $this->getUserIds(),
+                callback: fn (Builder $query, array $values) => $query->whereIn('user_id', $values),
             )
             ->when(
                 value: $this->getRecipientIds(),
@@ -36,22 +40,27 @@ class NotificationFilter implements Filterable
             );
     }
 
-    protected function getTitle(): ?string
+    private function getTitle(): ?string
     {
         return $this->has('title') ? $this->data['title'] : null;
     }
 
-    protected function getRecipientIds(): array
+    private function getUserIds(): array
+    {
+        return $this->has('user_ids') ? $this->data['user_ids'] : [];
+    }
+
+    private function getRecipientIds(): array
     {
         return $this->has('recipient_ids') ? $this->data['recipient_ids'] : [];
     }
 
-    protected function getCategoryId(): ?int
+    private function getCategoryId(): ?int
     {
         return $this->has('category_id') ? (int) $this->data['category_id'] : null;
     }
 
-    protected function getCreatedAtRange(): array
+    private function getCreatedAtRange(): array
     {
         if (!$this->has('created_at')) {
             return [];
@@ -66,7 +75,7 @@ class NotificationFilter implements Filterable
         return $hasFromDate && $hasToDate ? $createdAt : [];
     }
 
-    protected function has(string $key): bool
+    private function has(string $key): bool
     {
         return array_key_exists($key, $this->data);
     }
