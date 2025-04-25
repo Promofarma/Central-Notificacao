@@ -114,7 +114,7 @@ export const initToast = async ({ body, notifications }) => {
 
     const { data } = await notifications(storeId, {
         params: {
-            viewed_status: "unviewed",
+            read_status: "unread",
         },
     });
 
