@@ -5,8 +5,6 @@ declare(strict_types=1);
 use App\Helpers\AssetFileResponse;
 use App\Http\Controllers\LogoutController;
 use App\Livewire\Auth\Login;
-// use App\Livewire\Dashboard\Dashboard; // TODO: implement dashboard
-
 use App\Livewire\Recipient\Index as RecipientIndex;
 use Illuminate\Support\Facades\Route;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
@@ -14,14 +12,13 @@ use Symfony\Component\HttpFoundation\BinaryFileResponse;
 Route::middleware('guest')->get('/', Login::class)->name('login');
 
 Route::group(['prefix' => 'recipient'], function (): void {
-    Route::get('/{recipientId}/{notificationUuid?}', RecipientIndex::class)->name('recipient.index');
+    Route::get('/{recipient}', RecipientIndex::class)->name('recipient');
 });
 
 Route::group(['middleware' => 'auth'], function (): void {
     Route::get('/logout', LogoutController::class)->name('logout');
 
     Route::redirect('/dashboard', '/notifications');
-    // Route::get('/dashboard', Dashboard::class)->name('dashboard'); // TODO: implement dashboard
 
     Route::group(['prefix' => 'notifications'], base_path('routes/features/notification.php'));
     Route::group(['prefix' => 'groups'], routes: base_path('routes/features/group.php'));
@@ -35,6 +32,6 @@ Route::group(['middleware' => 'auth'], function (): void {
 });
 
 Route::group(['prefix' => 'assets'], function (): void {
-    Route::get('notification-toast.js', fn(): BinaryFileResponse => AssetFileResponse::make('notification/index.js', false)->toFileResponse());
-    Route::get('notification-toast.css', fn(): BinaryFileResponse => AssetFileResponse::make('notification/toast.css', false)->toFileResponse());
+    Route::get('notification-toast.js', fn (): BinaryFileResponse => AssetFileResponse::make('notification/index.js', false)->toFileResponse());
+    Route::get('notification-toast.css', fn (): BinaryFileResponse => AssetFileResponse::make('notification/toast.css', false)->toFileResponse());
 });

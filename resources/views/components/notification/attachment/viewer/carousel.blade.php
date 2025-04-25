@@ -30,50 +30,24 @@
     >
         <button
             type="button"
-            class="absolute z-20 flex items-center justify-center p-2 transition -translate-y-1/2 rounded-full left-5 top-1/2 bg-surface/40 text-on-surface hover:bg-surface/60 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:outline-offset-0 dark:bg-surface-dark/40 dark:text-on-surface-dark dark:hover:bg-surface-dark/60 dark:focus-visible:outline-primary-dark"
-            aria-label="previous slide"
+            class="absolute z-20 flex items-center justify-center p-2 text-gray-600 transition -translate-y-1/2 rounded-full left-5 top-1/2 bg-gray-950/5 hover:bg-gray-950/10 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:outline-offset-0 dark:bg-surface-dark/40 dark:text-gray-600-dark dark:hover:bg-surface-dark/60 dark:focus-visible:outline-primary-dark"
+            aria-label="Voltar para imagem anterior"
             x-on:click="previous()"
+            x-show="slides.length > 1"
         >
-            <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                fill="none"
-                stroke-width="3"
-                class="size-5 md:size-6 pr-0.5"
-                aria-hidden="true"
-            >
-                <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    d="M15.75 19.5 8.25 12l7.5-7.5"
-                />
-            </svg>
+            <x-heroicon-s-chevron-left class="size-5 md:size-6 pr-0.5" />
         </button>
 
         <button
             type="button"
-            class="absolute z-20 flex items-center justify-center p-2 transition -translate-y-1/2 rounded-full right-5 top-1/2 bg-surface/40 text-on-surface hover:bg-surface/60 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:outline-offset-0 dark:bg-surface-dark/40 dark:text-on-surface-dark dark:hover:bg-surface-dark/60 dark:focus-visible:outline-primary-dark"
-            aria-label="next slide"
+            class="absolute z-20 flex items-center justify-center p-2 text-gray-600 transition -translate-y-1/2 rounded-full right-5 top-1/2 bg-gray-950/5 hover:bg-gray-950/10 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:outline-offset-0 dark:bg-surface-dark/40 dark:text-gray-600-dark dark:hover:bg-surface-dark/60 dark:focus-visible:outline-primary-dark"
+            aria-label="Ir para próxima imagem"
             x-on:click="next()"
+            x-show="slides.length > 1"
         >
-            <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                fill="none"
-                stroke-width="3"
-                class="size-5 md:size-6 pl-0.5"
-                aria-hidden="true"
-            >
-                <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    d="M8.25 4.5l7.5 7.5-7.5 7.5"
-                />
-            </svg>
+            <x-heroicon-s-chevron-right class="size-5 md:size-6 pl-0.5" />
         </button>
-        <div class="relative min-h-[50svh] w-full">
+        <div class="relative bg-white border border-gray-950/10 shadow-sm rounded-lg min-h-[50svh] w-full">
             <template x-for="(slide, index) in slides">
                 <div
                     x-show="currentSlideIndex == index + 1"
@@ -90,21 +64,21 @@
             </template>
         </div>
         <div
-            class="absolute rounded-radius bottom-3 md:bottom-5 left-1/2 z-20 flex -translate-x-1/2 gap-4 md:gap-3 bg-surface/75 px-1.5 py-1 md:px-2"
+            class="absolute bottom-3 md:bottom-5 left-1/2 z-20 flex -translate-x-1/2 gap-4 md:gap-3 bg-gray-950/10 rounded-lg px-1.5 py-1 md:px-2"
             role="group"
-            aria-label="slides"
+            aria-label="images"
         >
             <template x-for="(slide, index) in slides">
                 <button
-                    class="transition bg-gray-400 rounded-full size-2"
+                    class="transition bg-gray-100 rounded-full size-2"
                     x-on:click="currentSlideIndex = index + 1"
-                    x-bind:class="[currentSlideIndex === index + 1 ? 'bg-gray-400' :
-                        'bg-gray-400/50'
+                    x-bind:class="[currentSlideIndex === index + 1 ? 'bg-primary-600' :
+                        'bg-gray-100'
                     ]"
                     x-bind:aria-label="'slide ' + (index + 1)"
                 ></button>
             </template>
         </div>
-        <x-notification.attachment.image-preview />
+        <x-notification.attachment.image-preview with-controls />
     </div>
 @endif

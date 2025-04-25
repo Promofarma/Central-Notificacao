@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Models;
 
 use App\Enums\NotificationSendType;
-use App\Filters\Concerns\HasFilter;
+use App\Filters\Concerns\HasFiltered;
 use App\Helpers\FormatsTimestamps;
 use App\Observers\NotificationObserver;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
@@ -15,13 +15,12 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
-use Illuminate\Support\Str;
 
 #[ObservedBy(NotificationObserver::class)]
 final class Notification extends Model
 {
     use FormatsTimestamps;
-    use HasFilter;
+    use HasFiltered;
 
     protected $primaryKey = 'uuid';
 
@@ -38,6 +37,11 @@ final class Notification extends Model
             'scheduled_date' => 'date',
             'scheduled_time' => 'datetime',
         ];
+    }
+
+    public function getRawContent(): string
+    {
+        return trim(html_entity_decode(strip_tags($this->content)));
     }
 
     public function recipients(): HasMany

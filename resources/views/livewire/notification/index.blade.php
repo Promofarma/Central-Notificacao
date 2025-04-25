@@ -2,8 +2,8 @@
     :$title
     :$headerButtons
 >
-    <div x-on:notification-deleted.window="console.log($event.detail)">
-        <livewire:notification.filter />
+    <div>
+        {{-- <livewire:notification.filter /> --}}
 
         <div @class([
             'grid grid-cols-1 gap-4 md:grid-cols-2' => $this->notifications->isNotEmpty(),

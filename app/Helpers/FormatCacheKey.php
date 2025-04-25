@@ -6,11 +6,13 @@ namespace App\Helpers;
 
 class FormatCacheKey
 {
-    public static function format(string $key): string
+    public static function format(string $key, int $level = 1): string
     {
         $basename = explode('\\', $key);
 
-        array_pop($basename);
+        for ($i = 0; $i <= $level; $i++) {
+            array_pop($basename);
+        }
 
         return implode('-', array_map('strtolower', $basename));
     }

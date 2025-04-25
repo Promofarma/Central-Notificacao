@@ -4,49 +4,42 @@ declare(strict_types=1);
 
 namespace App\Filters\Concerns;
 
-use App\Filters\BaseFilterComponent;
+use App\Filters\Enums\FilterEvent;
 use App\Helpers\FormatCacheKey;
-use App\Livewire\Ui\Toast\Toast;
+use Illuminate\Support\Facades\Session;
+use Livewire\Attributes\Computed;
 
 trait InteractsWithFilterData
 {
-    public array $filterData = [];
+    public ?array $filterData = [];
 
     public function getListeners(): array
     {
         return [
-            BaseFilterComponent::FILTER_UPDATED_EVENT => 'onFilterDataUpdated',
-            BaseFilterComponent::FILTER_RESETED_EVENT => 'onFilterDataReseted',
+            FilterEvent::UPDATED => 'handleFilterDataUpdated',
+            FilterEvent::RESETED => 'handleFilterDataReseted',
         ];
     }
 
-    public function onFilterDataUpdated(array $data): void
+    public function mountInteractsWithFilterData(): void
     {
-        [$property, $value] = $data;
+        $this->filterData = Session::get(FormatCacheKey::format(self::class, level: 0), []);
+    }
+
+    public function handleFilterDataUpdated(array $payload): void
+    {
+        [$property, $value] = $payload;
 
         $this->filterData[$property] = $value;
 
-        $this->afterOnFilterDataUpdated();
+        $this->afterFilterDataUpdated();
     }
 
-    public function onFilterDataReseted(string $key = null): void
+    public function handleFilterDataReseted(): void
     {
-        if (filled($key) && isset($this->filterData[$key])) {
-            $this->filterData[$key] = null;
-        }
-
         $this->reset('filterData');
 
-        $this->afterOnFilterDataReseted();
-
-        Toast::success('Filtros limpos com sucesso!')->now();
-    }
-
-    public function mount(): void
-    {
-        parent::mount();
-
-        $this->filterData = session(FormatCacheKey::format(static::class), []);
+        $this->afterFilterDataReseted();
     }
 
     public function getFilterData(): array
@@ -54,11 +47,17 @@ trait InteractsWithFilterData
         return $this->filterData;
     }
 
-    public function afterOnFilterDataUpdated(): void
+    #[Computed]
+    public function countFilteredData(): int
+    {
+        return count(array_filter($this->filterData));
+    }
+
+    public function afterFilterDataUpdated(): void
     {
     }
 
-    public function afterOnFilterDataReseted(): void
+    public function afterFilterDataReseted(): void
     {
     }
 }

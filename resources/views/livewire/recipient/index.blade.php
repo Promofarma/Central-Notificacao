@@ -1,43 +1,38 @@
-<main class="flex h-screen">
-    <aside
-        x-data="{
-            tab: $persist('inbox').as('recipient-tab'),
-        }"
-        class="flex flex-grow max-w-md border-r border-gray-200"
-    >
-        <x-recipient.mini-sidebar :recipient-id="$recipientId" />
-        <x-recipient.sidebar-wrapper
-            title="Caixa de Entrada"
-            icon="heroicon-s-inbox"
-            x-show="tab === 'inbox'"
-            x-cloak
-        >
-            <x-recipient.inbox :notification-recipient-items="$unarchivedNotificationRecipients" />
-        </x-recipient.sidebar-wrapper>
-        <x-recipient.sidebar-wrapper
-            title="Arquivadas"
-            icon="heroicon-s-archive-box"
-            x-show="tab === 'archived'"
-            x-cloak
-        >
-            <x-recipient.inbox :notification-recipient-items="$archivedNotificationRecipients" />
-        </x-recipient.sidebar-wrapper>
-        <x-recipient.sidebar-wrapper
-            title="Filtros"
-            icon="heroicon-s-funnel"
-            x-show="tab === 'filters'"
-            x-cloak
-        >
-            <livewire:recipient.filter />
-        </x-recipient.sidebar-wrapper>
+<div class="relative flex h-screen">
+    <aside class="flex flex-auto max-w-2xl border-r divide-x divide-gray-950/10 border-gray-950/10">
+        <x-recipient-v2.mini-sidebar :recipient="$recipient" />
+
+        <x-recipient-v2.categories :categories="$this->categories" />
+
+
+        @if ($tab === 'inbox')
+            <x-recipient-v2.inbox
+                title="Caixa de Entrada"
+                icon="heroicon-s-inbox"
+                :notifications="$this->notificationRecipients"
+            />
+        @endif
+
+        @if ($tab === 'archived')
+            <x-recipient-v2.inbox
+                title="Arquivadas"
+                icon="heroicon-s-archive-box"
+                :notifications="$this->notificationRecipients"
+            />
+        @endif
     </aside>
-    @if ($selected)
+
+    @if (filled($notification) && Str::isUuid($notification))
         <livewire:recipient.show
-            :notification-uuid="$selected"
-            :recipient-id="$recipientId"
-            :wire:key="$selected"
+            :id="$recipient"
+            :uuid="$notification"
+            wire:key="selected-notification-{{ $notification }}"
         />
     @else
-        <x-recipient.content :categories="$categories" />
+        <x-recipient-v2.content />
     @endif
-</main>
+
+    <livewire:recipient.modal.achievement />
+
+    <livewire:recipient.drawer.filter />
+</div>

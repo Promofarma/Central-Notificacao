@@ -1,9 +1,10 @@
- <x-ui.button
-     size="sm"
-     icon="archive-box-arrow-down"
-     color="gray"
-     wire:click="archive"
-     wire-target="archive"
- >
-     Arquivar
- </x-ui.button>
+<div>
+    <x-ui.button
+        text="Arquivar"
+        icon="archive-box"
+        color="gray"
+        size="sm"
+        wire:click="archive"
+        wire-target="archive"
+    />
+</div>
