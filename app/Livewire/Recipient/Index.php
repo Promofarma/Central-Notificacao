@@ -6,118 +6,139 @@ namespace App\Livewire\Recipient;
 
 use App\Filters\Concerns\InteractsWithFilterData;
 use App\Filters\NotificationRecipientFilter;
+use App\Helpers\InteractsWithCacheTags;
 use App\Livewire\Component\Pages\BasePage;
 use App\Models\Category;
 use App\Models\NotificationRecipient;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Cache;
+use Livewire\Attributes\Computed;
 use Livewire\Attributes\Locked;
 use Livewire\Attributes\On;
+use Livewire\Attributes\Url;
 
 final class Index extends BasePage
 {
+    use InteractsWithCacheTags;
     use InteractsWithFilterData;
+
+    #[Locked]
+    public int $recipient;
+
+    #[Url]
+    public string $tab = 'inbox';
+
+    #[Url(as: 'category')]
+    public ?int $category = null;
+
+    #[Url(as: 'notification')]
+    public ?string $notification = null;
 
     protected static string $layout = 'components.layouts.guest';
 
     protected static string $view = 'livewire.recipient.index';
 
-    protected static ?string $title = 'Caixa de entrada';
-
-    #[Locked]
-    public int $recipientId;
-
-    public ?string $selected = null;
-
-    public function getNotificationRecipientItems(): Collection
+    public function updatedTab(): void
     {
-        return Cache::rememberForever(
-            key: $this->getCacheKey(),
-            callback: fn (): Collection => NotificationRecipient::query()->select([
+        $this->reset('category');
+    }
+
+    #[Computed]
+    public function categories(): Collection
+    {
+        return Category::query()
+            ->select([
                 'id',
-                'notification_uuid',
-                'recipient_id',
-                'viewed_at',
-                'readed_at',
-                'archived_at',
-                'created_at',
+                'name',
             ])
-            ->with([
-                'notification' => fn ($query) => $query->select([
-                    'uuid',
-                    'title',
-                    'content',
-                    'category_id',
-                    'scheduled_date',
-                    'user_id',
+            ->withCount([
+                'notifications' => fn ($query) => $query->whereHas('recipients', fn ($query): Builder => $this->applyFilters($query)),
+            ])
+            ->whereHas('notifications.recipients', fn ($query): Builder => $this->applyFilters($query))
+            ->orderBy('name')
+            ->get();
+    }
+
+    #[Computed]
+    public function notificationRecipients(): Collection
+    {
+        return $this->getCacheTags()->remember($this->getCacheKey(), now()->addMinutes(30), function (): Collection {
+            $query = NotificationRecipient::query()
+                ->select([
+                    'id',
+                    'notification_uuid',
+                    'recipient_id',
+                    'viewed_at',
+                    'readed_at',
+                    'archived_at',
                     'created_at',
                 ])
-                    ->with([
-                        'user' => fn ($query) => $query->select(['id', 'name']),
-                        'category' => fn ($query) => $query->select(['id', 'name']),
-                    ])
-                    ->withCount('attachments'),
-            ])
-            ->where('recipient_id', $this->recipientId)
-            ->whereHas('notification', fn ($query) => $query->scheduled())
-            ->filter(new NotificationRecipientFilter($this->getFilterData()))
-            ->orderBy('created_at', 'desc')
-            ->get(),
-        );
+                ->with([
+                    'notification' => fn ($query) => $query
+                        ->select([
+                            'uuid',
+                            'title',
+                            'content',
+                            'user_id',
+                            'scheduled_date',
+                            'scheduled_time',
+                            'category_id',
+                            'created_at',
+                        ])
+                        ->with('user:id,name')
+                        ->withCount('attachments')
+                        ->where('category_id', $this->category),
+                ])
+                ->whereRelation('notification', 'category_id', $this->category);
+
+            return $this->applyFilters($query)
+                ->orderByDesc('created_at')
+                ->get();
+        });
     }
 
-    public function getUnarchivedNotificationRecipients(): Collection
+    #[On('notification-read')]
+    public function handleNotificationRead(): void
     {
-        $unarchivedNotificationRecipients = $this->getNotificationRecipientItems()
-            ->reject(fn (NotificationRecipient $notificationRecipient): bool => $notificationRecipient->archived_at !== null);
-
-        return $this->groupNotificationRecipientItemsByCategoryName($unarchivedNotificationRecipients);
+        $this->invalidateCache();
     }
 
-    public function getArchivedNotificationRecipients(): Collection
-    {
-        $archivedNotificationRecipients = $this->getNotificationRecipientItems()
-            ->filter(fn (NotificationRecipient $notificationRecipient): bool => $notificationRecipient->archived_at !== null);
-
-        return $this->groupNotificationRecipientItemsByCategoryName($archivedNotificationRecipients);
-    }
-
-    #[On('notification-readed')]
     #[On('notification-archived')]
-    public function forgetCache(): void
+    public function handleNotificationArchived(): void
     {
-        Cache::forget($this->getCacheKey());
+        $this->invalidateCache();
     }
 
-    public function afterOnFilterDataReseted(): void
+    public function afterFilterDataUpdated(): void
     {
-        $this->forgetCache();
+        $this->invalidateCache();
     }
 
-    public function afterOnFilterDataUpdated(): void
+    protected function getTags(): array
     {
-        $this->forgetCache();
+        return [
+            'recipient:'.$this->recipient,
+            'inbox',
+        ];
     }
 
-    private function groupNotificationRecipientItemsByCategoryName(Collection $notificationRecipientItems): Collection
+    private function applyFilters(Builder $query): Builder
     {
-        return $notificationRecipientItems->groupBy('notification.category.name')
-            ->sortByDesc(fn (Collection $notificationRecipientItems): int => $notificationRecipientItems->count());
+        return $query->filter(new NotificationRecipientFilter([
+            'tab' => $this->tab,
+            'recipient_id' => $this->recipient,
+            ...$this->getFilterData(),
+        ]));
     }
 
     private function getCacheKey(): string
     {
-        return sprintf('notification_recipient:%d', $this->recipientId);
-    }
-
-    public function getViewData(): array
-    {
-        return [
-            'unarchivedNotificationRecipients' => $this->getUnarchivedNotificationRecipients(),
-            'archivedNotificationRecipients' => $this->getArchivedNotificationRecipients(),
-            'categories' => Category::withCount([
-                'notifications as notifications_unread_count' => fn ($query) => $query->whereHas('recipients', fn ($query) => $query->unread()->where('recipient_id', $this->recipientId)),
-            ])->get(),
-        ];
+        return sprintf(
+            'notification-recipients:%s:%s:%s',
+            $this->recipient,
+            $this->tab,
+            $this->category ?? 'none',
+            // md5(json_encode($this->getFilterData()))
+        );
     }
 }

@@ -1,52 +1,104 @@
-<section class="flex flex-col flex-1">
-    <header
-        class="flex items-center justify-between h-full gap-3 px-4 border-b border-gray-200 shadow-sm shrink-0 max-h-14 shadow-gray-300/10"
-    >
-        @if ($notificationRecipient->isArchived())
-            <span class="inline-flex items-center gap-1.5">
-                <x-heroicon-m-archive-box class="text-gray-500 size-4" />
-                <x-ui.text size="xs">Arquivada</x-ui.text>
-            </span>
-        @else
-            <livewire:recipient.archive
-                :notification-recipient="$notificationRecipient"
-                :wire:key="$notificationRecipient->id"
+<main class="flex-1 overflow-y-auto">
+    <div class="sticky inset-0 top-0 bg-white">
+        <header class="flex items-center justify-between px-4 border-b h-14 border-gray-950/10">
+            <x-ui.button
+                :href="route('recipient', [
+                    'recipient' => $recipient->recipient_id,
+                    'category' => $notification->category_id,
+                ])"
+                text="Voltar"
+                icon="arrow-left"
+                color="gray"
+                size="sm"
             />
-        @endif
-        <div class="flex items-center gap-3">
-            @if ($notificationRecipient->isRead())
-                <x-ui.badge
-                    icon="heroicon-m-check"
-                    color="success"
+            <div class="flex items-center gap-x-4">
+                @if ($recipient->isArchived())
+                    <x-ui.badge
+                        icon="heroicon-m-archive-box"
+                        size="sm"
+                    >
+                        Arquivada
+                    </x-ui.badge>
+                @else
+                    <livewire:recipient.archive
+                        :recipient="$recipient"
+                        wire:key="archive-recipient-{{ $recipient->id }}"
+                    />
+                @endif
+
+                @if ($recipient->isRead())
+                    <span class="block w-px h-6 bg-gray-950/10"></span>
+                    <x-ui.badge
+                        icon="heroicon-m-envelope-open"
+                        size="sm"
+                        color="success"
+                    >
+                        Lida
+                    </x-ui.badge>
+                @endif
+            </div>
+        </header>
+        <div class="flex items-center justify-between p-4 border-b border-gray-950/10">
+            <x-ui.heading>
+                {{ $notification->title }}
+            </x-ui.heading>
+
+            <div class="shrink-0">
+                <x-ui.text
+                    size="sm"
+                    variant="subtle"
+                    title="Enviada em {{ $notification->formatted_created_at }}"
+                    @mouseenter="on = true"
                 >
-                    Lida {{ $notificationRecipient->readed_at->diffForHumans() }}
-                </x-ui.badge>
-            @endif
-            <x-ui.badge color="gray">{{ $notification->category->name }}</x-ui.badge>
+                    {{ $notification->created_at->diffForHumans() }}
+                </x-ui.text>
+            </div>
+
         </div>
-    </header>
-    <div class="flex items-start justify-between p-4 shrink-0">
-        <div class="flex items-start">
-            <div class="flex items-start gap-4 text-sm">
-                <span class="relative flex w-10 h-10 overflow-hidden rounded-full shrink-0">
-                    <span class="flex items-center justify-center w-full h-full bg-gray-200 rounded-full">
-                        {{ $notification->user->name[0] }}
-                    </span>
-                </span>
-                <div class="grid gap-1">
-                    <div class="font-semibold">{{ $notification->user->name }}</div>
-                    <div class="text-xs line-clamp-1">{{ $notification->title }}</div>
-                </div>
+    </div>
+
+    <div
+        x-data="{ expanded: false }"
+        class="p-4"
+    >
+        <div class="flex items-center mb-4 gap-x-4">
+            <x-ui.avatar
+                size="sm"
+                :initials="$notification->user->initials()"
+            />
+            <div class="space-y-1">
+                <x-ui.heading level="4">
+                    {{ $notification->user->name }}
+                </x-ui.heading>
+                <x-ui.text
+                    size="xs"
+                    variant="subtle"
+                >
+                    {{ $notification->user->email }}
+                </x-ui.text>
             </div>
         </div>
-        <div class="ml-auto text-xs text-gray-400">{{ $notification->formatted_created_at }}</div>
-    </div>
-    <div class="flex-1 h-px space-y-4 overflow-y-auto">
-        <div class="p-4 prose whitespace-normal prose-gray max-w-none">
-            {!! html_entity_decode($notification->content) !!}
+
+        <div
+            class="prose-sm prose prose-gray max-w-none"
+            x-bind:class="{ 'line-clamp-3': !expanded }"
+            x-cloak
+            x-ref="content"
+        >
+            {!! $notification->content !!}
         </div>
+
+        <button
+            class="inline-block text-sm font-medium text-gray-500 transition-colors duration-150 hover:text-primary-700"
+            x-on:click="expanded = ! expanded"
+            x-show="! expanded && {{ strlen($notification->getRawContent()) }} > 100"
+            x-cloak
+        >...mais</button>
+
         @if (filled($attachments = $notification->attachments))
-            <x-notification.attachment.viewer :$attachments />
+            <div class="mt-4">
+                <x-notification.attachment.viewer :$attachments />
+            </div>
         @endif
     </div>
-</section>
+</main>

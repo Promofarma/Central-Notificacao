@@ -13,6 +13,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use Spatie\Permission\Traits\HasRoles;
+use Illuminate\Support\Str;
 
 final class User extends Authenticatable
 {
@@ -48,7 +49,6 @@ final class User extends Authenticatable
         return $this->belongsToMany(Team::class, table: 'team_users');
     }
 
-
     public function groups(): HasMany
     {
         return $this->hasMany(Group::class);
@@ -75,5 +75,14 @@ final class User extends Authenticatable
             ->flatMap(fn(Team $team): Collection => $team->users)
             ->unique('id')
             ->pluck('name', 'id');
+    }
+
+    public function initials(): string
+    {
+        return Str::of($this->name)
+            ->explode(' ')
+            ->map(fn (string $name) => Str::of($name)->substr(0, 1))
+            ->take(2)
+            ->implode('');
     }
 }

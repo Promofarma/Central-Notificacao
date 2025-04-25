@@ -1,9 +1,9 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace App\Livewire\Notification\Drawer;
 
-use App\FormSchema\Contracts\FormSchemaContract;
-use App\FormSchema\NotificationFormSchema;
 use App\Livewire\Ui\Drawer\DrawerForm;
 use App\Models\Notification;
 use Filament\Forms\Form;
@@ -25,13 +25,13 @@ final class Edit extends DrawerForm
         return new Notification;
     }
 
-    protected function getOperation(): string
-    {
-        return 'edit';
-    }
-
     public function render(): Factory|View
     {
         return view('livewire.notification.drawer.edit');
+    }
+
+    protected function getOperation(): string
+    {
+        return 'edit';
     }
 }

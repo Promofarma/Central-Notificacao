@@ -9,9 +9,9 @@ use Filament\Notifications\Notification;
 use Filament\Support\Colors\Color;
 use Filament\Support\Facades\FilamentColor;
 
-class FilamentSetup
+final class FilamentSetup
 {
-    protected const DATE_FORMAT = 'd/m/Y';
+    private const DATE_FORMAT = 'd/m/Y';
 
     public function configureColors(): self
     {
@@ -34,7 +34,7 @@ class FilamentSetup
         });
 
         Components\DatePicker::configureUsing(function (Components\DatePicker $component): void {
-            $component->prefixIcon('lucide-calendar')
+            $component->prefixIcon('heroicon-m-calendar')
                 ->native(false)
                 ->placeholder(today()->format(static::DATE_FORMAT))
                 ->displayFormat(static::DATE_FORMAT);

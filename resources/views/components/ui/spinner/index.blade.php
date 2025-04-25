@@ -1,11 +1,9 @@
 <svg
     {!! $attributes->merge(['class' => 'shrink-0 size-4 animate-spin']) !!}
-    data-flux-icon=""
     xmlns="http://www.w3.org/2000/svg"
     fill="none"
     viewBox="0 0 24 24"
     aria-hidden="true"
-    data-slot="icon"
 >
     <circle
         class="opacity-25"

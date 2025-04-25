@@ -19,7 +19,7 @@
                 @click="imagePath = '{{ $attachment->path }}'"
             />
         @else
-            <x-heroicon-s-document class="w-6 h-6 stroke-gray-600 shrink-0" />
+            <x-heroicon-s-document class="w-6 h-6 text-gray-600 shrink-0" />
         @endif
     </div>
 

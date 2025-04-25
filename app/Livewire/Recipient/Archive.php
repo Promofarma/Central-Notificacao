@@ -6,20 +6,22 @@ namespace App\Livewire\Recipient;
 
 use App\Livewire\Ui\Toast\Toast;
 use App\Models\NotificationRecipient;
-use Illuminate\Database\QueryException;
-use Livewire\Component;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
+use Illuminate\Database\QueryException;
+use Livewire\Attributes\Locked;
 use Livewire\Attributes\Renderless;
+use Livewire\Component;
 
-class Archive extends Component
+final class Archive extends Component
 {
-    public NotificationRecipient $notificationRecipient;
+    #[Locked]
+    public NotificationRecipient $recipient;
 
     public function archive(): void
     {
         try {
-            $this->notificationRecipient->update(['archived_at' => now()]);
+            $this->recipient->update(['archived_at' => now()]);
 
             $this->dispatch('notification-archived');
 

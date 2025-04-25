@@ -15,9 +15,13 @@ final class Create extends BaseCreatePage
 {
     protected static string $view = 'livewire.notification.create';
 
+    public function getModel(): Model
+    {
+        return new Notification;
+    }
+
     protected function mutateFormDataBeforeCreate(array $data): array
     {
-
         if ($data['is_recurrent'] && (Carbon::parse($data['recurrence']['start_date'])->isToday())) {
             $data['scheduled_date'] = $data['recurrence']['start_date'];
             $data['scheduled_time'] = $data['recurrence']['scheduled_time'];
@@ -29,10 +33,5 @@ final class Create extends BaseCreatePage
     protected function afterCreate(): void
     {
         event(new NotificationReady($this->getRecord(), $this->data));
-    }
-
-    public function getModel(): Model
-    {
-        return new Notification;
     }
 }

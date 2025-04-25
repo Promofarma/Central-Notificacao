@@ -11,18 +11,26 @@ use Illuminate\Support\Facades\DB;
 
 abstract class BaseCreatePage extends BaseForm
 {
-    public function getTitle(): ?string
+    final public function getTitle(): ?string
     {
         return sprintf('Adicionar %s', $this->getTranslatedSingularModelName());
     }
 
-    protected function beforeValidate(): void {}
+    protected function beforeValidate(): void
+    {
+    }
 
-    protected function afterValidate(): void {}
+    protected function afterValidate(): void
+    {
+    }
 
-    protected function beforeCreate(): void {}
+    protected function beforeCreate(): void
+    {
+    }
 
-    protected function afterCreate(): void {}
+    protected function afterCreate(): void
+    {
+    }
 
     protected function getCreatedNotification(): string
     {
@@ -34,7 +42,7 @@ abstract class BaseCreatePage extends BaseForm
         return $data;
     }
 
-    public function handleOnSubmit(): void
+    final public function handleOnSubmit(): void
     {
         try {
             DB::beginTransaction();

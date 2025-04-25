@@ -4,24 +4,14 @@ declare(strict_types=1);
 
 namespace App\Models;
 
-use App\Filters\Concerns\HasFilter;
+use App\Filters\Concerns\HasFiltered;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 final class NotificationRecipient extends Model
 {
-    use HasFilter;
-
-    protected function casts(): array
-    {
-        return [
-            'recipient_id' => 'integer',
-            'viewed_at' => 'datetime',
-            'readed_at' => 'datetime',
-            'archived_at' => 'datetime',
-        ];
-    }
+    use HasFiltered;
 
     public function recipient(): BelongsTo
     {
@@ -84,5 +74,15 @@ final class NotificationRecipient extends Model
             'readed_at' => now(),
             'updated_at' => now(),
         ]);
+    }
+
+    protected function casts(): array
+    {
+        return [
+            'recipient_id' => 'integer',
+            'viewed_at' => 'datetime',
+            'readed_at' => 'datetime',
+            'archived_at' => 'datetime',
+        ];
     }
 }

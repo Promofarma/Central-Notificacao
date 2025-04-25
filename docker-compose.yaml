@@ -9,7 +9,6 @@ services:
       - "5173:5173" # vite
     volumes:
       - "./.:/var/www/html"
-
   notificacao_http:
     container_name: notificacao_http
     image: nginx
@@ -21,7 +20,16 @@ services:
       - "./.:/var/www/html"
     depends_on:
       - "notificacao_php"
-
+  notificacao_redis:
+    container_name: notificacao_redis
+    image: redis/redis-stack:latest
+    environment:
+      - REDIS_ARGS=--requirepass promofarma2506
+    ports:
+      - "6379:6379"
+      - "8001:8001"
+    depends_on:
+      - "notificacao_php"
   notificacao_mysql:
     container_name: notificacao_mysql
     image: mysql

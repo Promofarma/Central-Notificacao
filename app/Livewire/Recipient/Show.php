@@ -4,81 +4,137 @@ declare(strict_types=1);
 
 namespace App\Livewire\Recipient;
 
+use App\Helpers\InteractsWithCacheTags;
 use App\Models\NotificationRecipient;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
-use Illuminate\Support\Facades\Cache;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Livewire\Attributes\Locked;
 use Livewire\Attributes\On;
 use Livewire\Component;
 
-class Show extends Component
+/**
+ * @property NotificationRecipient $notificationRecipient
+ */
+final class Show extends Component
 {
-    #[Locked]
-    public string $notificationUuid;
+    use InteractsWithCacheTags;
 
     #[Locked]
-    public int $recipientId;
+    public int $id;
 
-    public ?NotificationRecipient $notificationRecipient;
+    #[Locked]
+    public string $uuid;
+
+    public ?NotificationRecipient $notificationRecipient = null;
 
     public function mount(): void
     {
-        $this->initializeNotificationRecipient();
-    }
-
-    public function getNotificationRecipient(): NotificationRecipient
-    {
-        return NotificationRecipient::query()
-            ->select(['id', 'notification_uuid', 'recipient_id', 'readed_at', 'archived_at', 'created_at'])
-            ->with([
-                'notification' => fn ($query) => $query
-                        ->select(['uuid', 'title', 'content', 'user_id', 'category_id', 'created_at'])
-                        ->with([
-                            'user' => fn ($query) => $query->select(['id', 'name', 'email']),
-                            'category' => fn ($query) => $query->select(['id', 'name']),
-                            'attachments' => fn ($query) => $query->select(['id', 'file_name', 'size', 'extension', 'path', 'notification_uuid', 'created_at']),
-                        ]),
-            ])
-            ->where([
-                'notification_uuid' => $this->notificationUuid,
-                'recipient_id' => $this->recipientId,
-            ])
-            ->firstOrFail();
+        $this->initialize();
     }
 
     #[On('notification-archived')]
-    public function onNotificationArchived(): void
+    public function handleNotificationArchived(): void
     {
-        Cache::put($this->getCacheKey(), $this->notificationRecipient);
-    }
+        $cache = $this->getCacheTags();
 
-    public function render(): View|Factory
-    {
-        return view('livewire.recipient.show', [
-            'notificationRecipient' => $this->notificationRecipient,
-            'notification' => $this->notificationRecipient->notification,
-        ]);
-    }
+        $cacheKey = $this->getCacheKey();
 
-    private function initializeNotificationRecipient(): void
-    {
-        /** @var NotificationRecipient $notificationRecipient */
-        $notificationRecipient = Cache::get($this->getCacheKey()) ?? $this->getNotificationRecipient();
-
-        if (! $notificationRecipient->isRead()) {
-            $notificationRecipient->markAsRead();
-
-            $this->dispatch('notification-readed');
-
-            Cache::put($this->getCacheKey(), $notificationRecipient);
+        if (! $cache->has($cacheKey)) {
+            return;
         }
+
+        $cache->forget($cacheKey);
+
+        $notificationRecipient = $this->fetchNotificationRecipient();
+
+        $cache->put($cacheKey, $notificationRecipient, now()->addMinutes(30));
 
         $this->notificationRecipient = $notificationRecipient;
     }
 
+    public function fetchNotificationRecipient(): NotificationRecipient
+    {
+        return NotificationRecipient::query()
+            ->select([
+                'id',
+                'recipient_id',
+                'notification_uuid',
+                'viewed_at',
+                'readed_at',
+                'archived_at',
+                'created_at',
+            ])
+            ->with(['notification' => function ($query) {
+                $query
+                    ->select([
+                        'uuid',
+                        'title',
+                        'content',
+                        'user_id',
+                        'category_id',
+                        'created_at',
+                    ])
+                    ->with([
+                        'user:id,name,email',
+                        'attachments:id,file_name,size,extension,path,notification_uuid,created_at',
+                    ]);
+            }])
+            ->where([
+                'recipient_id' => $this->id,
+                'notification_uuid' => $this->uuid,
+            ])
+            ->firstOrFail();
+    }
+
+    public function render(): Factory|View
+    {
+        return view('livewire.recipient.show', [
+            'recipient' => $this->notificationRecipient,
+            'notification' => $this->notificationRecipient->notification,
+        ]);
+    }
+
+    protected function getTags(): array
+    {
+        return [
+            'recipient:'.$this->id,
+            'notification:'.$this->uuid,
+        ];
+    }
+
+    private function initialize(): void
+    {
+        $cache = $this->getCacheTags();
+
+        /** @var ?NotificationRecipient $notificationRecipient */
+        $notificationRecipient = $cache->get($this->getCacheKey());
+
+        if ($notificationRecipient) {
+            $this->notificationRecipient = $notificationRecipient;
+
+            return;
+        }
+
+        try {
+            $notificationRecipient = $this->fetchNotificationRecipient();
+
+            if (! $notificationRecipient->isRead()) {
+                $notificationRecipient->markAsRead();
+
+                $this->dispatch('notification-read');
+
+                $cache->put($this->getCacheKey(), $notificationRecipient, now()->addMinutes(30));
+            }
+
+            $this->notificationRecipient = $notificationRecipient;
+        } catch (ModelNotFoundException) {
+            abort(404);
+        }
+    }
+
     private function getCacheKey(): string
     {
-        return 'recipient.'.$this->recipientId.'.notification.'.$this->notificationUuid;
+        return sprintf('recipient:%s:notification:%s', $this->id, $this->uuid);
     }
 }

@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace App\Queries;
 
@@ -21,7 +21,8 @@ final class TeamMembersNotificationsQuery
                 'recipients as recipients_read_count' => fn($query) => $query->read(),
                 'attachments',
             ])
-            ->whereIn('user_id', function ($query) {
+            ->where('user_id', $this->user->id)
+            ->orWhereIn('user_id', function ($query) {
                 $query->select('user_id')
                     ->from('team_users')
                     ->whereIn('team_id', function ($subquery) {
