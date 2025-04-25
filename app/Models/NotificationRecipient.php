@@ -13,16 +13,6 @@ final class NotificationRecipient extends Model
 {
     use HasFiltered;
 
-    protected function casts(): array
-    {
-        return [
-            'recipient_id' => 'integer',
-            'viewed_at' => 'datetime',
-            'readed_at' => 'datetime',
-            'archived_at' => 'datetime',
-        ];
-    }
-
     public function recipient(): BelongsTo
     {
         return $this->belongsTo(Recipient::class);
@@ -84,5 +74,15 @@ final class NotificationRecipient extends Model
             'readed_at' => now(),
             'updated_at' => now(),
         ]);
+    }
+
+    protected function casts(): array
+    {
+        return [
+            'recipient_id' => 'integer',
+            'viewed_at' => 'datetime',
+            'readed_at' => 'datetime',
+            'archived_at' => 'datetime',
+        ];
     }
 }

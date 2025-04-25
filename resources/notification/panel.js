@@ -4,6 +4,7 @@ const notificationListItem = ({
     uuid,
     title,
     recipient_id,
+    category_id,
     created_by,
     readed_at,
     created_at,
@@ -23,7 +24,7 @@ const notificationListItem = ({
             </span>
         </header>
         <footer class="notification-item-footer">
-            <a href="${baseUrl}/recipient/${recipient_id}/${uuid}" target="_blank">Visualizar</a>
+            <a href="${baseUrl}/recipient/${recipient_id}?category=${category_id}&notification=${uuid}" target="_blank">Visualizar</a>
             <span class="time">${created_at}</span>
         </footer>
     `;

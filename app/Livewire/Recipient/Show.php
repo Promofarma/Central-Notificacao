@@ -4,10 +4,11 @@ declare(strict_types=1);
 
 namespace App\Livewire\Recipient;
 
+use App\Helpers\InteractsWithCacheTags;
 use App\Models\NotificationRecipient;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
-use Illuminate\Support\Facades\Cache;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Livewire\Attributes\Locked;
 use Livewire\Attributes\On;
 use Livewire\Component;
@@ -17,6 +18,8 @@ use Livewire\Component;
  */
 final class Show extends Component
 {
+    use InteractsWithCacheTags;
+
     #[Locked]
     public int $id;
 
@@ -33,20 +36,26 @@ final class Show extends Component
     #[On('notification-archived')]
     public function handleNotificationArchived(): void
     {
+        $cache = $this->getCacheTags();
+
         $cacheKey = $this->getCacheKey();
 
-        Cache::forget($cacheKey);
+        if (! $cache->has($cacheKey)) {
+            return;
+        }
+
+        $cache->forget($cacheKey);
 
         $notificationRecipient = $this->fetchNotificationRecipient();
 
-        Cache::put($cacheKey, $notificationRecipient, now()->addMinutes(5));
+        $cache->put($cacheKey, $notificationRecipient, now()->addMinutes(30));
 
         $this->notificationRecipient = $notificationRecipient;
     }
 
     public function fetchNotificationRecipient(): NotificationRecipient
     {
-        return Cache::rememberForever($this->getCacheKey(), fn (): NotificationRecipient => NotificationRecipient::query()
+        return NotificationRecipient::query()
             ->select([
                 'id',
                 'recipient_id',
@@ -75,8 +84,7 @@ final class Show extends Component
                 'recipient_id' => $this->id,
                 'notification_uuid' => $this->uuid,
             ])
-            ->firstOrFail()
-        );
+            ->firstOrFail();
     }
 
     public function render(): Factory|View
@@ -87,12 +95,20 @@ final class Show extends Component
         ]);
     }
 
+    protected function getTags(): array
+    {
+        return [
+            'recipient:'.$this->id,
+            'notification:'.$this->uuid,
+        ];
+    }
+
     private function initialize(): void
     {
-        $cacheKey = $this->getCacheKey();
+        $cache = $this->getCacheTags();
 
         /** @var ?NotificationRecipient $notificationRecipient */
-        $notificationRecipient = Cache::get($cacheKey);
+        $notificationRecipient = $cache->get($this->getCacheKey());
 
         if ($notificationRecipient) {
             $this->notificationRecipient = $notificationRecipient;
@@ -100,21 +116,25 @@ final class Show extends Component
             return;
         }
 
-        $notificationRecipient = $this->fetchNotificationRecipient();
+        try {
+            $notificationRecipient = $this->fetchNotificationRecipient();
 
-        if (! $notificationRecipient->isRead()) {
-            $notificationRecipient->markAsRead();
+            if (! $notificationRecipient->isRead()) {
+                $notificationRecipient->markAsRead();
 
-            $this->dispatch('notification-read');
+                $this->dispatch('notification-read');
 
-            Cache::put($cacheKey, $notificationRecipient, now()->addMinutes(5));
+                $cache->put($this->getCacheKey(), $notificationRecipient, now()->addMinutes(30));
+            }
+
+            $this->notificationRecipient = $notificationRecipient;
+        } catch (ModelNotFoundException) {
+            abort(404);
         }
-
-        $this->notificationRecipient = $notificationRecipient;
     }
 
     private function getCacheKey(): string
     {
-        return sprintf('notification-recipient:%s:%s', $this->id, $this->uuid);
+        return sprintf('recipient:%s:notification:%s', $this->id, $this->uuid);
     }
 }

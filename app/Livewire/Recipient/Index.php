@@ -6,12 +6,12 @@ namespace App\Livewire\Recipient;
 
 use App\Filters\Concerns\InteractsWithFilterData;
 use App\Filters\NotificationRecipientFilter;
+use App\Helpers\InteractsWithCacheTags;
 use App\Livewire\Component\Pages\BasePage;
 use App\Models\Category;
 use App\Models\NotificationRecipient;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Cache;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Locked;
 use Livewire\Attributes\On;
@@ -19,6 +19,7 @@ use Livewire\Attributes\Url;
 
 final class Index extends BasePage
 {
+    use InteractsWithCacheTags;
     use InteractsWithFilterData;
 
     #[Locked]
@@ -61,7 +62,7 @@ final class Index extends BasePage
     #[Computed]
     public function notificationRecipients(): Collection
     {
-        return Cache::tags($this->getCacheTags())->rememberForever($this->getCacheKey(), function (): Collection {
+        return $this->getCacheTags()->remember($this->getCacheKey(), now()->addMinutes(30), function (): Collection {
             $query = NotificationRecipient::query()
                 ->select([
                     'id',
@@ -79,6 +80,8 @@ final class Index extends BasePage
                             'title',
                             'content',
                             'user_id',
+                            'scheduled_date',
+                            'scheduled_time',
                             'category_id',
                             'created_at',
                         ])
@@ -97,13 +100,26 @@ final class Index extends BasePage
     #[On('notification-read')]
     public function handleNotificationRead(): void
     {
-        $this->clearCache();
+        $this->invalidateCache();
     }
 
     #[On('notification-archived')]
     public function handleNotificationArchived(): void
     {
-        $this->clearCache();
+        $this->invalidateCache();
+    }
+
+    public function afterFilterDataUpdated(): void
+    {
+        $this->invalidateCache();
+    }
+
+    protected function getTags(): array
+    {
+        return [
+            'recipient:'.$this->recipient,
+            'inbox',
+        ];
     }
 
     private function applyFilters(Builder $query): Builder
@@ -115,27 +131,14 @@ final class Index extends BasePage
         ]));
     }
 
-    private function getCacheTags(): array
-    {
-        return [
-            'inbox',
-            'recipient:'.$this->recipient,
-        ];
-    }
-
     private function getCacheKey(): string
     {
         return sprintf(
-            'notification-recipients:%s:%s:%s:%s',
+            'notification-recipients:%s:%s:%s',
             $this->recipient,
             $this->tab,
             $this->category ?? 'none',
-            md5(json_encode($this->getFilterData()))
+            // md5(json_encode($this->getFilterData()))
         );
-    }
-
-    private function clearCache(): void
-    {
-        Cache::tags($this->getCacheTags())->flush();
     }
 }

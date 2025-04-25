@@ -7,7 +7,6 @@
 
     <x-slot:footer>
         <x-ui.button
-            size="sm"
             icon="trash"
             color="gray"
             full-size

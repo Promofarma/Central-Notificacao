@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Observers;
 
 use App\Helpers\NotificationRecipientCacheInvalidator;
@@ -15,11 +17,11 @@ final class NotificationObserver
 
     public function updated(Notification $notification): void
     {
-        NotificationRecipientCacheInvalidator::forget($notification);
+        NotificationRecipientCacheInvalidator::invalidate($notification);
     }
 
     public function deleting(Notification $notification): void
     {
-        NotificationRecipientCacheInvalidator::forget($notification);
+        NotificationRecipientCacheInvalidator::invalidate($notification);
     }
 }

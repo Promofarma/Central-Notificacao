@@ -38,10 +38,12 @@
         />
     </nav>
 
-    <button
+    <!-- Achivements Not implemented -->
+    {{-- <button
         class="inline-flex items-center justify-center w-10 h-10 mx-auto mb-2 text-gray-500 transition duration-150 bg-gray-200 rounded-full cursor-pointer active:scale-110 hover:scale-105 hover:bg-primary-400/20 hover:text-primary-700 shrink-0"
         @click="$wire.dispatchTo('recipient.modal.achievement', 'open-modal', { recipient: 1 })"
     >
         <x-heroicon-m-trophy class="w-5 h-5 shrink-0" />
-    </button>
+    </button> --}}
+    <!-- Achivements Not implemented -->
 </div>

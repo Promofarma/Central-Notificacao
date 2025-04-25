@@ -59,6 +59,7 @@ const createToastItem = ({
     id,
     uuid,
     title,
+    category_id,
     recipient_id,
     created_by,
     created_at,
@@ -82,7 +83,7 @@ const createToastItem = ({
             <p>Enviado por <strong>${created_by}</strong> em ${created_at}</p>
         </header>
         <footer>
-            <a href="${baseUrl}/recipient/${recipient_id}/${uuid}" target="_blank" rel="noopener noreferrer" class="toast-action-button">
+            <a href="${baseUrl}/recipient/${recipient_id}?category=${category_id}&notification=${uuid}" target="_blank" rel="noopener noreferrer" class="toast-action-button">
                 Visualizar Notificação
             </a>
         </footer>
@@ -117,23 +118,23 @@ export const initToast = async ({ body, notifications }) => {
         },
     });
 
-    const schedulesForToday = data
-        .filter(
-            ({ scheduled_date }) =>
-                scheduled_date === null ||
-                scheduled_date === new Date().toISOString().split("T")[0]
-        )
-        .filter(({ scheduled_time }) => {
-            if (scheduled_time === null) return true;
+    // const schedulesForToday = data
+    //     .filter(
+    //         ({ scheduled_date }) =>
+    //             scheduled_date === null ||
+    //             scheduled_date === new Date().toISOString().split("T")[0]
+    //     )
+    //     .filter(({ scheduled_time }) => {
+    //         if (scheduled_time === null) return true;
 
-            const now = new Date();
+    //         const now = new Date();
 
-            const time = `${String(now.getHours()).padStart(2, "0")}:${String(
-                now.getMinutes()
-            ).padStart(2, "0")}:00`;
+    //         const time = `${String(now.getHours()).padStart(2, "0")}:${String(
+    //             now.getMinutes()
+    //         ).padStart(2, "0")}:00`;
 
-            return scheduled_time === time;
-        });
+    //         return scheduled_time === time;
+    //     });
 
     const toastContainer = createContainer("div", "toast-container");
 
@@ -141,7 +142,7 @@ export const initToast = async ({ body, notifications }) => {
 
     toastContainer.appendChild(toastList);
 
-    toastList.append(createToastFragment(schedulesForToday));
+    toastList.append(createToastFragment(data));
 
     body.el.appendChild(toastContainer);
 };

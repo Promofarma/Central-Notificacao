@@ -30,7 +30,7 @@ final class Index extends Panel
         return [
             BladeCompiler::renderComponent(
                 component: new Button(
-                    text: 'Filtros',
+                    text: 'Filtros'.($this->countFilteredData > 0 ? " ({$this->countFilteredData})" : ''),
                     icon: 'funnel',
                     color: 'gray',
                     id: 'trigger',

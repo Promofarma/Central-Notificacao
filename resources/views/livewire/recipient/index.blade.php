@@ -4,7 +4,6 @@
 
         <x-recipient-v2.categories :categories="$this->categories" />
 
-
         @if ($tab === 'inbox')
             <x-recipient-v2.inbox
                 title="Caixa de Entrada"
@@ -29,7 +28,19 @@
             wire:key="selected-notification-{{ $notification }}"
         />
     @else
-        <x-recipient-v2.content />
+        <main class="flex flex-col items-center justify-center flex-1">
+            <x-ui.empty-state>
+                <x-slot:icon>
+                    <x-heroicon-s-inbox class="w-6 h-6" />
+                </x-slot:icon>
+                <x-slot:title>
+                    Nenhuma notificação selecionada
+                </x-slot:title>
+                <x-slot:description>
+                    Selecione uma notificação para visualizar.
+                </x-slot:description>
+            </x-ui.empty-state>
+        </main>
     @endif
 
     <livewire:recipient.modal.achievement />

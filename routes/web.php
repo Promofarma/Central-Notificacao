@@ -12,7 +12,7 @@ use Symfony\Component\HttpFoundation\BinaryFileResponse;
 Route::middleware('guest')->get('/', Login::class)->name('login');
 
 Route::group(['prefix' => 'recipient'], function (): void {
-    Route::get('/{recipient}', RecipientIndex::class)->name('recipient');
+    Route::get('/{recipient}', RecipientIndex::class)->whereNumber('recipient')->name('recipient');
 });
 
 Route::group(['middleware' => 'auth'], function (): void {

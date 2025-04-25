@@ -6,7 +6,7 @@ namespace App\DTO;
 
 use Illuminate\Support\Facades\Auth;
 
-class NotificationDTO extends AbstractDTO
+final class NotificationDTO extends AbstractDTO
 {
     public function __construct(
         public readonly string $title,
@@ -24,7 +24,7 @@ class NotificationDTO extends AbstractDTO
             title: $data['title'],
             content: trim($data['content']),
             category_id: (int) $data['category_id'],
-            user_id: Auth::id(),
+            user_id: $data['user_id'] ? (int) $data['user_id'] : Auth::id(),
             scheduled_date: $data['scheduled_date'] ?? null,
             scheduled_time: $data['scheduled_time'] ?? null,
         );

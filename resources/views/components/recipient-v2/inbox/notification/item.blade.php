@@ -1,3 +1,4 @@
+@use('App\Enums\NotificationSendType')
 @props(['recipient', 'notification'])
 <a
     href="javascript:void(0)"
@@ -28,7 +29,7 @@
                     @if (!$recipient->isViewed() && !$recipient->isRead())
                         <span class="text-lg text-green-500">&bullet;</span>
                     @endif
-                    {{ $notification->created_at->diffForHumans() }}
+                    {{ filled($notification->scheduled_date) ? $notification->scheduled_datetime->diffForHumans() : $notification->created_at->diffForHumans() }}
                 </x-ui.text>
             </div>
         </div>
