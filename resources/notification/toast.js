@@ -118,31 +118,13 @@ export const initToast = async ({ body, notifications }) => {
         },
     });
 
-    // const schedulesForToday = data
-    //     .filter(
-    //         ({ scheduled_date }) =>
-    //             scheduled_date === null ||
-    //             scheduled_date === new Date().toISOString().split("T")[0]
-    //     )
-    //     .filter(({ scheduled_time }) => {
-    //         if (scheduled_time === null) return true;
-
-    //         const now = new Date();
-
-    //         const time = `${String(now.getHours()).padStart(2, "0")}:${String(
-    //             now.getMinutes()
-    //         ).padStart(2, "0")}:00`;
-
-    //         return scheduled_time === time;
-    //     });
-
     const toastContainer = createContainer("div", "toast-container");
 
     const toastList = createContainer("ul", "toast-list");
 
     toastContainer.appendChild(toastList);
 
-    toastList.append(createToastFragment(data));
+    toastList.append(createToastFragment(data.slice(0, 3)));
 
     body.el.appendChild(toastContainer);
 };

@@ -22,7 +22,7 @@ final class NotificationRecipientResource extends JsonResource
             'scheduled_time' => $this->notification->scheduled_time,
             'viewed_at' => $this->viewed_at?->format('d/m/Y à\\s H:i'),
             'readed_at' => $this->readed_at?->format('d/m/Y à\\s H:i'),
-            'created_at' => $this->notification->created_at->format('d/m/Y à\\s H:i'),
+            'created_at' => filled($this->notification->scheduled_date) ? $this->notification->scheduled_datetime->format('d/m/Y à\\s H:i') : $this->notification->created_at->format('d/m/Y à\\s H:i'),
         ];
     }
 }
