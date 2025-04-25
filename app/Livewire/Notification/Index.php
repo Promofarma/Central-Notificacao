@@ -34,7 +34,7 @@ final class Index extends Panel
                     icon: 'funnel',
                     color: 'gray',
                     id: 'trigger',
-                    alpineExtraAttributes: ['@click.prevent' => '$dispatch(\'open-filter\')'],
+                    alpineExtraAttributes: ['@click.prevent' => '$wire.dispatchTo(\'notification.drawer.filter\', \'open-drawer\')'],
                 )
             ),
 

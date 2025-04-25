@@ -3,8 +3,6 @@
     :$headerButtons
 >
     <div>
-        {{-- <livewire:notification.filter /> --}}
-
         <div @class([
             'grid grid-cols-1 gap-4 md:grid-cols-2' => $this->notifications->isNotEmpty(),
         ])>
@@ -30,6 +28,11 @@
             @endforelse
         </div>
     </div>
-    <livewire:notification.modal.show />
-    <livewire:notification.drawer.edit />
+
+    @if ($this->notifications->isNotEmpty())
+        <livewire:notification.modal.show />
+        <livewire:notification.drawer.edit />
+    @endif
+
+    <livewire:notification.drawer.filter />
 </x-ui.page>
