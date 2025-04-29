@@ -14,7 +14,7 @@
                 <x-dynamic-component
                     name="icon"
                     :component="$icon"
-                    class="stroke-gray-600 size-5"
+                    class="text-gray-600 size-5"
                 />
             </div>
         @endif

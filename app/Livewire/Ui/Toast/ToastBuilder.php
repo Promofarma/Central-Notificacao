@@ -17,9 +17,11 @@ final class ToastBuilder
         $this->notification = $notification ?? new Notification(uniqid());
     }
 
-    private static function getIconPackageName(): string
+    public static function create(?string $title = null): self
     {
-        return 'lucide';
+        return app(self::class, [
+            'title' => $title,
+        ]);
     }
 
     public function getTitle(): ?string
@@ -58,18 +60,16 @@ final class ToastBuilder
         return $this;
     }
 
-    public static function create(?string $title = null): self
-    {
-        return app(self::class, [
-            'title' => $title,
-        ]);
-    }
-
     public function build(): Notification
     {
         return $this->notification
             ->title($this->getTitle())
             ->body($this->getBody())
             ->icon($this->getIcon());
+    }
+
+    private static function getIconPackageName(): string
+    {
+        return 'heroicon-m';
     }
 }

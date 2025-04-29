@@ -6,26 +6,26 @@ namespace App\Livewire\Ui\Toast;
 
 use Throwable;
 
-class Toast
+final class Toast
 {
     public static function success(string $title = 'Sucesso! Ação concluída', string $icon = 'check', ?string $body = null): ToastSender
     {
-        return static::make($title, $body, $icon);
+        return self::make($title, $body, $icon);
     }
 
     public static function error(string $title = 'Ops! Algo deu errado', string $icon = 'alert-triangle', ?string $body = null): ToastSender
     {
-        return static::make($title, $body, $icon);
+        return self::make($title, $body, $icon);
     }
 
     public static function warning(string $title = 'Atenção! Verifique isso', string $icon = 'alert-triangle', ?string $body = null): ToastSender
     {
-        return static::make($title, $body, $icon);
+        return self::make($title, $body, $icon);
     }
 
     public static function info(string $title = 'Informação importante', string $icon = 'info', ?string $body = null): ToastSender
     {
-        return static::make($title, $body, $icon);
+        return self::make($title, $body, $icon);
     }
 
     public static function exception(Throwable $exception): ToastSender
@@ -35,7 +35,7 @@ class Toast
             'line' => $exception->getLine(),
         ]);
 
-        return static::error(body: $exception->getMessage());
+        return self::error(body: $exception->getMessage());
     }
 
     public static function make(string $title, ?string $body = null, ?string $icon = null): ToastSender
