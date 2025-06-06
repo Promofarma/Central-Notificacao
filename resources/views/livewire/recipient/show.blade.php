@@ -58,7 +58,7 @@
     </div>
 
     <div
-        x-data="{ expanded: false }"
+        x-data="{ expanded: true }"
         class="p-4"
     >
         <div class="flex items-center mb-4 gap-x-4">
