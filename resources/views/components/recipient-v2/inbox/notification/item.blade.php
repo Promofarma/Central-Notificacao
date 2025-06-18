@@ -29,7 +29,7 @@
                     @if (!$recipient->isViewed() && !$recipient->isRead())
                         <span class="text-lg text-green-500">&bullet;</span>
                     @endif
-                    {{ filled($notification->scheduled_date) ? $notification->scheduled_datetime->diffForHumans() : $notification->created_at->diffForHumans() }}
+                    {{ filled($notification->scheduled_date) ? $notification->scheduled_datetime->format('d/m/Y H:i') : $notification->created_at->format('d/m/Y H:i') }}
                 </x-ui.text>
             </div>
         </div>
