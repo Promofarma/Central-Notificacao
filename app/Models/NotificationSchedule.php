@@ -10,16 +10,6 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 final class NotificationSchedule extends Model
 {
-    protected function casts(): array
-    {
-        return [
-            'interval_days_of_week' => 'array',
-            'interval_day' => 'integer',
-            'start_date' => 'date',
-            'end_date' => 'date',
-        ];
-    }
-
     public function notification(): BelongsTo
     {
         return $this->belongsTo(Notification::class);
@@ -28,5 +18,22 @@ final class NotificationSchedule extends Model
     public function results(): HasMany
     {
         return $this->hasMany(NotificationScheduleResult::class);
+    }
+
+    protected static function booted(): void
+    {
+        self::creating(function (NotificationSchedule $record): void {
+            $record->scheduled_time = config('notification-schedule.default_time');
+        });
+    }
+
+    protected function casts(): array
+    {
+        return [
+            'interval_days_of_week' => 'array',
+            'interval_day' => 'integer',
+            'start_date' => 'date',
+            'end_date' => 'date',
+        ];
     }
 }
