@@ -1,9 +1,11 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace App\FormSchema;
 
-use App\FormSchema\Contracts\FormSchemaContract;
 use App\Enums\AcceptedFileTypes;
+use App\FormSchema\Contracts\FormSchemaContract;
 use App\Models\Recipient;
 use Carbon\Carbon;
 use Filament\Forms\Components;
@@ -48,7 +50,7 @@ final class NotificationFormSchema implements FormSchemaContract
                     ->label('Título')
                     ->required()
                     ->maxLength(60)
-                    ->dehydrateStateUsing(fn(string $state): string => Str::of($state)->lower()->ucfirst()->trim()->value())
+                    ->dehydrateStateUsing(fn (string $state): string => Str::of($state)->lower()->ucfirst()->trim()->value())
                     ->placeholder('Digite o título da notificação'),
 
                 Components\RichEditor::make('content')
@@ -56,9 +58,9 @@ final class NotificationFormSchema implements FormSchemaContract
                     ->required()
                     ->maxLength(3000)
                     ->toolbarButtons(['bold', 'italic', 'underline', 'link', 'bulletList', 'orderedList', 'redo', 'undo'])
-                    ->hint(fn(Components\RichEditor $component): string => 'Máximo de caracteres: ' . $component->getMaxLength())
+                    ->hint(fn (Components\RichEditor $component): string => 'Máximo de caracteres: '.$component->getMaxLength())
                     ->placeholder('Escreva o conteúdo da notificação')
-                    ->dehydrateStateUsing(fn(string $state): string => html_entity_decode($state)),
+                    ->dehydrateStateUsing(fn (string $state): string => html_entity_decode($state)),
 
                 Components\FileUpload::make('attachments')
                     ->label('Anexos')
@@ -68,7 +70,7 @@ final class NotificationFormSchema implements FormSchemaContract
                     ->previewable(false)
                     ->directory('notification-attachments')
                     ->acceptedFileTypes(AcceptedFileTypes::keys())
-                    ->hint(fn(Components\FileUpload $component): string => 'Tamanho máximo: ' . Number::fileSize($component->getMaxSize() * 1024))
+                    ->hint(fn (Components\FileUpload $component): string => 'Tamanho máximo: '.Number::fileSize($component->getMaxSize() * 1024))
                     ->helperText('Arquivos aceitos: Imagem, PDF, Excel, Word, PowerPoint')
                     ->visibleOn('create'),
             ]);
@@ -89,23 +91,23 @@ final class NotificationFormSchema implements FormSchemaContract
                     ])
                     ->descriptions([
                         'recipients' => 'Selecione uma por uma.',
-                        'groups' => 'Escolha um grupo de lojas já configurado.'
+                        'groups' => 'Escolha um grupo de lojas já configurado.',
                     ])
                     ->icons([
                         'recipients' => 'heroicon-s-users',
-                        'groups' => 'heroicon-s-user-group'
+                        'groups' => 'heroicon-s-user-group',
                     ])
                     ->afterStateUpdated(function (Get $get, Set $set): void {
                         self::resetRecipientIdsIfNecessary($get, $set);
                     }),
 
                 Components\Select::make('recipient_ids')
-                    ->label(fn(Get $get): ?string => match ($get('target_type')) {
+                    ->label(fn (Get $get): ?string => match ($get('target_type')) {
                         'recipients' => 'Lojas',
                         'groups' => 'Grupos',
                         default => null,
                     })
-                    ->required(fn(Get $get): bool => ! $get('send_to_all_recipients'))
+                    ->required(fn (Get $get): bool => ! $get('send_to_all_recipients'))
                     ->multiple()
                     ->options(function (Get $get): Collection {
                         /** @var \App\Models\User $currentUser */
@@ -116,8 +118,8 @@ final class NotificationFormSchema implements FormSchemaContract
                             default => Recipient::orderBy('id')->pluck('name', 'id'),
                         };
                     })
-                    ->optionsLimit(fn(Components\Select $component) => count($component->getOptions()))
-                    ->disabled(fn(Get $get): bool => $get('send_to_all_recipients') || !$get('target_type')),
+                    ->optionsLimit(fn (Components\Select $component) => count($component->getOptions()))
+                    ->disabled(fn (Get $get): bool => $get('send_to_all_recipients') || ! $get('target_type')),
 
                 Components\Select::make('category_id')
                     ->label('Categoria')
@@ -141,6 +143,10 @@ final class NotificationFormSchema implements FormSchemaContract
             ->columns(1)
             ->visibleOn('create')
             ->schema([
+                Components\Placeholder::make('warning_placeholder')
+                    ->hiddenLabel()
+                    ->content(view('components.notification-warning')),
+
                 Components\Checkbox::make('send_to_all_recipients')
                     ->label('Enviar para todos os destinatários?')
                     ->reactive()
@@ -148,7 +154,7 @@ final class NotificationFormSchema implements FormSchemaContract
                     ->afterStateUpdated(function (Get $get, Set $set): void {
                         self::resetRecipientIdsIfNecessary($get, $set);
                     })
-                    ->disabled(fn(Get $get): bool => $get('target_type') === 'groups'),
+                    ->disabled(fn (Get $get): bool => $get('target_type') === 'groups'),
 
                 Components\Checkbox::make('is_scheduled')
                     ->label('Programar envio?')
@@ -158,7 +164,6 @@ final class NotificationFormSchema implements FormSchemaContract
                         $state ? $set('is_recurrent', false) : null;
 
                         $set('scheduled_date', null);
-                        $set('scheduled_time', null);
                     }),
 
                 Components\Grid::make()
@@ -168,12 +173,8 @@ final class NotificationFormSchema implements FormSchemaContract
                             ->required()
                             ->minDate(today()->addDay())
                             ->seconds(false)
-                            ->lazy(),
-
-                        Components\TimePicker::make('scheduled_time')
-                            ->label('Hora de envio')
-                            ->seconds(false)
-                            ->lazy(),
+                            ->lazy()
+                            ->columnSpanFull(),
 
                         Components\Placeholder::make('scheduled_placeholder')
                             ->hiddenLabel()
@@ -181,19 +182,11 @@ final class NotificationFormSchema implements FormSchemaContract
                             ->content(function (Get $get): HtmlString {
                                 $scheduledDateTime = Carbon::parse($get('scheduled_date'));
 
-                                if ($get('scheduled_time')) {
-                                    $scheduledDateTime->setTimeFromTimeString($get('scheduled_time'));
-                                }
-
-                                return new HtmlString(sprintf(
-                                    '<p class="text-xs font-medium text-gray-500 break-words">A notificação será enviada em %s, às %s.</p>',
-                                    $scheduledDateTime->format('d/m/Y'),
-                                    $scheduledDateTime->format('H:i'),
-                                ));
+                                return new HtmlString('<p class="text-xs font-medium text-gray-500 break-words">A notificação será enviada em '.$scheduledDateTime->format('d/m/Y').', às 07:00.</p>');
                             })
-                            ->visible(fn(Get $get): bool => $get('scheduled_date') !== null),
+                            ->visible(fn (Get $get): bool => $get('scheduled_date') !== null),
                     ])
-                    ->visible(fn(Get $get): bool => $get('is_scheduled')),
+                    ->visible(fn (Get $get): bool => $get('is_scheduled')),
 
                 Components\Checkbox::make('is_recurrent')
                     ->label('Repetir envio?')
@@ -243,7 +236,7 @@ final class NotificationFormSchema implements FormSchemaContract
                             ])
                             ->columnSpanFull()
                             ->live()
-                            ->visible(fn(Get $get): bool => $get('interval') === 'weekly'),
+                            ->visible(fn (Get $get): bool => $get('interval') === 'weekly'),
 
                         Components\Select::make('interval_day')
                             ->label('Selecione o dia para envio')
@@ -251,35 +244,28 @@ final class NotificationFormSchema implements FormSchemaContract
                             ->native(true)
                             ->options(range(1, 31))
                             ->columnSpanFull()
-                            ->prefixIcon('lucide-calendar')
+                            ->prefixIcon('heroicon-s-calendar')
                             ->live()
-                            ->visible(fn(Get $get): bool => $get('interval') === 'monthly'),
+                            ->visible(fn (Get $get): bool => $get('interval') === 'monthly'),
 
                         Components\DatePicker::make('start_date')
                             ->label('Início da recorrência')
                             ->required()
                             ->minDate(today())
-                            ->prefixIcon('lucide-calendar-range')
+                            ->prefixIcon('heroicon-s-calendar')
                             ->closeOnDateSelection()
-                            ->disabled(fn(Get $get) => is_null($get('interval'))),
+                            ->disabled(fn (Get $get) => is_null($get('interval'))),
 
                         Components\DatePicker::make('end_date')
                             ->label('Término da recorrência')
                             ->required()
-                            ->minDate(fn(): Carbon => today()->addMonth())
-                            ->prefixIcon('lucide-calendar-range')
+                            ->minDate(fn (): Carbon => today()->addDay())
+                            ->prefixIcon('heroicon-s-calendar')
                             ->closeOnDateSelection()
-                            ->disabled(fn(Get $get) => is_null($get('interval')) || is_null($get('start_date'))),
-
-                        Components\TimePicker::make('scheduled_time')
-                            ->label('Hora de envio')
-                            ->seconds(false)
-                            ->prefixIcon('lucide-clock')
-                            ->columnSpanFull()
-                            ->disabled(fn(Get $get) => is_null($get('interval'))),
+                            ->disabled(fn (Get $get) => is_null($get('interval')) || is_null($get('start_date'))),
                     ])
                     ->lazy()
-                    ->visible(fn(Get $get): bool => $get('is_recurrent')),
+                    ->visible(fn (Get $get): bool => $get('is_recurrent')),
 
                 Components\Placeholder::make('recurrent_placeholder')
                     ->hiddenLabel()
@@ -287,23 +273,23 @@ final class NotificationFormSchema implements FormSchemaContract
                         $interval = $get('recurrence.interval');
 
                         $period = collect([$get('recurrence.start_date'), $get('recurrence.end_date')])
-                            ->filter(fn(?string $date): bool => $date !== null)
-                            ->map(fn(string $date): string => Carbon::parse($date)->format('d/m/Y'))
+                            ->filter(fn (?string $date): bool => $date !== null)
+                            ->map(fn (string $date): string => Carbon::parse($date)->format('d/m/Y'))
                             ->implode(' a ');
 
                         $daysOfWeek = collect($get('recurrence.interval_days_of_week'))
-                            ->map(fn(string $day) => __(ucfirst($day)));
+                            ->map(fn (string $day) => __(ucfirst($day)));
 
                         $base = Str::of('A notificação será enviada ')
-                            ->when($interval === 'daily', fn(Stringable $str): Stringable => $str->append('todos os dias'))
-                            ->when($interval === 'weekly', fn(Stringable $str): Stringable => $str->append('semanalmente, na ')->append($daysOfWeek->implode(', ')))
-                            ->when($interval === 'monthly', fn(Stringable $str): Stringable => $str->append('mensalmente, no dia ' . $get('recurrence.interval_day') . ' de cada mês'))
-                            ->append(', de ' . $period)
-                            ->when($get('recurrence.scheduled_time') ?? '00:00', fn(Stringable $str, string $time): Stringable => $str->append(' às ' . $time));
+                            ->when($interval === 'daily', fn (Stringable $str): Stringable => $str->append('todos os dias'))
+                            ->when($interval === 'weekly', fn (Stringable $str): Stringable => $str->append('semanalmente, na ')->append($daysOfWeek->implode(', ')))
+                            ->when($interval === 'monthly', fn (Stringable $str): Stringable => $str->append('mensalmente, no dia '.$get('recurrence.interval_day').' de cada mês'))
+                            ->append(', de '.$period)
+                            ->append(' às 07:00');
 
-                        return new HtmlString('<p class="text-xs font-medium text-gray-500 break-words">' . $base->value() . '</p>');
+                        return new HtmlString('<p class="text-xs font-medium text-gray-500 break-words">'.$base->value().'</p>');
                     })
-                    ->visible(fn(Get $get): bool => $get('is_recurrent') && match ($get('recurrence.interval')) {
+                    ->visible(fn (Get $get): bool => $get('is_recurrent') && match ($get('recurrence.interval')) {
                         'daily' => ($get('recurrence.start_date') !== null && $get('recurrence.end_date') !== null),
                         'weekly' => ($get('recurrence.start_date') !== null && $get('recurrence.end_date') !== null && count($get('recurrence.interval_days_of_week')) > 0),
                         'monthly' => ($get('recurrence.start_date') !== null && $get('recurrence.end_date') !== null && $get('recurrence.interval_day') !== null),

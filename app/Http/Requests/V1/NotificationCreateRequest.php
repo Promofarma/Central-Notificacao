@@ -22,6 +22,7 @@ final class NotificationCreateRequest extends FormRequest
             'user_id' => 'required|int|exists:users,id',
             'recipient_ids' => 'required|array|min:1',
             'recipient_ids.*' => 'required|int|exists:recipients,id',
+            'scheduled_date' => 'nullable|date|date_format:Y-m-d',
         ];
     }
 }

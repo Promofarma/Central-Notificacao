@@ -16,32 +16,6 @@ abstract class BaseCreatePage extends BaseForm
         return sprintf('Adicionar %s', $this->getTranslatedSingularModelName());
     }
 
-    protected function beforeValidate(): void
-    {
-    }
-
-    protected function afterValidate(): void
-    {
-    }
-
-    protected function beforeCreate(): void
-    {
-    }
-
-    protected function afterCreate(): void
-    {
-    }
-
-    protected function getCreatedNotification(): string
-    {
-        return 'Operação concluída com sucesso!';
-    }
-
-    protected function mutateFormDataBeforeCreate(array $data): array
-    {
-        return $data;
-    }
-
     final public function handleOnSubmit(): void
     {
         try {
@@ -76,5 +50,31 @@ abstract class BaseCreatePage extends BaseForm
             url: route($this->getResourceRouteName(ResourceOperation::Index)),
             navigate: true,
         );
+    }
+
+    protected function beforeValidate(): void
+    {
+    }
+
+    protected function afterValidate(): void
+    {
+    }
+
+    protected function beforeCreate(): void
+    {
+    }
+
+    protected function afterCreate(): void
+    {
+    }
+
+    protected function getCreatedNotification(): string
+    {
+        return 'Operação concluída com sucesso!';
+    }
+
+    protected function mutateFormDataBeforeCreate(array $data): array
+    {
+        return $data;
     }
 }
