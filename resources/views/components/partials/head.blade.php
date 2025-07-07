@@ -43,6 +43,11 @@
         }
     </style>
 
+    <link
+        rel="stylesheet"
+        href="https://printjs-4de6.kxcdn.com/print.min.css"
+    >
+
     @filamentStyles
     @vite('resources/css/app.css')
 </head>
