@@ -45,7 +45,7 @@ const updateUnviewedNotificationCount = (notificationList) => {
         (n) => !n.readed_at
     );
 
-    console.log(filterUnreadNotifications);
+    console.log(filterUnreadNotifications.length);
 
     notificationCountElement.textContent = filterUnreadNotifications.length;
 };
