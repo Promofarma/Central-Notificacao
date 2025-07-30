@@ -38,7 +38,7 @@ const createCloseButton = (toastItem) => {
             await markAsViewed(toastItem.id);
 
             // atualiza a contagem de notificação no badge do painel
-            handleViewed();
+            // handleViewed();
 
             button.removeEventListener("click", handleClick);
 
