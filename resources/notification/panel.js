@@ -41,7 +41,11 @@ const updateUnviewedNotificationCount = (notificationList) => {
         return;
     }
 
-    notificationCountElement.textContent = notificationList.length;
+    const filterUnreadNotifications = notificationList.filter(
+        ({ readed_at }) => !readed_at
+    );
+
+    notificationCountElement.textContent = filterUnreadNotifications.length;
 };
 
 const updateNotificationPanelBody = (notificationList) => {
@@ -78,11 +82,7 @@ export const initPanel = async ({ body, notifications }) => {
         return;
     }
 
-    const { data } = await notifications(storeId, {
-        params: {
-            read_status: "unread",
-        },
-    });
+    const { data } = await notifications(storeId);
 
     updateUnviewedNotificationCount(data);
 
