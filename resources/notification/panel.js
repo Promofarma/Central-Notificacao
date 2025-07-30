@@ -32,23 +32,19 @@ const notificationListItem = ({
     return listItem;
 };
 
-const updateUnviewedNotificationCount = async (notificationList) => {
+const updateUnviewedNotificationCount = (notificationList) => {
     const notificationCountElement = document.querySelector(
         ".notification-count"
     );
 
-    if (!notificationCountElement || !notificationList.length) {
+    if (!notificationCountElement) {
         return;
     }
 
-    const filterUnviewedOrUnreaded = notificationList.filter(
-        ({ readed_at }) => readed_at === null
-    );
-
-    notificationCountElement.textContent = filterUnviewedOrUnreaded.length;
+    notificationCountElement.textContent = notificationList.length;
 };
 
-const updateNotificationPanelBody = async (notificationList) => {
+const updateNotificationPanelBody = (notificationList) => {
     const notificationPanelBody = document.querySelector(
         ".notification-panel-body"
     );
@@ -84,7 +80,7 @@ export const initPanel = async ({ body, notifications }) => {
 
     const { data } = await notifications(storeId);
 
-    await updateUnviewedNotificationCount(data);
+    updateUnviewedNotificationCount(data);
 
-    await updateNotificationPanelBody(data);
+    updateNotificationPanelBody(data);
 };
