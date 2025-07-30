@@ -42,7 +42,7 @@ const updateUnviewedNotificationCount = async (notificationList) => {
     }
 
     const filterUnviewedOrUnreaded = notificationList.filter(
-        ({ viewed_at }) => viewed_at === null
+        ({ readed_at }) => readed_at === null
     );
 
     notificationCountElement.textContent = filterUnviewedOrUnreaded.length;
