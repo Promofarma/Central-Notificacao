@@ -78,7 +78,11 @@ export const initPanel = async ({ body, notifications }) => {
         return;
     }
 
-    const { data } = await notifications(storeId);
+    const { data } = await notifications(storeId, {
+        params: {
+            read_status: "unread",
+        },
+    });
 
     updateUnviewedNotificationCount(data);
 
