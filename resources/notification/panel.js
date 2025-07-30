@@ -32,7 +32,7 @@ const notificationListItem = ({
     return listItem;
 };
 
-const updateUnviewedNotificationCount = (notificationList) => {
+const updateUnviewedNotificationCount = async (notificationList) => {
     const notificationCountElement = document.querySelector(
         ".notification-count"
     );
@@ -42,7 +42,7 @@ const updateUnviewedNotificationCount = (notificationList) => {
     }
 
     const filterUnreadNotifications = notificationList.filter(
-        (n) => !n.readed_at
+        ({ readed_at }) => !readed_at
     );
 
     console.log(filterUnreadNotifications.length);
@@ -50,7 +50,7 @@ const updateUnviewedNotificationCount = (notificationList) => {
     notificationCountElement.textContent = filterUnreadNotifications.length;
 };
 
-const updateNotificationPanelBody = (notificationList) => {
+const updateNotificationPanelBody = async (notificationList) => {
     const notificationPanelBody = document.querySelector(
         ".notification-panel-body"
     );
@@ -86,7 +86,7 @@ export const initPanel = async ({ body, notifications }) => {
 
     const { data } = await notifications(storeId);
 
-    updateUnviewedNotificationCount(data);
+    await updateUnviewedNotificationCount(data);
 
-    updateNotificationPanelBody(data);
+    await updateNotificationPanelBody(data);
 };
