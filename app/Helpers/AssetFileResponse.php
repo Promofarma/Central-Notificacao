@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Helpers;
 
+use Exception;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 final class AssetFileResponse
@@ -24,11 +25,11 @@ final class AssetFileResponse
     {
         $filePath = $this->getFilePath();
 
-        return response()->file($filePath, [
-            'Content-Type' => $this->getContentType(),
-            'Cache-Control' => 'no-cache',
+        return  response()->file($filePath, [
+            'Content-Type'   => $this->getContentType(),
+            'Cache-Control'  => 'public, max-age=3600, immutable',
             'Content-Length' => filesize($filePath),
-            'Version' => md5($filePath),
+            'Version'        => md5_file($filePath),
         ]);
     }
 
@@ -36,7 +37,7 @@ final class AssetFileResponse
     {
         $manifestFile = public_path('build/manifest.json');
 
-        throw_unless(file_exists($manifestFile), new \Exception('Manifest file not found.'));
+        throw_unless(file_exists($manifestFile), new Exception('Manifest file not found.'));
 
         $manifestContent = file_get_contents($manifestFile);
 
@@ -44,7 +45,7 @@ final class AssetFileResponse
 
         $path = 'resources/'.($this->autoDiscover ? $this->getFilenameWithAutoDiscover() : $this->filename);
 
-        throw_unless(array_key_exists($path, $manifestData), new \Exception('File not found in manifest.'));
+        throw_unless(array_key_exists($path, $manifestData), new Exception('File not found in manifest.'));
 
         return public_path('build/'.$manifestData[$path]['file']);
     }
@@ -64,7 +65,7 @@ final class AssetFileResponse
         return match ($this->getFileExtension()) {
             'js' => 'application/javascript',
             'css' => 'text/css',
-            default => throw new \Exception('File type not supported.'),
+            default => throw new Exception('File type not supported.'),
         };
     }
 }
