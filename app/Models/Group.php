@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models;
 
 use App\Enums\GroupStatus;
@@ -14,11 +16,14 @@ use Illuminate\Support\Collection;
 #[ObservedBy(GroupObserver::class)]
 final class Group extends Model
 {
-    protected function casts(): array
+    public static function getUserIdsFromGroups(array $ids): Collection
     {
-        return [
-            'status' => GroupStatus::class
-        ];
+        return self::with('recipients:id')
+            ->whereIn('id', $ids)
+            ->get()
+            ->flatMap(fn ($group) => $group->recipients->pluck('id'))
+            ->unique()
+            ->values();
     }
 
     public function recipients(): BelongsToMany
@@ -31,16 +36,6 @@ final class Group extends Model
         return $this->belongsTo(User::class);
     }
 
-    public static function getUserIdsFromGroups(array $ids): Collection
-    {
-        return static::with('recipients:id')
-            ->whereIn('id', $ids)
-            ->get()
-            ->flatMap(fn($group) => $group->recipients->pluck('id'))
-            ->unique()
-            ->values();
-    }
-
     public function scopeOwnedBy(Builder $query, int $userId): Builder
     {
         return $query->where('user_id', $userId);
@@ -49,5 +44,17 @@ final class Group extends Model
     public function scopeActive(Builder $query): Builder
     {
         return $query->where('status', GroupStatus::ACTIVE);
+    }
+
+    public function scopeHasMembers(Builder $query): Builder
+    {
+        return $query->whereHas('recipients');
+    }
+
+    protected function casts(): array
+    {
+        return [
+            'status' => GroupStatus::class,
+        ];
     }
 }

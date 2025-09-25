@@ -2,7 +2,8 @@
     :$title
     :$headerButtons
 >
-    <div>
+    <div class="space-y-4">
+        {{ $this->notifications->links() }}
         <div @class([
             'grid grid-cols-1 gap-4 md:grid-cols-2' => $this->notifications->isNotEmpty(),
         ])>

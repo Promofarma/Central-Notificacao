@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace App\Queries;
 
@@ -10,7 +12,8 @@ final class TeamMembersNotificationsQuery
 {
     public function __construct(
         private readonly User $user
-    ) {}
+    ) {
+    }
 
     public function builder(): Builder
     {
@@ -18,7 +21,7 @@ final class TeamMembersNotificationsQuery
             ->with(['schedule', 'attachments', 'category', 'user:id,name'])
             ->withCount([
                 'recipients',
-                'recipients as recipients_read_count' => fn($query) => $query->read(),
+                'recipients as recipients_read_count' => fn ($query) => $query->read(),
                 'attachments',
             ])
             ->where('user_id', $this->user->id)

@@ -10,7 +10,7 @@ use App\Livewire\Component\Pages\Concerns\InteractsWithAuthenticatedUser;
 use App\Livewire\Component\Pages\Panel;
 use App\Queries\TeamMembersNotificationsQuery;
 use App\View\Components\Ui\Button;
-use Illuminate\Support\Collection;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\Compilers\BladeCompiler;
 use Livewire\Attributes\Computed;
@@ -52,10 +52,11 @@ final class Index extends Panel
     #[Computed]
     #[On('notification-updated')]
     #[On('notification-deleted')]
-    public function notifications(): Collection
+    public function notifications(): LengthAwarePaginator
     {
-        return (new TeamMembersNotificationsQuery(user: Auth::user()))->builder()
+        return (new TeamMembersNotificationsQuery(user: Auth::user()))
+            ->builder()
             ->filter(new NotificationFilter($this->getFilterData()))
-            ->get();
+            ->paginate(8);
     }
 }
