@@ -10,10 +10,8 @@ use Filament\Forms\Components;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Form;
-use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Livewire\Features\SupportRedirects\Redirector;
 
 /**
  * @property Form $form
@@ -24,13 +22,13 @@ final class Login extends BasePage implements HasForms
 
     protected const REDIRECT_TO_ROUTE = 'notification.index';
 
+    public ?array $data = [];
+
     protected static string $layout = 'components.layouts.guest';
 
     protected static string $view = 'livewire.auth.login';
 
     protected static ?string $title = 'Acesse sua conta';
-
-    public ?array $data = [];
 
     public function form(Form $form): Form
     {

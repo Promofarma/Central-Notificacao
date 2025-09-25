@@ -13,17 +13,17 @@ final class Toast
         return self::make($title, $body, $icon);
     }
 
-    public static function error(string $title = 'Ops! Algo deu errado', string $icon = 'alert-triangle', ?string $body = null): ToastSender
+    public static function error(string $title = 'Ops! Algo deu errado', string $icon = 'exclamation-triangle', ?string $body = null): ToastSender
     {
         return self::make($title, $body, $icon);
     }
 
-    public static function warning(string $title = 'Atenção! Verifique isso', string $icon = 'alert-triangle', ?string $body = null): ToastSender
+    public static function warning(string $title = 'Atenção! Verifique isso', string $icon = 'exclamation-triangle', ?string $body = null): ToastSender
     {
         return self::make($title, $body, $icon);
     }
 
-    public static function info(string $title = 'Informação importante', string $icon = 'info', ?string $body = null): ToastSender
+    public static function info(string $title = 'Informação importante', string $icon = 'exclamation-circle', ?string $body = null): ToastSender
     {
         return self::make($title, $body, $icon);
     }

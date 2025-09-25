@@ -55,7 +55,7 @@ final class ToastBuilder
 
     public function icon(string $icon): self
     {
-        $this->icon = sprintf('%s-%s', self::getIconPackageName(), strtolower($icon));
+        $this->icon = sprintf('%s-%s', self::getIconPackageName(), mb_strtolower($icon));
 
         return $this;
     }

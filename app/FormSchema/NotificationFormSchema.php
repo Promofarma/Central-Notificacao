@@ -114,7 +114,7 @@ final class NotificationFormSchema implements FormSchemaContract
                         $currentUser = Auth::user();
 
                         return match ($get('target_type')) {
-                            'groups' => $currentUser->groups()->active()->pluck('name', 'id'),
+                            'groups' => $currentUser->groups()->active()->hasMembers()->pluck('name', 'id'),
                             default => Recipient::orderBy('id')->pluck('name', 'id'),
                         };
                     })
