@@ -42,6 +42,7 @@ final class ListNotificationRecipientController extends Controller
                     ])
                     ->with('user:id,name'),
             ])
+            ->limit(30)
             ->filter(new NotificationRecipientFilter($validated))
             ->orderBy('created_at', 'desc')
             ->get();
