@@ -8,7 +8,6 @@ use App\Filters\Concerns\InteractsWithFilterData;
 use App\Filters\NotificationRecipientFilter;
 use App\Helpers\InteractsWithCacheTags;
 use App\Livewire\Component\Pages\BasePage;
-use App\Livewire\Ui\Toast\Toast;
 use App\Models\Category;
 use App\Models\NotificationRecipient;
 use Illuminate\Database\Eloquent\Builder;
@@ -17,7 +16,6 @@ use Livewire\Attributes\Computed;
 use Livewire\Attributes\Locked;
 use Livewire\Attributes\On;
 use Livewire\Attributes\Url;
-use Throwable;
 
 final class Index extends BasePage
 {
@@ -35,6 +33,13 @@ final class Index extends BasePage
 
     #[Url(as: 'notification')]
     public ?string $notification = null;
+
+    #[Locked]
+    public array $tabs = [
+        ['key' => 'inbox', 'title' => 'Caixa de Entrada', 'icon' => 'heroicon-s-inbox'],
+        ['key' => 'archived', 'title' => 'Arquivadas', 'icon' => 'heroicon-s-archive-box'],
+        ['key' => 'all', 'title' => 'Todas Recebidas', 'icon' => 'heroicon-s-inbox-stack'],
+    ];
 
     protected static string $layout = 'components.layouts.guest';
 
@@ -96,6 +101,19 @@ final class Index extends BasePage
 
             return $this->applyFilters($query)->orderByDesc('created_at')->get();
         });
+    }
+
+    #[Computed]
+    public function currentTab(): array
+    {
+        return collect($this->tabs)->firstWhere('key', $this->tab) ?? $this->tabs[0];
+    }
+
+    public function getViewData(): array
+    {
+        return [
+            'tabs' => $this->tabs,
+        ];
     }
 
     #[On('notification-read')]

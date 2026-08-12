@@ -7,7 +7,6 @@ namespace App\Filters;
 use App\Enums\NotificationRecipientReadStatus;
 use App\Filters\Contracts\FilterContract;
 use Illuminate\Database\Eloquent\Builder;
-use InvalidArgumentException;
 
 final class NotificationRecipientFilter implements FilterContract
 {
