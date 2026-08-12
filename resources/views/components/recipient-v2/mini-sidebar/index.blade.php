@@ -22,6 +22,7 @@
             wire:loading.attr="disabled"
             wire:target="tab"
         />
+
         <x-recipient-v2.mini-sidebar.nav-item
             text="Arquivadas"
             icon="heroicon-s-archive-box"
@@ -30,6 +31,16 @@
             wire:loading.attr="disabled"
             wire:target="tab"
         />
+
+        <x-recipient-v2.mini-sidebar.nav-item
+            text="Recebidas"
+            icon="heroicon-s-inbox-stack"
+            @click="$wire.tab === 'all' ? false : $wire.set('tab', 'all');"
+            x-bind:data-active="$wire.tab === 'all'"
+            wire:loading.attr="disabled"
+            wire:target="tab"
+        />
+
         <x-recipient-v2.mini-sidebar.nav-item
             text="Filtros"
             icon="heroicon-s-funnel"
