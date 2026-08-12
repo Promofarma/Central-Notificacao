@@ -19,6 +19,14 @@
                 :notifications="$this->notificationRecipients"
             />
         @endif
+
+        @if ($tab === 'all')
+            <x-recipient-v2.inbox
+                title="Todas"
+                icon="heroicon-s-archive-box"
+                :notifications="$this->notificationRecipients"
+            />
+        @endif
     </aside>
 
     @if (filled($notification) && Str::isUuid($notification))
