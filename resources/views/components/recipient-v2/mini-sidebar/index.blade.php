@@ -1,3 +1,4 @@
+@props(['recipient', 'tabs'])
 <div class="flex flex-col bg-white max-w-20 grow">
     <div class="flex items-center justify-center border-b h-14 border-gray-950/10">
         <a
@@ -14,32 +15,16 @@
         </a>
     </div>
     <nav class="flex flex-col items-center flex-1 mt-4 space-y-4">
-        <x-recipient-v2.mini-sidebar.nav-item
-            text="Caixa de Entrada"
-            icon="heroicon-s-inbox"
-            @click="$wire.tab === 'inbox' ? false : $wire.set('tab', 'inbox');"
-            x-bind:data-active="$wire.tab === 'inbox'"
-            wire:loading.attr="disabled"
-            wire:target="tab"
-        />
-
-        <x-recipient-v2.mini-sidebar.nav-item
-            text="Arquivadas"
-            icon="heroicon-s-archive-box"
-            @click="$wire.tab === 'archived' ? false : $wire.set('tab', 'archived');"
-            x-bind:data-active="$wire.tab === 'archived'"
-            wire:loading.attr="disabled"
-            wire:target="tab"
-        />
-
-        <x-recipient-v2.mini-sidebar.nav-item
-            text="Recebidas"
-            icon="heroicon-s-inbox-stack"
-            @click="$wire.tab === 'all' ? false : $wire.set('tab', 'all');"
-            x-bind:data-active="$wire.tab === 'all'"
-            wire:loading.attr="disabled"
-            wire:target="tab"
-        />
+        @foreach ($tabs as $tab)
+            <x-recipient-v2.mini-sidebar.nav-item
+                :text="$tab['title']"
+                :icon="$tab['icon']"
+                x-on:click="$wire.tab === '{{ $tab['key'] }}' ? false : $wire.set('tab', '{{ $tab['key'] }}');"
+                x-bind:data-active="$wire.tab === '{{ $tab['key'] }}'"
+                wire:target="tab"
+                wire:loading.attr="disabled"
+            />
+        @endforeach
 
         <x-recipient-v2.mini-sidebar.nav-item
             text="Filtros"
