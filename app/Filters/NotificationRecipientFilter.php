@@ -7,6 +7,7 @@ namespace App\Filters;
 use App\Enums\NotificationRecipientReadStatus;
 use App\Filters\Contracts\FilterContract;
 use Illuminate\Database\Eloquent\Builder;
+use InvalidArgumentException;
 
 final class NotificationRecipientFilter implements FilterContract
 {
@@ -21,7 +22,7 @@ final class NotificationRecipientFilter implements FilterContract
             ->when(value: $this->data['tab'] ?? null, callback: fn(Builder $query, string $value) => match ($value) {
                 'inbox' => $query->unarchived(),
                 'archived' => $query->archived(),
-                'all' => $query,
+                default => $query,
             })
             ->when(value: $this->data['recipient_id'] ?? null, callback: fn(
                 Builder $query,

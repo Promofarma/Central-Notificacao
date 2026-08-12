@@ -8,6 +8,7 @@ use App\Filters\Concerns\InteractsWithFilterData;
 use App\Filters\NotificationRecipientFilter;
 use App\Helpers\InteractsWithCacheTags;
 use App\Livewire\Component\Pages\BasePage;
+use App\Livewire\Ui\Toast\Toast;
 use App\Models\Category;
 use App\Models\NotificationRecipient;
 use Illuminate\Database\Eloquent\Builder;
@@ -16,6 +17,7 @@ use Livewire\Attributes\Computed;
 use Livewire\Attributes\Locked;
 use Livewire\Attributes\On;
 use Livewire\Attributes\Url;
+use Throwable;
 
 final class Index extends BasePage
 {
@@ -52,9 +54,10 @@ final class Index extends BasePage
                 'name',
             ])
             ->withCount([
-                'notifications' => fn ($query) => $query->whereHas('recipients', fn ($query): Builder => $this->applyFilters($query)),
+                'notifications' =>
+                    fn($query) => $query->whereHas('recipients', fn($query): Builder => $this->applyFilters($query)),
             ])
-            ->whereHas('notifications.recipients', fn ($query): Builder => $this->applyFilters($query))
+            ->whereHas('notifications.recipients', fn($query): Builder => $this->applyFilters($query))
             ->orderBy('name')
             ->get();
     }
@@ -74,7 +77,7 @@ final class Index extends BasePage
                     'created_at',
                 ])
                 ->with([
-                    'notification' => fn ($query) => $query
+                    'notification' => fn($query) => $query
                         ->select([
                             'uuid',
                             'title',
@@ -91,9 +94,7 @@ final class Index extends BasePage
                 ])
                 ->whereRelation('notification', 'category_id', $this->category);
 
-            return $this->applyFilters($query)
-                ->orderByDesc('created_at')
-                ->get();
+            return $this->applyFilters($query)->orderByDesc('created_at')->get();
         });
     }
 
@@ -117,7 +118,7 @@ final class Index extends BasePage
     protected function getTags(): array
     {
         return [
-            'recipient:'.$this->recipient,
+            'recipient:' . $this->recipient,
             'inbox',
         ];
     }
