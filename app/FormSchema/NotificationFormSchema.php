@@ -24,56 +24,83 @@ final class NotificationFormSchema implements FormSchemaContract
     public function getComponents(): array
     {
         return [
-            Components\Grid::make(12)
-                ->schema(function (string $operation) {
-                    $isEdit = $operation === 'edit';
+            Components\Grid::make(12)->schema(function (string $operation) {
+                $isEdit = $operation === 'edit';
 
-                    return [
-                        self::makeContent()->columnSpan([
+                return [
+                    self::makeContent()
+                        ->columnSpan([
                             'md' => $isEdit ? 12 : 7,
                             '2xl' => $isEdit ? 12 : 8,
                         ]),
-                        self::makeAside()->columnSpan([
+                    self::makeAside()
+                        ->columnSpan([
                             'md' => $isEdit ? 12 : 5,
-                            '2xl' =>  $isEdit ? 12 : 4,
+                            '2xl' => $isEdit ? 12 : 4,
                         ]),
-                    ];
-                }),
+                ];
+            }),
         ];
     }
 
     private static function makeContent(): Component
     {
-        return Components\Grid::make(1)
-            ->schema([
-                Components\TextInput::make('title')
-                    ->label('Título')
-                    ->required()
-                    ->maxLength(60)
-                    ->dehydrateStateUsing(fn (string $state): string => Str::of($state)->lower()->ucfirst()->trim()->value())
-                    ->placeholder('Digite o título da notificação'),
+        return Components\Grid::make(1)->schema([
+            Components\TextInput::make('title')
+                ->label('Título')
+                ->required()
+                ->maxLength(60)
+                ->dehydrateStateUsing(fn(string $state): string => Str::of($state)->lower()->ucfirst()->trim()->value())
+                ->placeholder('Digite o título da notificação'),
 
-                Components\RichEditor::make('content')
-                    ->label('Conteúdo')
-                    ->required()
-                    ->maxLength(3000)
-                    ->toolbarButtons(['bold', 'italic', 'underline', 'link', 'bulletList', 'orderedList', 'redo', 'undo'])
-                    ->hint(fn (Components\RichEditor $component): string => 'Máximo de caracteres: '.$component->getMaxLength())
-                    ->placeholder('Escreva o conteúdo da notificação')
-                    ->dehydrateStateUsing(fn (string $state): string => html_entity_decode($state)),
+            Components\RichEditor::make('content')
+                ->label('Conteúdo')
+                ->required()
+                ->maxLength(3000)
+                ->toolbarButtons(['bold', 'italic', 'underline', 'link', 'bulletList', 'orderedList', 'redo', 'undo'])
+                ->hint(
+                    fn(Components\RichEditor $component): string => 'Máximo de caracteres: '
+                    . $component->getMaxLength(),
+                )
+                ->placeholder('Escreva o conteúdo da notificação')
+                ->dehydrateStateUsing(fn(string $state): string => html_entity_decode($state)),
 
-                Components\FileUpload::make('attachments')
-                    ->label('Anexos')
-                    ->multiple()
-                    ->maxSize(10240) // 10MB
-                    ->maxFiles(5)
-                    ->previewable(false)
-                    ->directory('notification-attachments')
-                    ->acceptedFileTypes(AcceptedFileTypes::keys())
-                    ->hint(fn (Components\FileUpload $component): string => 'Tamanho máximo: '.Number::fileSize($component->getMaxSize() * 1024))
-                    ->helperText('Arquivos aceitos: Imagem, PDF, Excel, Word, PowerPoint')
-                    ->visibleOn('create'),
-            ]);
+            Components\FileUpload::make('attachments')
+                ->label('Anexos')
+                ->multiple()
+                ->maxSize(10240) // 10MB
+                ->maxFiles(5)
+                ->previewable(false)
+                ->directory('notification-attachments')
+                ->acceptedFileTypes(AcceptedFileTypes::keys())
+                ->hint(
+                    fn(Components\FileUpload $component): string => 'Tamanho máximo: '
+                    . Number::fileSize($component->getMaxSize() * 1024),
+                )
+                ->helperText('Arquivos aceitos: Imagem, PDF, Excel, Word, PowerPoint')
+                ->visibleOn('create'),
+
+            \App\Forms\Components\TargetType::make('type')
+                ->label('Tipo')
+                ->required()
+                ->reactive()
+                ->default('toast')
+                ->options([
+                    'toast' => 'Pop-up',
+                    'banner' => 'Banner',
+                ])
+                ->descriptions([
+                    'toast' => 'Notificação temporária exibida no canto da tela.',
+                    'banner' => 'Faixa fixa exibida no topo da intranet.',
+                ])
+                ->icons([
+                    'toast' => 'heroicon-s-bell-alert',
+                    'banner' => 'heroicon-s-megaphone',
+                ])
+                ->afterStateUpdated(function (Set $set): void {
+                    $set('is_recurrent', false);
+                }),
+        ]);
     }
 
     private static function makeAside(): Component
@@ -102,12 +129,12 @@ final class NotificationFormSchema implements FormSchemaContract
                     }),
 
                 Components\Select::make('recipient_ids')
-                    ->label(fn (Get $get): ?string => match ($get('target_type')) {
+                    ->label(fn(Get $get): ?string => match ($get('target_type')) {
                         'recipients' => 'Lojas',
                         'groups' => 'Grupos',
                         default => null,
                     })
-                    ->required(fn (Get $get): bool => ! $get('send_to_all_recipients'))
+                    ->required(fn(Get $get): bool => !$get('send_to_all_recipients'))
                     ->multiple()
                     ->options(function (Get $get): Collection {
                         /** @var \App\Models\User $currentUser */
@@ -118,8 +145,8 @@ final class NotificationFormSchema implements FormSchemaContract
                             default => Recipient::orderBy('id')->pluck('name', 'id'),
                         };
                     })
-                    ->optionsLimit(fn (Components\Select $component) => count($component->getOptions()))
-                    ->disabled(fn (Get $get): bool => $get('send_to_all_recipients') || ! $get('target_type')),
+                    ->optionsLimit(fn(Components\Select $component) => count($component->getOptions()))
+                    ->disabled(fn(Get $get): bool => $get('send_to_all_recipients') || !$get('target_type')),
 
                 Components\Select::make('category_id')
                     ->label('Categoria')
@@ -154,7 +181,7 @@ final class NotificationFormSchema implements FormSchemaContract
                     ->afterStateUpdated(function (Get $get, Set $set): void {
                         self::resetRecipientIdsIfNecessary($get, $set);
                     })
-                    ->disabled(fn (Get $get): bool => $get('target_type') === 'groups'),
+                    ->disabled(fn(Get $get): bool => $get('target_type') === 'groups'),
 
                 Components\Checkbox::make('is_scheduled')
                     ->label('Programar envio?')
@@ -182,15 +209,23 @@ final class NotificationFormSchema implements FormSchemaContract
                             ->content(function (Get $get): HtmlString {
                                 $scheduledDateTime = Carbon::parse($get('scheduled_date'));
 
-                                return new HtmlString('<p class="text-xs font-medium text-gray-500 break-words">A notificação será enviada em '.$scheduledDateTime->format('d/m/Y').', às 07:00.</p>');
+                                return new HtmlString(
+                                    '<p class="text-xs font-medium text-gray-500 break-words">A notificação será enviada em '
+                                    . $scheduledDateTime->format('d/m/Y')
+                                    . ', às 07:00.</p>',
+                                );
                             })
-                            ->visible(fn (Get $get): bool => $get('scheduled_date') !== null),
+                            ->visible(fn(Get $get): bool => $get('scheduled_date') !== null),
                     ])
-                    ->visible(fn (Get $get): bool => $get('is_scheduled')),
+                    ->visible(fn(Get $get): bool => $get('is_scheduled')),
 
                 Components\Checkbox::make('is_recurrent')
                     ->label('Repetir envio?')
                     ->reactive()
+                    ->disabled(fn(Get $get): bool => $get('type') === 'banner')
+                    ->hint(fn(Get $get): ?string => $get('type') === 'banner'
+                        ? 'Indisponível para o tipo Banner'
+                        : null)
                     ->helperText('Marque esta opção para repetir o envio da notificação em intervalos regulares.')
                     ->afterStateUpdated(function (bool $state, Set $set, Component $component): void {
                         $state ? $set('is_scheduled', false) : null;
@@ -236,7 +271,7 @@ final class NotificationFormSchema implements FormSchemaContract
                             ])
                             ->columnSpanFull()
                             ->live()
-                            ->visible(fn (Get $get): bool => $get('interval') === 'weekly'),
+                            ->visible(fn(Get $get): bool => $get('interval') === 'weekly'),
 
                         Components\Select::make('interval_day')
                             ->label('Selecione o dia para envio')
@@ -246,7 +281,7 @@ final class NotificationFormSchema implements FormSchemaContract
                             ->columnSpanFull()
                             ->prefixIcon('heroicon-s-calendar')
                             ->live()
-                            ->visible(fn (Get $get): bool => $get('interval') === 'monthly'),
+                            ->visible(fn(Get $get): bool => $get('interval') === 'monthly'),
 
                         Components\DatePicker::make('start_date')
                             ->label('Início da recorrência')
@@ -254,18 +289,18 @@ final class NotificationFormSchema implements FormSchemaContract
                             ->minDate(today())
                             ->prefixIcon('heroicon-s-calendar')
                             ->closeOnDateSelection()
-                            ->disabled(fn (Get $get) => is_null($get('interval'))),
+                            ->disabled(fn(Get $get) => is_null($get('interval'))),
 
                         Components\DatePicker::make('end_date')
                             ->label('Término da recorrência')
                             ->required()
-                            ->minDate(fn (): Carbon => today()->addDay())
+                            ->minDate(fn(): Carbon => today()->addDay())
                             ->prefixIcon('heroicon-s-calendar')
                             ->closeOnDateSelection()
-                            ->disabled(fn (Get $get) => is_null($get('interval')) || is_null($get('start_date'))),
+                            ->disabled(fn(Get $get) => is_null($get('interval')) || is_null($get('start_date'))),
                     ])
                     ->lazy()
-                    ->visible(fn (Get $get): bool => $get('is_recurrent')),
+                    ->visible(fn(Get $get): bool => $get('is_recurrent')),
 
                 Components\Placeholder::make('recurrent_placeholder')
                     ->hiddenLabel()
@@ -273,28 +308,47 @@ final class NotificationFormSchema implements FormSchemaContract
                         $interval = $get('recurrence.interval');
 
                         $period = collect([$get('recurrence.start_date'), $get('recurrence.end_date')])
-                            ->filter(fn (?string $date): bool => $date !== null)
-                            ->map(fn (string $date): string => Carbon::parse($date)->format('d/m/Y'))
+                            ->filter(fn(?string $date): bool => $date !== null)
+                            ->map(fn(string $date): string => Carbon::parse($date)->format('d/m/Y'))
                             ->implode(' a ');
 
-                        $daysOfWeek = collect($get('recurrence.interval_days_of_week'))
-                            ->map(fn (string $day) => __(ucfirst($day)));
+                        $daysOfWeek = collect($get(
+                            'recurrence.interval_days_of_week',
+                        ))->map(fn(string $day) => __(ucfirst($day)));
 
                         $base = Str::of('A notificação será enviada ')
-                            ->when($interval === 'daily', fn (Stringable $str): Stringable => $str->append('todos os dias'))
-                            ->when($interval === 'weekly', fn (Stringable $str): Stringable => $str->append('semanalmente, na ')->append($daysOfWeek->implode(', ')))
-                            ->when($interval === 'monthly', fn (Stringable $str): Stringable => $str->append('mensalmente, no dia '.$get('recurrence.interval_day').' de cada mês'))
-                            ->append(', de '.$period)
+                            ->when($interval === 'daily', fn(Stringable $str): Stringable => $str->append(
+                                'todos os dias',
+                            ))
+                            ->when($interval === 'weekly', fn(Stringable $str): Stringable => $str->append(
+                                'semanalmente, na ',
+                            )->append($daysOfWeek->implode(', ')))
+                            ->when($interval === 'monthly', fn(Stringable $str): Stringable => $str->append(
+                                'mensalmente, no dia ' . $get('recurrence.interval_day') . ' de cada mês',
+                            ))
+                            ->append(', de ' . $period)
                             ->append(' às 07:00');
 
-                        return new HtmlString('<p class="text-xs font-medium text-gray-500 break-words">'.$base->value().'</p>');
+                        return new HtmlString(
+                            '<p class="text-xs font-medium text-gray-500 break-words">' . $base->value() . '</p>',
+                        );
                     })
-                    ->visible(fn (Get $get): bool => $get('is_recurrent') && match ($get('recurrence.interval')) {
-                        'daily' => ($get('recurrence.start_date') !== null && $get('recurrence.end_date') !== null),
-                        'weekly' => ($get('recurrence.start_date') !== null && $get('recurrence.end_date') !== null && count($get('recurrence.interval_days_of_week')) > 0),
-                        'monthly' => ($get('recurrence.start_date') !== null && $get('recurrence.end_date') !== null && $get('recurrence.interval_day') !== null),
-                        default => false,
-                    })
+                    ->visible(
+                        fn(Get $get): bool => (
+                            $get('is_recurrent')
+                            && match ($get('recurrence.interval')) {
+                                'daily' => $get('recurrence.start_date') !== null
+                                && $get('recurrence.end_date') !== null,
+                                'weekly' => $get('recurrence.start_date') !== null
+                                && $get('recurrence.end_date') !== null
+                                && count($get('recurrence.interval_days_of_week')) > 0,
+                                'monthly' => $get('recurrence.start_date') !== null
+                                && $get('recurrence.end_date') !== null
+                                && $get('recurrence.interval_day') !== null,
+                                default => false,
+                            }
+                        ),
+                    )
                     ->columnSpanFull(),
             ]);
     }

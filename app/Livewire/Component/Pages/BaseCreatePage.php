@@ -46,27 +46,16 @@ abstract class BaseCreatePage extends BaseForm
 
         Toast::success($this->getCreatedNotification())->now();
 
-        $this->redirect(
-            url: route($this->getResourceRouteName(ResourceOperation::Index)),
-            navigate: true,
-        );
+        $this->redirect(url: route($this->getResourceRouteName(ResourceOperation::Index)), navigate: true);
     }
 
-    protected function beforeValidate(): void
-    {
-    }
+    protected function beforeValidate(): void {}
 
-    protected function afterValidate(): void
-    {
-    }
+    protected function afterValidate(): void {}
 
-    protected function beforeCreate(): void
-    {
-    }
+    protected function beforeCreate(): void {}
 
-    protected function afterCreate(): void
-    {
-    }
+    protected function afterCreate(): void {}
 
     protected function getCreatedNotification(): string
     {

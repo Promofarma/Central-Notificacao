@@ -17,21 +17,25 @@ final class NotificationRecipientFilter implements FilterContract
     public function apply(Builder $query): Builder
     {
         return $query
-            ->whereHas('notification', fn(Builder $query): Builder => $query->scheduled())
-            ->when(value: $this->data['tab'] ?? null, callback: fn(Builder $query, string $value) => match ($value) {
+            ->whereHas('notification', fn (Builder $query): Builder => $query->scheduled()->notExpired())
+            ->when(value: $this->data['tab'] ?? null, callback: fn (Builder $query, string $value) => match ($value) {
                 'inbox' => $query->unarchived(),
                 'archived' => $query->archived(),
                 default => $query,
             })
-            ->when(value: $this->data['recipient_id'] ?? null, callback: fn(
+            ->when($this->data['type'] ?? null, callback: fn (
+                Builder $query,
+                string $type,
+            ): Builder => $query->whereRelation('notification', 'type', $type))
+            ->when(value: $this->data['recipient_id'] ?? null, callback: fn (
                 Builder $query,
                 int $value,
             ) => $query->where('recipient_id', $value))
-            ->when(value: $this->data['user_id'] ?? null, callback: fn(
+            ->when(value: $this->data['user_id'] ?? null, callback: fn (
                 Builder $query,
                 int $value,
-            ) => $query->whereHas('notification', fn(Builder $query): Builder => $query->where('user_id', $value)))
-            ->when(value: $this->data['read_status'] ?? null, callback: fn(
+            ) => $query->whereHas('notification', fn (Builder $query): Builder => $query->where('user_id', $value)))
+            ->when(value: $this->data['read_status'] ?? null, callback: fn (
                 Builder $query,
                 string $value,
             ): Builder => match (NotificationRecipientReadStatus::from($value)) {

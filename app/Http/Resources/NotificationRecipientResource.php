@@ -15,6 +15,7 @@ final class NotificationRecipientResource extends JsonResource
             'id' => $this->id,
             'uuid' => $this->notification->uuid,
             'title' => $this->notification->title,
+            'type' => $this->notification->type->value,
             'recipient_id' => $this->recipient_id,
             'category_id' => $this->notification->category_id,
             'created_by' => $this->notification->user->name,
@@ -22,7 +23,9 @@ final class NotificationRecipientResource extends JsonResource
             'scheduled_time' => $this->notification->scheduled_time,
             'viewed_at' => $this->viewed_at?->format('d/m/Y à\\s H:i'),
             'readed_at' => $this->readed_at?->format('d/m/Y à\\s H:i'),
-            'created_at' => filled($this->notification->scheduled_date) ? $this->notification->scheduled_datetime->format('d/m/Y à\\s H:i') : $this->notification->created_at->format('d/m/Y à\\s H:i'),
+            'created_at' => filled($this->notification->scheduled_date)
+                ? $this->notification->scheduled_datetime->format('d/m/Y à\\s H:i')
+                : $this->notification->created_at->format('d/m/Y à\\s H:i'),
         ];
     }
 }
