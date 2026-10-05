@@ -39,6 +39,8 @@ final class ListNotificationRecipientController extends Controller
                         'scheduled_date',
                         'scheduled_time',
                         'created_at',
+                        'type',
+                        'expires_at',
                     ])
                     ->with('user:id,name'),
             ])
