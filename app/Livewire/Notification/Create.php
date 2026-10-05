@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Livewire\Notification;
 
 use App\DTO\NotificationDTO;
+use App\Enums\NotificationType;
 use App\Events\NotificationReady;
 use App\Livewire\Component\Pages\BaseCreatePage;
 use App\Models\Notification;
@@ -19,7 +20,7 @@ final class Create extends BaseCreatePage
 
     public function getModel(): Model
     {
-        return new Notification;
+        return new Notification();
     }
 
     /**
@@ -32,6 +33,8 @@ final class Create extends BaseCreatePage
      */
     protected function mutateFormDataBeforeCreate(array $data): array
     {
+        $data['expires_at'] = NotificationType::from($data['type'])->isBanner() ? now()->addDay()->endOfDay() : null;
+
         $this->configureRecurrentNotificationSchedule($data);
 
         return NotificationDTO::fromArray($data)->toArray();
@@ -45,9 +48,9 @@ final class Create extends BaseCreatePage
     private function configureRecurrentNotificationSchedule(array &$data): void
     {
         /** @var bool $isRecurrent */
-        $isRecurrent = $data['is_recurrent'];
+        $isRecurrent = $data['is_recurrent'] ?? false;
 
-        if (! $isRecurrent) {
+        if (!$isRecurrent) {
             return;
         }
 

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Models;
 
 use App\Enums\NotificationSendType;
+use App\Enums\NotificationType;
 use App\Filters\Concerns\HasFiltered;
 use App\Helpers\FormatsTimestamps;
 use App\Observers\NotificationObserver;
@@ -59,34 +60,37 @@ final class Notification extends Model
         return $this->hasOne(NotificationSchedule::class);
     }
 
+    public function scopeNotExpired(Builder $query): Builder
+    {
+        return $query->where(fn (Builder $query): Builder => $query
+            ->whereNull('expires_at')
+            ->orWhere('expires_at', '>', now()));
+    }
+
     public function scopeScheduled(Builder $query): Builder
     {
         $now = now();
 
-        return $query
-            ->where(function (Builder $query) use ($now): void {
-                $query
-                    ->whereNotNull('scheduled_date')
-                    ->whereDate('scheduled_date', '<=', $now->toDateString())
-                    ->where(function (Builder $query) use ($now): void {
-                        $query
-                            ->whereNull('scheduled_time')
-                            ->orWhereTime('scheduled_time', '<=', $now->toTimeString());
-                    });
-            })
-            ->orWhere(function (Builder $query) use ($now): void {
-                $query
-                    ->whereNull('scheduled_date')
-                    ->whereDate('created_at', '<=', $now->toDateString());
-            });
+        return $query->where(function (Builder $query) use ($now): void {
+            $query
+                ->whereNotNull('scheduled_date')
+                ->whereDate('scheduled_date', '<=', $now->toDateString())
+                ->where(function (Builder $query) use ($now): void {
+                    $query->whereNull('scheduled_time')->orWhereTime('scheduled_time', '<=', $now->toTimeString());
+                });
+        })->orWhere(function (Builder $query) use ($now): void {
+            $query->whereNull('scheduled_date')->whereDate('created_at', '<=', $now->toDateString());
+        });
     }
 
     protected function casts(): array
     {
         return [
             'data' => 'array',
+            'type' => NotificationType::class,
             'category_id' => 'integer',
             'user_id' => 'integer',
+            'expires_at' => 'datetime',
             'scheduled_date' => 'date',
             'scheduled_time' => 'datetime',
         ];
@@ -103,6 +107,8 @@ final class Notification extends Model
 
     protected function scheduledDatetime(): Attribute
     {
-        return Attribute::get(fn (): ?Carbon => filled($this->scheduled_date) && filled($this->scheduled_time) ? Carbon::parse($this->scheduled_date->toDateString().' '.$this->scheduled_time->toTimeString()) : null);
+        return Attribute::get(fn (): ?Carbon => filled($this->scheduled_date) && filled($this->scheduled_time)
+            ? Carbon::parse($this->scheduled_date->toDateString().' '.$this->scheduled_time->toTimeString())
+            : null);
     }
 }
