@@ -23,6 +23,7 @@ final class NotificationCreateRequest extends FormRequest
             'recipient_ids' => 'required|array|min:1',
             'recipient_ids.*' => 'required|int|exists:recipients,id',
             'scheduled_date' => 'nullable|date|date_format:Y-m-d',
+            'type' => 'nullable|string|in:toast,banner',
         ];
     }
 }
