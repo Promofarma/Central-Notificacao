@@ -9,6 +9,8 @@ use Illuminate\Support\Facades\Auth;
 
 final class NotificationDTO extends AbstractDTO
 {
+    private const TYPE = 'toast';
+    
     public function __construct(
         public readonly string $title,
         public readonly string $content,
@@ -25,7 +27,7 @@ final class NotificationDTO extends AbstractDTO
         return new self(
             title: $data['title'],
             content: trim($data['content']),
-            type: $data['type'],
+            type: $data['type'] ?? self::TYPE,
             category_id: (int) $data['category_id'],
             user_id: isset($data['user_id']) ? (int) $data['user_id'] : Auth::id(),
             expires_at: $data['expires_at'] ?? null,
